@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# DESCRIPTION
+# ===================================================================
+#
+# This is the main script for meta ICA. It will call each individual
+# function related to meta ICA.
+#
+#
+# USAGE
+# ===================================================================
+#
+# $1 : path to cohort folder
+#
+# $2 : cleanup method at lower level. 'aroma' or 'fix'
+#
+# $3 : conducting group ICA using 'grp1' or 'grp2' subsample or 'all' 
+#      subjects.
+#
+# $4 : number of individual ICAs to be conducted.
+#
+# $5 : number of subjects in each individual ICA.
+#
+# $6 : isotropic resampling scale
+#
+# ==================================================================
+
+cohortFolder=/data/jiyang/grp_cmp_hi_lo_functioning_centenarians
+cleanup_mode=aroma
+grpICA_subsample=all
+N_indICA=50
+N_subj_each_indICA=30
+iso_resample_scale=4
+
+# cohortFolder=$1
+# cleanup_mode=$2
+# grpICA_subsample=$3
+# N_indICA=$4
+# N_subj_each_indICA=$5
+# iso_resample_scale=$6
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+curr_dir=$(dirname $(which $0))
+
+${curr_dir}/Ini_genLists.sh ${cohortFolder} ${cleanup_mode}
+
+# randomise subjects for meta-ICA
+echo "meta-ICA : randomising subjects for meta-ICA ..."
+
+${curr_dir}/H-lv_metaICA_randomiseSubjects.sh ${cohortFolder} \
+											  ${grpICA_subsample} \
+											  ${N_subj_each_indICA} \
+											  ${N_indICA} \
+											  ${cleanup_mode} \
+											  ${iso_resample_scale} \
+											  noQsub
+
+
+
+
+# Submit jobs
+randSubj_1_jid=$($FSLDIR/bin/fsl_sub -T 120 -q short.q -N randSubj_1 -l ${cohortFolder}/SGE_commands/oe -t ${cohortFolder}/SGE_commands/randomiseSubjects.fslsub.1)
+
+randSubj_2_jid=$($FSLDIR/bin/fsl_sub -T 60  -q short.q -N randSubj_2 -l ${cohortFolder}/SGE_commands/oe -j ${randSubj_1_jid} -t ${cohortFolder}/SGE_commands/randomiseSubjects.fslsub.2)
+

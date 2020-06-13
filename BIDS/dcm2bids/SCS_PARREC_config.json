@@ -1,0 +1,33 @@
+{
+  "descriptions": [
+    {
+      "dataType": "anat",
+      "modalityLabel": "T1w",
+      "criteria": {
+        "ProtocolName": "3DCORT1CLEAR"
+      }
+    },
+    {
+      "dataType": "anat",
+      "modalityLabel": "FLAIR",
+      "criteria": {
+        "ProtocolName": "T2FLAIR3.5_2CLEAR"
+      }
+    },
+    {
+      "dataType": "dwi",
+      "modalityLabel": "dwi",
+      "criteria": {
+        "ProtocolName": "DTI32DIRSENSE"
+      }
+    },
+    {
+      "dataType": "func",
+      "modalityLabel": "bold",
+      "customLabels": "task-rest",
+      "criteria": {
+        "ProtocolName": "RestingStatefmriSENSE"
+      }
+    }
+  ]
+}

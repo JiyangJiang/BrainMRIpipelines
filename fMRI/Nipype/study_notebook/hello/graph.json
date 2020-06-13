@@ -1,0 +1,24 @@
+[
+    {
+        "group": 1,
+        "imports": [],
+        "name": "0_a_plus_b",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "0_a_plus_b"
+        ],
+        "name": "1_concat_a_b",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "1_concat_a_b"
+        ],
+        "name": "2_plus_1",
+        "size": 1
+    }
+]

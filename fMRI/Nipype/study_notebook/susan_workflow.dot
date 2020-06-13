@@ -1,0 +1,27 @@
+digraph susan_smooth{
+  label="susan_smooth";
+  susan_smooth_inputnode[label="inputnode (utility)"];
+  susan_smooth_median[label="median (fsl)"];
+  susan_smooth_mask[label="mask (fsl)"];
+  susan_smooth_meanfunc2[label="meanfunc2 (fsl)"];
+  susan_smooth_merge[label="merge (utility)"];
+  susan_smooth_multi_inputs[label="multi_inputs (utility)"];
+  susan_smooth_smooth[label="smooth (fsl)"];
+  susan_smooth_outputnode[label="outputnode (utility)"];
+  susan_smooth_inputnode -> susan_smooth_mask;
+  susan_smooth_inputnode -> susan_smooth_mask;
+  susan_smooth_inputnode -> susan_smooth_median;
+  susan_smooth_inputnode -> susan_smooth_median;
+  susan_smooth_inputnode -> susan_smooth_multi_inputs;
+  susan_smooth_inputnode -> susan_smooth_multi_inputs;
+  susan_smooth_median -> susan_smooth_merge;
+  susan_smooth_median -> susan_smooth_multi_inputs;
+  susan_smooth_mask -> susan_smooth_meanfunc2;
+  susan_smooth_meanfunc2 -> susan_smooth_merge;
+  susan_smooth_merge -> susan_smooth_multi_inputs;
+  susan_smooth_multi_inputs -> susan_smooth_smooth;
+  susan_smooth_multi_inputs -> susan_smooth_smooth;
+  susan_smooth_multi_inputs -> susan_smooth_smooth;
+  susan_smooth_multi_inputs -> susan_smooth_smooth;
+  susan_smooth_smooth -> susan_smooth_outputnode;
+}

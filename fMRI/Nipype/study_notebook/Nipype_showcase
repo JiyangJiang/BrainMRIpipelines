@@ -1,0 +1,26 @@
+from nipype import Workflow, Node
+from nipype.interfaces.fsl import SliceTimer, MCFLIRT, Smooth
+
+# Initiate a node to correct for slice-wise acquisition (slice timing)
+sliceTimer = Node (SliceTimer (index_dir = False,
+							   interleaved=True,
+							   time_repetition=2.5),
+				   name = "slicetimer")
+
+# Initiate a node to correct for motion
+mcflirt = Node (MCFLIRT (mean_vol = True,
+						 save_plots = True),
+				name = "mcflirt")
+
+# Initiate a node to smooth fMRI
+smooth = Node (Smooth (fwhm = 4), name = "smooth")
+
+# creating workflow
+preproc01 = Workflow (name = "preproc01", base_dir = '.')
+preproc01.connect ([(slicetimer, mcflirt, [('slice_time_corrected_file', 'in_file')]),
+					(mcflirt,    smooth,  [('out_file',                  'in_file')])])
+
+# visualise workflow
+preproc01.write_graph(graph2use = 'orig')
+from IPython.display import Image
+Image (filename = "preproc01/graph_detailed.png")

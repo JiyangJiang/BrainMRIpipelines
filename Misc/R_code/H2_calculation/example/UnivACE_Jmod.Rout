@@ -1,0 +1,68 @@
+
+R version 3.4.4 (2018-03-15) -- "Someone to Lean On"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-redhat-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # -----------------------------------------------------------------------
+> # Program: UnivACE.R  
+> # Univariate Twin Analysis model to estimate causes of variation (ACE) for continuous data
+> # Matrix style model input - Raw data input
+> # -----------------------------------------------------------------------
+> 
+> require(OpenMx)
+Loading required package: OpenMx
+To take full advantage of multiple cores, use:
+  mxOption(NULL, 'Number of Threads', parallel::detectCores()) #now
+  Sys.setenv(OMP_NUM_THREADS=parallel::detectCores()) #before library(OpenMx)
+> require(psych)
+Loading required package: psych
+
+Attaching package: ‘psych’
+
+The following object is masked from ‘package:OpenMx’:
+
+    tr
+
+> # source("GenEpiHelperFunctions.R")
+> 
+> 
+> ### Data import
+> twindata<-read.delim("Test Data ACE Model.csv", header = TRUE, sep = ";")
+> 
+> # zyg as factor
+> twindata$zyg<- factor(twindata$zyg, levels= c(1:2),labels= c("MZ", "DZ"))
+> 
+> 
+> # Prepare Data
+> #----------------------------------------------------------------------------------------------------------
+> # Reads data from csv spreadsheet in which mis val were recoded to 'NA'
+> # Variabels: Famid ADHD1 IQ1 ADHD2 IQ2 zyg (1=MZ, 2=DZ)
+> # ----------------------------------------------------------------------------------------------------------
+> 
+> nv <- 1			# number of variables for a twin = 1 in Univariate
+> ntv <- 2*nv		# number of variables for a pair = 2* 1 for Univariate
+> 
+> #twindata <- read.table ('ADHDiq.csv', header=T, sep=',')
+> names (twindata)
+[1] "Subjects"  "zyg"       "duration1" "duration2" "quality1"  "quality2" 
+> 
+> #selVars <- c('IQ1','IQ2')
+> mzData <- subset(twindata, zyg=="MZ", selVars)
+Error in eval(substitute(select), nl, parent.frame()) : 
+  object 'selVars' not found
+Calls: subset -> subset.data.frame -> eval -> eval
+Execution halted

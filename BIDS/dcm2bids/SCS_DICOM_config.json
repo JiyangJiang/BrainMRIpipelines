@@ -1,0 +1,33 @@
+{
+  "descriptions": [
+    {
+      "dataType": "anat",
+      "modalityLabel": "T1w",
+      "criteria": {
+        "ProtocolName": "*T1*"
+      }
+    },
+    {
+      "dataType": "anat",
+      "modalityLabel": "FLAIR",
+      "criteria": {
+        "ProtocolName": "*FLAIR*"
+      }
+    },
+    {
+      "dataType": "dwi",
+      "modalityLabel": "dwi",
+      "criteria": {
+        "ProtocolName": "*DTI*"
+      }
+    },
+    {
+      "dataType": "func",
+      "modalityLabel": "bold",
+      "customLabels": "task-rest",
+      "criteria": {
+        "ProtocolName": "*Resting*"
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++
+ERROR : mri_watershed Error: indices out of bounds
+++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Ref : https://www.mail-archive.com/freesurfer@nmr.mgh.harvard.edu/msg40730.html
+
+We think we were able to isolate the problem. Version 5.1 is failing to apply the talairach transform to the nu.mgz. It gets computed and applied to the orig.mgz but then not transferred during the next step.
+
+When mri_normalize tries to run without this information, it fails, and then this leads to watershed failing as well. mri_normalize usually tries to fallback on other options if the talairach transform isn't present, and this can work most of the time, but in some cases it fails (which can explain why this subject in particular fails but other subjects go through just fine).
+
+try:
+
+set mdir=$SUBJECTS_DIR/$subject/mri
+mri_add_xform_to_header $mdir/transforms/talairach.xfm $mdir/nu.mgz $mir/nu.mgz
+
+to add the transform to your nu.mgz header. Then if you run recon-all from this step onwards (you could even use recon-all -make all), it should work.

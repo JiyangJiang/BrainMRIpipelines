@@ -1,0 +1,24 @@
+#!/bin/bash
+
+
+#$ -N UKBB_FS_isoErr
+#$ -V
+#$ -cwd
+#$ -pe smp 1
+#$ -q standard.q
+#$ -l h_vmem=4G
+#$ -o /data3/imaging/UKBB/ukbb_freesurfer/processing/measures/isoErr.out
+#$ -e /data3/imaging/UKBB/ukbb_freesurfer/processing/measures/isoErr.err
+#$ -t 1-19336
+
+cd /data3/imaging/UKBB/ukbb_freesurfer/processing
+
+list=/data3/imaging/UKBB/ukbb_freesurfer/processing/measures/misc/fs_list.txt
+
+tar_file=`cat ${list} | awk "NR==${SGE_TASK_ID}"`
+
+subjID=`echo $(basename ${tar_file}) | awk -F '.' '{print $1}'`
+
+error=`tar xf ${tar_file} ${subjID}/scripts/recon-all.log -O | grep "with ERROR"`
+
+[ "${error}" != "" ] && mkdir -p $(dirname ${tar_file})/wERROR && mv ${tar_file} $(dirname ${tar_file})/wERROR

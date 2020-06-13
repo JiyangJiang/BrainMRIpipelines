@@ -1,0 +1,27 @@
+
+1) decide voxel coordinate of the center of your mask by using FSLVIEW
+
+	e.g. x=48, y=24, z=48 in MNI space
+
+2) create single voxel mask
+
+	fslmaths ${FSLDIR}/data/standard/MNI152_T1_2mm \
+			 -mul 0 \
+			 -add 1 \
+			 -roi 48 1 24 1 48 1 0 1 \
+			 single_vox_mask \
+			 -odt float
+
+3) make the sphere with sphere kernal filtering
+
+	fslmaths single_vox_mask \
+			 -kernal sphere 5 \
+			 -fmean \
+			 sphere_mask \
+			 -odt float
+
+4) binarise mask
+
+	fslmaths sphere_mask \
+			 -bin \
+			 sphere_mask_bin

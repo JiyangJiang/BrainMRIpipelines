@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# ========================================= #
+#        DWI workflow with MRtrix3          #
+# ========================================= #
+#
+# DESCRIPTION :
+#
+# This workflow describes how to process DWI data using MRtrix in data sorted in BIDS format.
+#
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+BIDS_folder=/Users/jiyang/Desktop/fMRI_fMRIPrep+ICA/projectFolder
+preproc_method=eddy
+
+
+# 1. Prepare mif for MRtrix
+# -------------------------------------------------------------------------------------------
+# This will do mrconvert on all sub-*/dwi/*.nii* in project folder to convert them to mif
+# format (combining the bvec/bval and json info), and save in derivatives/mrtrix/orig_mif
+# folder.
+$(dirname $(which $0))/mrtrix_sortBIDSdata.sh ${BIDS_folder}
+
+# 2. Denoising
+# -------------------------------------------------------------------------------------------
+# This will run dwidenoise to all mif in derivatives/mrtrix/orig_mif, and save the output to
+# derivatives/mrtrix/denoise folder.
+$(dirname $(which $0))/mrtrix_denoise_BIDS.sh ${BIDS_folder} Mcore
+
+# 3. Removing Gibbs ring
+# -------------------------------------------------------------------------------------------
+# This will run mrdegibbs to all mif in derivatives/mrtrix/denoise, and save the denoised and
+# the noise mif in derivatives/mrtrix/unring.
+$(dirname $(which $0))/mrtrix_unring_BIDS.sh ${BIDS_folder} 0,1 Mcore
+# 0,1 - axial acquisition; 0,2 coronal acquisition; 1,2 sagittal acquisition.
+
+# 4. preprocess with FSL's eddy or dwipreproc
+# -------------------------------------------------------------------------------------------
+# This will run preprocessing to remove susceptibility-induced off resonance noise, eddy 
+# current, and movement.
+case ${preproc_method} in
+	eddy)
+		# Below example is using FSL's eddy
+		$(dirname $(which $0))/mrtrix_susceptibilityEddyMovementCorrection_BIDS.sh ${BIDS_folder} \
+                                												   eddy \
+                                												   Mcore \
+                                												   easy_acq_updown \
+                                												   noTopup \
+                                												   linear \
+                                												   1 \
+                                												   eddy
+		;;
+	dwipreproc)
+		# Below example is using dwipreproc
+		$(dirname $(which $0))/mrtrix_susceptibilityEddyMovementCorrection_BIDS.sh ${BIDS_folder} \
+													                               dwipreproc \
+													                               Mcore \
+													                               none \
+													                               linear
+		;;
+esac
+
+# 5. Correct for b1 field inhomogeneity
+# -------------------------------------------------------------------------------------------
+# This step corrects for b1 field inhonogeneity using dwibiascorrect.
+$(dirname $(which $0))/mrtrix_b1BiasFieldCorr_BIDS.sh ${BIDS_folder} \
+													  Mcore
+
+# 6. Generate DWI mask
+# -------------------------------------------------------------------------------------------
+# Generate DWI mask with dwi2mask
+$(dirname $(which $0))/mrtrix_dwiMask_BIDS.sh ${BIDS_folder} \
+											  Mcore		  

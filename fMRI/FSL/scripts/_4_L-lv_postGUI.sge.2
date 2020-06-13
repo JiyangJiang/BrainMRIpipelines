@@ -1,0 +1,232 @@
+#!/bin/bash
+
+# DESCRIPTION
+# =========================================================================================
+#
+# This is the second part of the post-GUI script.
+#
+# This script does all the work after GUI and the exclusion of motion outliers and before 
+# any higher level operations. This includes :
+#
+#    - AROMA/FIX cleanup
+#    - fsl_anat
+#    - regress out WM/CSF timeseries
+#    - regress out motion confounds
+#    - normalise to MNI
+#    - isotropic resampling
+#    - generate GM covariate map
+#
+# This scrip calls L-lv_cleanup.sh and L-lv_post-cleanup.sh with 'par_cluster'.
+#
+#
+# USAGE
+# =========================================================================================
+#
+# $1 = 'aroma' or 'fix'
+#
+# $2 = cohort folder (e.g. /Users/z3402744/Work/datasets/2_SCS_rs_fMRI)
+#
+# $3 = high pass threshold (e.g. 100)
+#
+# if FIX cleanup
+#
+#      $4 = path to FIX installation folder (e.g. /home/jiyang/my_software/fix)
+#      $5 = name of built-in training data (e.g. Standard.RData).
+#      $6 = FIX threshold (e.g. 10). Read notes in L-lv_cleanup.sh for explanations.
+#
+#
+# if AROMA cleanup
+#
+#      $4 = path to AROMA folder
+#      $5 = any random string
+#      $6 = any random string
+#
+# $7 = 'forceNoFSLanat' only use when fsl_anat has already
+#      been run. Any non-empty string othewise.
+#
+# $8 = TR in seconds
+#
+# $9 = 'yesRegWMts' or any other string if not regressing WM signal
+#
+# ${10} = 'yesRegCSFts' or any other string if not regressing CSF signal
+#
+# ${11} = "yesReg6motionParams" or any other string if not regressing
+#         6 motion parameters
+#
+# ${12} = 'yesReg24motionParams' or any other string if not regressing
+#         24 motion parameters
+#
+# ${13} = 'yesRegMotionOutlier' or any other string if not regressing
+#         motion outliers.
+#
+# ${14} = fsl_motion_outliers metrics to define outliers ('refrms', 
+#         'dvars', 'refmse', 'fd', 'fdrms'). 'refrms', 'dvars' and 
+#         'refmse' RECOMMENDED. Any string if not regressing motion
+#         outliers.
+#
+# ${15} = number of first N volumes to be removed from fMRI data
+#         to reach magnetic equibilium. This should be consistent
+#         with FEAT GUI setup.
+#
+# ${16} = isotropic resampling scale.
+#
+# ${17} = path to CNS
+#
+# ${18} = path to SPM12
+#
+# ${19} = OPTIONAL. specify if want to change to a SGE queue different from
+#         'standard.q', e.g. bigmem.q
+
+
+curr_dir=$(dirname $(which $0))
+
+cleanup_mode=aroma
+cohortFolder=/data/jiyang/grp_cmp_lt80_over95_nondemented_May30newPipeline
+Hpass_thr=100
+aromadir=/home/jiyang/my_software/ICA-AROMA
+NA1=na
+NA2=na
+forceNoFSLanat_flag=forceNoFSLanat
+tr=2
+regWMts_flag=yesRegWMts
+regCSFts_flag=yesRegCSFts
+reg6motionParam_flag=yesReg6motionParams
+reg24motionParam_flag=noReg24motionParams
+regMotionOutlier_flag=noRegMotionOutlier
+fslmotionoutliers_metric=dvars
+NvolsRm=8
+iso_resample_scale=4
+CNSpath=/home/jiyang/my_software/CNS
+SPM12path=/home/jiyang/my_software/spm12
+altq=short.q
+
+
+
+
+# cleanup_mode=$1
+# cohortFolder=$2
+
+# Hpass_thr=$3
+
+
+# ----------------------
+# run FIX/AROMA clean-up
+# ----------------------
+case ${cleanup_mode} in
+	fix)
+		# fixdir=$4
+		# Tdata=$5
+		# fix_thr=$6
+
+		${curr_dir}/L-lv_cleanup.sh ${cleanup_mode} \
+		                            ${cohortFolder} \
+		                            ${Hpass_thr} \
+		                            par_cluster \
+		                            ${fixdir} \
+		                            ${Tdata} \
+		                            ${fix_thr}
+		;;
+	aroma)
+		# aromadir=$4
+		# NA1=$5
+		# NA2=$6
+
+		${curr_dir}/L-lv_cleanup.sh ${cleanup_mode} \
+		                            ${cohortFolder} \
+		                            ${Hpass_thr} \
+		                            par_cluster \
+		                            ${aromadir}
+		;;
+esac
+
+
+
+
+# ----------------
+# run post-cleanup
+# ----------------
+# forceNoFSLanat_flag=$7
+# tr=$8
+# regWMts_flag=$9
+# regCSFts_flag=${10}
+# reg6motionParam_flag=${11}
+# reg24motionParam_flag=${12}
+# regMotionOutlier_flag=${13}
+# fslmotionoutliers_metric=${14}
+# NvolsRm=${15}
+# iso_resample_scale=${16}
+
+# CNSpath=${17}
+# SPM12path=${18}
+
+${curr_dir}/L-lv_post-cleanup.sh ${cohortFolder} \
+								 ${cleanup_mode} \
+								 ${forceNoFSLanat_flag} \
+								 ${tr} \
+								 ${Hpass_thr} \
+								 ${regWMts_flag} \
+								 ${regCSFts_flag} \
+								 ${reg6motionParam_flag} \
+								 ${reg24motionParam_flag} \
+								 ${regMotionOutlier_flag} \
+								 ${fslmotionoutliers_metric} \
+								 ${NvolsRm} \
+								 ${iso_resample_scale} \
+								 par_cluster \
+								 ${CNSpath} \
+								 ${SPM12path}
+
+
+
+
+
+# altq=${19}
+
+
+
+
+
+# submit scripts to SGE
+
+# 2) cleanup and post-cleanup
+# generate 6 motion parameters
+gen6motion_jid=`fsl_sub -T 5 -N gen6motparam -l ${cohortFolder}/SGE_commands/oe -t ${cohortFolder}/SGE_commands/gen6motParam.fslsub`
+
+while read studyFolder
+do
+	subjID=$(basename ${studyFolder})
+
+	# cleanup
+	cleanup_jid=`echo $(qsub ${cohortFolder}/SGE_commands/${subjID}_L-lv_cleanup.sge) | awk '{print $3}'`
+	
+	# fsl_anat
+	fslanat_jid=`echo $(qsub ${cohortFolder}/SGE_commands/${subjID}_L-lv_fslanat.sge) | awk '{print $3}'`
+
+	# temporal filtering
+	Tfilt_jid=`echo $(qsub -hold_jid ${cleanup_jid} ${cohortFolder}/SGE_commands/${subjID}_L-lv_Tfilt.sge) | awk '{print $3}'`
+
+	# generate WM/CSF time series
+	genWMCSFts_jid=`echo $(qsub -hold_jid ${fslanat_jid},${cleanup_jid} ${cohortFolder}/SGE_commands/${subjID}_L-lv_genWMCSFts.sge) | awk '{print $3}'`
+
+	# generate 24 motion parameters
+	gen24motion_jid=`echo $(qsub ${cohortFolder}/SGE_commands/${subjID}_L-lv_gen24motionParam.sge) | awk '{print $3}'`
+
+	# generate fsl_motion_outliers
+	genFSLmotionOutliers_jid=`echo $(qsub ${cohortFolder}/SGE_commands/${subjID}_L-lv_fslmotionoutliers.sge) | awk '{print $3}'`
+
+	# nuisance regression
+	nuiReg_jid=`echo $(qsub -hold_jid ${genWMCSFts_jid},${gen6motion_jid},${gen24motion_jid},${genFSLmotionOutliers_jid} ${cohortFolder}/SGE_commands/${subjID}_L-lv_nuisanceReg.sge) | awk '{print $3}'`
+
+	# normalise to MNI
+	norm2mni_jid=`echo $(qsub -hold_jid ${nuiReg_jid} ${cohortFolder}/SGE_commands/${subjID}_L-lv_normaliseFunc2MNI.sge) | awk '{print $3}'`
+
+	# generate GM covariate map
+	# genGMcovMap_jid=`echo $(qsub -hold_jid ${fslanat_jid} ${cohortFolder}/SGE_commands/${subjID}_L-lv_genGMcovMap.sge) | awk '{print $3}'`
+	# generating GM covariate map is not depending on any of these jobs, therefore directly submit jobs.
+
+	# alter q
+	if [ ! -z ${altq+x} ]; then
+		qalter -q ${altq} ${cleanup_jid},${fslanat_jid},${Tfilt_jid},${genWMCSFts_jid},${gen24motion_jid},${genFSLmotionOutliers_jid},${nuiReg_jid},${norm2mni_jid},${genGMcovMap_jid}
+	fi
+
+done < ${cohortFolder}/studyFolder.list

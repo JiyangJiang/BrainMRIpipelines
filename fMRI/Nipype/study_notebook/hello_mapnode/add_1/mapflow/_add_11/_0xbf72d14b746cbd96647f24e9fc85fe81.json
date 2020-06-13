@@ -1,0 +1,16 @@
+[
+    [
+        "a",
+        3
+    ],
+    [
+        "function_str",
+        "def plus_one (a):\n    return a + 1\n"
+    ],
+    [
+        "needed_outputs",
+        [
+            "out"
+        ]
+    ]
+]

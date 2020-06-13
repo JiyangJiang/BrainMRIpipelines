@@ -1,0 +1,62 @@
+Tests to run chronic pipeline from smaller scripts
+
+In these examples:
+
+Subject=ex4548
+
+First dwi datset directory (GE-NFL protocol i.e. 140 directions and 8 bzero volumes) = se5output (it is called "output" because it is the dicom output of the Matlab recon script)
+
+Second dwi dataset directory = se6output
+
+Third dwi dataset directory = se8output
+
+Blipped (flipped) dwi dataset directory = se7output
+
+The PIPELINE OUTPUTS
+
+For se5output = se5output/output
+For se6output = se6output/output
+For se7output = se7output/output
+For se8output = se8output/output
+
+For "3 datasets plus blipped data", the overall output directory = combined_output/combined_blipped  , and combined_output/combined_not_blipped
+
+For "140 direction data", the output directories are: se5output/output/148/148_blipped    , and output/148/148_notblipped
+
+for "64 directiondata", the output directories are: se5output/64output/64_blipped      , and se5output/64output/64_notblipped
+
+
+3 DATSETS PLUS BLIPPED DATA:
+
+
+./run_chronic_dti_pipeline_3_diffusion_plus_blipped.sh -i /home/jjmge/Documents/ex4548/se5output -b /home/jjmge/Documents/ex4548/se6output -c /home/jjmge/Documents/ex4548/se8output -f /home/jjmge/Documents/ex4548/se7output -o /home/jjmge/Documents/ex4548/se5output/output -p /home/jjmge/Documents/ex4548/se6output/output -q /home/jjmge/Documents/ex4548/se8output/output -r /home/jjmge/Documents/ex4548/se7output/output -z /home/jjmge/Documents/ex4548/combined_output/combined_blipped -s 666
+
+
+3 DATASETS AND NOT BLIPPED DATA:
+
+./run_chronic_dti_pipeline_3_diffusion_NOT_BLIPPED.sh -i /home/jjmge/Documents/ex4548/se5output -b /home/jjmge/Documents/ex4548/se6output -c /home/jjmge/Documents/ex4548/se8output -o /home/jjmge/Documents/ex4548/se5output/output_not_blipped -p /home/jjmge/Documents/ex4548/se6output/output_not_blipped -q /home/jjmge/Documents/ex4548/se8output/output_not_blipped -z /home/jjmge/Documents/ex4548/combined_output/combined_not_blipped -s 666
+
+
+140 DIRECTION BLIPPED DATA:
+
+
+./run_140d_dti_pipeline_plus_blipped.sh -i /home/jjmge/Documents/ex4548/se5output -f /home/jjmge/Documents/ex4548/se7output -o /home/jjmge/Documents/ex4548/se5output/output/148/148_blipped -r /home/jjmge/Documents/ex4548/se7output/output -s 666
+
+
+140 DIRECTION NOT BLIPPED DATA:
+
+
+./run_140d_dti_pipeline_NOT_BLIPPED.sh -i /home/jjmge/Documents/ex4548/se5output -o /home/jjmge/Documents/ex4548/se5output/output/148/148_notblipped -s 666
+
+
+64 DIRECTION BLIPPED DATA:
+
+./run_64d_dti_pipeline_plus_blipped.sh -i /home/jjmge/Documents/ex4548/se5output -f /home/jjmge/Documents/ex4548/se7output -o /home/jjmge/Documents/ex4548/se5output/64output/64_blipped -r /home/jjmge/Documents/ex4548/se7output/output -s 666
+
+
+64 DIRECTION NOT BLIPPED DATA:
+
+./run_64d_dti_pipeline_NOT_BLIPPED.sh -i /home/jjmge/Documents/ex4548/se5output -o /home/jjmge/Documents/ex4548/se5output/64output/64_notblipped -s 666
+
+
+

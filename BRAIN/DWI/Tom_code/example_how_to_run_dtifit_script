@@ -1,0 +1,21 @@
+EXAMPLE COMMAND LINES TO IMPLEMENT DTIFIT AFTER EDDY HAS BEEN COMPLETED
+
+usage: $0 -i input_main_dti_processed_output_DIR -p input_destination_dtifit_directory -s input_subject_id"
+echo
+echo
+
+usage()
+
+{
+
+cat << EOF
+
+COMPULSORY:
+
+   -b        Input DIR_NAME of processed diffusion data
+
+   -p        Input DESTINATION DIR DTIFIT location
+
+   -s        Input SUBJECT_ID (suffix)
+
+./script_dtifit_after_eddy.sh -i /home/jjmge/Documents/ex4548/combined_output -p /home/jjmge/Documents/ex4548/combined_output/dtifit -s 666

@@ -1,0 +1,71 @@
+#!/bin/bash
+
+#$ -N UKBB_FS_extract_aseg_aparc
+#$ -V
+#$ -cwd
+#$ -pe smp 1
+#$ -q standard.q
+#$ -l h_vmem=4G
+#$ -o /data3/imaging/UKBB/ukbb_freesurfer/processing/measures/misc/ext_area.out
+#$ -e /data3/imaging/UKBB/ukbb_freesurfer/processing/measures/misc/ext_area.err
+#$ -t 1-19336
+
+module load fsl/5.0.11 freesurfer/6.0.0
+
+cd /data3/imaging/UKBB/ukbb_freesurfer/processing
+
+list=/data3/imaging/UKBB/ukbb_freesurfer/processing/measures/misc/fs_list.txt
+
+tar_file=`cat ${list} | awk "NR==${SGE_TASK_ID}"`
+
+if [ -f "/data3/imaging/UKBB/ukbb_freesurfer/processing/${tar_file}" ]; then
+
+	# tmp_dir=/data3/imaging/UKBB/ukbb_freesurfer/processing/measures/misc/tmp
+	tmp_dir=`mktemp -d`
+
+	cp ${tar_file} ${tmp_dir}/.
+
+	cd ${tmp_dir}
+
+	tar xf $(basename ${tar_file})
+
+	export SUBJECTS_DIR=${tmp_dir}
+
+	subjID=`echo $(basename ${tar_file}) | awk -F '.' '{print $1}'`
+
+	aparcstats2table --subjects ${subjID} \
+					 --hemi rh \
+					 --meas area \
+					 --tablefile ${subjID}.rh.area.aparc \
+					 --skip
+
+	aparcstats2table --subjects ${subjID} \
+					 --hemi lh \
+					 --meas area \
+					 --tablefile ${subjID}.lh.area.aparc \
+					 --skip
+
+	aparcstats2table --subjects ${subjID} \
+					 --hemi rh \
+					 --meas area \
+					 --parc=aparc.a2009s \
+					 --tablefile ${subjID}.rh.area.aparc.a2009s \
+					 --skip
+
+	aparcstats2table --subjects ${subjID} \
+					 --hemi lh \
+					 --meas area \
+					 --parc=aparc.a2009s \
+					 --tablefile ${subjID}.lh.area.aparc.a2009s \
+					 --skip
+
+
+	cd /data3/imaging/UKBB/ukbb_freesurfer/processing/measures
+
+	for i in lh.area.aparc rh.area.aparc lh.area.aparc.a2009s rh.area.aparc.a2009s
+	do
+		mv ${tmp_dir}/${subjID}.${i} ${i}/.
+
+	done
+
+fi

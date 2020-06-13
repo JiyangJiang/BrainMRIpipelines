@@ -1,0 +1,87 @@
+
+++++++++++++++++++++++
+Introduction to Nipype
+++++++++++++++++++++++
+
+- An example of calling SPM12 in Nipype
+
+		from nipype.interfaces.spm import Smooth
+		smooth = Smooth()
+		smooth.inputs.in_files = 'functional.nii'
+		smooth.inputs.fwhm = 6
+		smooth.run()
+
+- An example of calling FSL in Nipype
+
+		from nipype.interfaces.fsl import MCFLIRT
+		mcflt = MCFLIRT()
+		mcflt.inputs.in_file = 'functional.nii'
+		mcflt.run()
+
+- An example of calling FreeSurfer in Nipype
+
+	Task : smoothing on the surface with two different smoothing kernels, on both hemisphere,
+	       on six subjects, all in parallel.
+
+		from nipype.interfaces.freesurfer import SurfaceSmooth
+		smoother = SurfaceSmooth()
+		smoother.inputs.in_file = "{hemi}.func.mgz"
+		smoother.iterables = [("hemi", ['lh', 'rh']),
+							  ("fwhm", [4, 8]),
+							  ("subject_id", ['sub01', 'sub02', 'sub03',
+							  				  'sub04', 'sub05', 'sub06']),
+							 ]
+		smoother.run (mode = 'parallel')
+
+- An example of doing motion correction using SPM, coregistration using FreeSurfer,
+  normalisation using ANTs, and smoothing using FSL
+
+	  # import modules
+	  from nipype.interfaces.freesurfer import BBRegister
+	  from nipype.interfaces.ants       import WarpTimeSeriesImageMultiTransform
+	  from nipype.interfaces.fsl        import SUSAN
+	  from nipype.interfaces.spm        import Realign
+
+	  # motion correction with SPM
+	  realign = Realign (register_to_mean = True)
+
+	  # coregistration with FreeSurfer
+	  coreg = BBRegister ()
+
+	  # normalisation with ANTs
+	  normalize = WarpTimeSeriesImageMultiTransform ()
+
+	  # smoothing with FSL
+	  smooth = SUSAN (fwhm = 6.0)
+
+	  # where can the raw data be found?
+	  grabber = nipype.DataGrabber()
+	  grabber.inputs.base_directory = '~/experiment_folder/data'
+	  grabber.inputs.subject_id = ['subject1', 'subject2', 'subject3']
+
+	  # where should the output data be stored?
+	  sink = nipype.DataSink ()
+	  sink.inputs.base_directory = '~/experiment_folder/output_folder'
+
+	  # create a workflow to connect all those nodes
+	  preprocflow = nipype.Workflow ()
+
+	  # connect the nodes to each other
+	  preprocflow.connect ([(grabber   ->  realign),
+	  						(realign   ->  coreg),
+	  						(coreg     ->  normalize),
+	  						(normalize ->  smooth),
+	  						(smooth    ->  sink)])
+
+	  # run the workflow in parallel
+	  preprocflow.run (mode = 'parallel')
+
+
+- Interface : Wraps a program or function
+
+- Node / MapNode : Wraps an Interface for use in a Workflow
+
+- Workflow : a graph or forest of graphs whose edges represent data flow
+
+- Plugin : a component describes how a Workflow should be executed.
+

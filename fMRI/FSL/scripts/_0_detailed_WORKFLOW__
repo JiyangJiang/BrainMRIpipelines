@@ -1,0 +1,414 @@
+================
+Data preparation
+================
+
+cohortFolder --- studyFolder_1 (ie. subjID) - subjID_anat.nii* & subjID_func.nii*
+              |
+              |- studyFolder_2 (ie. subjID) - subjID_anat.nii* & subjID_func.nii*
+              |
+              |- studyFolder_3 (ie. subjID) - subjID_anat.nii* & subjID_func.nii*
+
+
+
+======================
+Operations on FEAT GUI
+======================
+
++ ------------------------------------------------------
++                 Step 0 : Preparation
++ ------------------------------------------------------
+
+
+0.1) generate lists
+------------------------------------------------
+Ini_genLists.sh cohortFolder \
+				        L_lv_type
+
+
+
+0.2) extract anat brain (optimised for multicore)
+-------------------------------------------------
+This step performs:
+  1) generate lists (same as step 0.1)
+  2) brain extraction using SPM
+  3) despike with 3dDespike
+  4) rename existing *.feat or *.ica folders
+
+
+Ini_Xbrain.sh cohortFolder \
+			        CNS_path \
+			        SPM12_path \
+              running_mode ('par_Mcore', 'par_cluster', or 'sin') \
+              overwrite_flag (overwrite or skip)
+
+
+It is always helpful to visually check the non-brain
+removed images (this is now done in step 0.3).
+
+
+
+0.3) OPTIONAL - visual inspection on raw func and anat_brain
+-------------------------------------------------------------
+call *L-lv_qc_nativeSpace_slices.sh*
+
+
+
+
+
+
++ ------------------------------------------------------
++                 Step 1 : Preprocessing 
++ ------------------------------------------------------
+
+
+
+Option 1: FEAT GUI (AROMA cleanup)
+-----------------------------------------
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+WARNING : FIX cleanup mode with FEAT GUI is not fully functional
+          in my scripts. Use MELODIC GUI for the moment.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+0) Remove existing func_filename.feat or func_filename+.feat etc.
+   folder/s. This is important, because otherwise the following
+   steps cannot find the correct .feat folder.
+
+Optional : unclick "Progress watcher" in "Misc".
+
+1) First-level analysis - Preprocessing
+
+2) Data tag : Number of inputs
+              Select 4D data (Note : give full path)
+              Delete volumes
+              High pass threshold
+
+   Note : input the actual number of fMRI images
+          use "ls -1" to list all fMRI images, and "Paste" to the GUI.
+          use absolute path, e.g. "ls -1 ${cohortFolder}/${subjID}/*_func.nii*"
+
+3) Pre-stats tag : Motion correction = MCFLIRT
+                   ---------------------------------------------------------------
+	           			 B0 unwarping = as needed
+                   ---------------------------------------------------------------
+				           Slice timing correction = as needed
+                   ---------------------------------------------------------------
+				           BET brain extraction = tick
+                   ---------------------------------------------------------------
+				           Spatial smoothing FWHM = 5 or as needed
+                                            AROMA cleanup requires that spatial
+                                            smoothing should be done during
+                                            preprocessing.
+                    ---------------------------------------------------------------
+				            intensity normalization = untick
+                    ---------------------------------------------------------------
+				            Temporal filtering = both perf sub and highpass untick
+                                         If using AROMA cleanup, temporal filtering
+                                         should NOT be done during preprocessing -
+                                         do it after AROMA. If using FIX cleanup,
+                                         my FIX cleanup script automatically runs 
+                                         highpass.
+                    ---------------------------------------------------------------
+          				  MELODIC ICA data exploration = untick in ICA-AROMA mode
+          				  						                   tick in FIX mode
+          				  ---------------------------------------------------------------
+
+4) Registration tag : tick "Main structural image"
+                      ------------------------------------------------------------------
+                      Select main struct imgs = BRAIN EXTRACTED anat (*_anat_brain.nii*)
+                      ------------------------------------------------------------------
+	           			    Main struct img : Linear - Normal search - BBR
+                      ------------------------------------------------------------------
+				              Standard space : Linear - Normal search - 12 DOF
+                      ------------------------------------------------------------------
+				   					  Nonlinear = tick
+
+
+
+Option 2 : MELODIC GUI (FIX cleanup)
+-----------------------------------------
+
+If using MELODIC GUI to do first-level (single-subject ICA), apply MELODIC's
+"automatic dimensionality estimation", which creates the subfolder
+"<mel.ica>/filtered_func_data.ica".
+
+
+0) Remove existing func_filename.ica or func_filename+.ica etc.
+   folder/s. This is important, because otherwise the following
+   steps cannot find the correct .ica folder.
+
+Optional : unclick "Progress watcher" in "Misc".
+
+1) Data tag : Number of inputs
+              Select 4D data (Note : give full path)
+              Delete volumes
+              High pass threshold
+              
+   Note : input the actual number of fMRI images
+          use "ls -1" to list all fMRI images, and "Paste" to the GUI.
+          use absolute path, e.g. "ls -1 ${cohortFolder}/${subjID}/*_func.nii*"
+
+2) Pre-stats tag : Motion correction = MCFLIRT
+                   ---------------------------------------------------------------
+                   B0 unwarping = as needed
+                   ---------------------------------------------------------------
+                   Slice timing correction = as needed
+                   ---------------------------------------------------------------
+                   BET brain extraction = tick
+                   ---------------------------------------------------------------
+                   Spatial smoothing FWHM = 5 or as needed
+                   ---------------------------------------------------------------
+                   intensity normalization = untick
+                   ---------------------------------------------------------------
+                   Temporal filtering = both perf sub and highpass untick
+                                        My FIX cleanup script automatically runs 
+                                        highpass.
+                   ---------------------------------------------------------------
+              
+
+
+3) Registration tag : Select main struct imgs = brain extracted anat (*_anat_brain.nii*)
+                      ------------------------------------------------------------------
+                      Main struct img : Linear - Normal search - BBR
+                      ------------------------------------------------------------------
+                      Standard space : Linear - Normal search - 12 DOF
+                      ------------------------------------------------------------------
+                      Nonlinear = tick
+                      ------------------------------------------------------------------
+                      Resampling resolution = 4mm or as needed
+                      ------------------------------------------------------------------
+
+4) Stats tag :  "variance-normalise timecourses" tick
+                "Automatic dimentionality estimation" tick
+                 Single-session ICA
+
+
+
+- multiple images can be *pasted* to 4D images and main structural images.
+
+- save fsf to ${cohortFolder}/fsf for next step.
+
+- to change feat jobs on SGE cluster to a different queue (e.g. bigmem.q)
+
+    qalter -q bigmem.q $(qstat | grep -w "jiyang" | cut -d ' ' -f 2 | tr '\n' ',')
+
+
++ ---------------------------------------------------------
++ Step 2 : Run feat commandline with fsf file from FEAT GUI
++ ---------------------------------------------------------
+
+- This is optimised for cluster-based parallel computing
+
+  ${FSLDIR}/bin/feat ${cohortFolder}/fsf/design.fsf
+
+- Each subject takes ~30-40 min
+
+- if running with cluster parallel (par_cluster) mode, run L-lv_check_FEAT_failure.sh
+  to check whether there is any subjects failing FEAT preprocessing. The script will
+  automatically wait for the batch processing to finish.
+
+
+
++ -------------------------------------------------------------
++      Step 3 : Remove subjects with excessive motion, and
++               calculate mean transition/rotation
++ -------------------------------------------------------------
+
+call * L-lv_remove_excessive_motion.sh *, which will call 
+* L_lv_rmExcMotion_calcMeanRotTrans.m *.
+
+This script will move subjects with excessive motion to 
+cohortFolder/excessive_motion. mean transition/rotation for
+subjects passed this screening will be saved in
+cohortFolder/stats for later use (e.g. compared motion differences
+between groups).
+
+
+
+
+
++ ---------------------------------------------------------------
++                        Step 4 : Cleanup
++ ---------------------------------------------------------------
+
+4.1) Run *L-lv_cleanup.sh* to perform FIX or AROMA cleanup.
+
+4.2) Run *L-lv_post-cleanup.sh* to perform
+
+     - fsl_anat
+     - regress out WM/CSF timeseries
+     - regress out motion confounds
+     - normalise to MNI
+     - isotropic resampling
+     - generate GM covariate map
+
+4.3) TIPS - To manually pass the noise component to fsl_regfilt
+
+      The last line in the label.txt contains the ICs that should be regressed out.
+      To pass these ICs to fsl_regfilt:
+
+      tail -1 Rest_EPI.ica/labels.txt | tr --delete [] | sed 's/ //g'
+
+
++ ----------------------------------------------------------------------------
++                     Step 5 : Higher level group analyses
++        (dual_regression part will benefit from cluster parallel computing)
++ ----------------------------------------------------------------------------
+
+---> Demean
+
+Ref : https://www.jiscmail.ac.uk/cgi-bin/webadmin?A2=fsl;c5cc1cdc.1301
+      https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/GLM/Faq
+
+- It is good to always demean
+
+- If you have not removed the mean from your model EVs then randomise will (now, as of version 5.0) 
+  _also_ remove the mean from the model EVs too (as well as removing the mean from the data).
+
+
+---> Regression design matrix
+
+Ref : https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FEAT/UserGuide#Single-Group_Average_with_Additional_Covariate
+
+
+---> Parallel processing on SGE
+
+- group ICA (melodic) cannot parallelise. Do this locally.
+
+- dual regression can be parallelised
+
++ ----------------------------------------------------------------------------
+
+
+1) Run H-lv_prepare_grp_contrast.sh to prepare group contrast that
+   can be used to generate design matrix. The design matrix will be
+   saved to cohortFolder/groupICA/grp_contrast.in_order_of.input_list.
+   Paste the data to FSL's GLM setup, save the .fsf to
+   cohortFolder/groupICA/des_mtx/.
+
+
+2) Statistical tests
+
+    2.1) Test single design matrix with single dimensionality ICA
+
+          Run H-lv_grpICA_dualReg_grpComp.sh
+
+          - You can choose whether to implement group ICA and whether to
+            implement dual regression. Refer to the script for more info.
+
+            - If using the 10 or 20 established RSN templates (http://www.fmrib.
+              ox.ac.uk/datasets/brainmap+rsns/), only dual regression is needed 
+              (group ICA is not necessary).
+
+            - !!! If using ICs derived from group ICA, keep the noise components
+                  as they will serve as confounding factors for denoising.
+
+            - To visualise the group ICA results, call "H-lv_visualise_group_ICs.sh".
+
+
+          - Note that you will need to create design matrix/contrasts to 
+            conduct cross-subject analyses if you choose to yesDualReg.
+            Alternatively, you could test the mean activation.
+
+          - This script will do the following:
+
+            - generate the necessary list/s (call *Ini_genLists.sh*).
+
+            - group ICA by calling melodic comamndline.
+
+            - dual regression with design matrix/contrast or testing group mean.
+
+    2.2) Test multiple dimensionalities and multiple design matrices
+
+      2.2.1) Generate group IC maps (i.e. templates) with different dimensionalities
+
+             call "H-lv_generate_multi-dim_ICmaps.sh"
+
+      2.2.2) RECOMMENDED. test all design matrices in groupICA/des_mtx folder with 
+             single or multiple dimentionality
+
+             call "H-lv_test_allDesMtx_multiDim.sh"
+
+    2.3) RECOMMENDED : meta ICA (*H-lv_metaICA_main.sh*), and then call
+         *H-lv_grpICA_dualReg_grpComp.sh* to test design matrix/contrast.
+
+
+3) To see which the corrected p-value for each contrast. Note that these are (1-p)
+
+    for i in `ls dr_stage3_ic00??_tfce_corrp_tstat*`;\
+    do echo -en "$(echo ${i} | awk -F'_' '{print $3}')\t";\
+    echo -en "$(echo $(echo ${i} | awk -F'_' '{print $6}') | awk -F '.' '{print $1}')\t"
+    fslstats ${i} -R | awk '{print $2}';\
+    done \
+    | grep "0.99" \
+    > results
+
+
+
++ ------------------------------------------------------------------------------------------
++                                    SEED-BASED ANALYSES
++ ------------------------------------------------------------------------------------------
+
+1. Create seed region mask (PCC in this case)
+
+  1.1 open fsleyes
+
+    fsleyes -std &
+
+  1.2 open atlas panel
+
+    Settings -> Ortho View 1 -> Atlas panel
+
+  1.3 search PCC
+
+    Atlas Information -> tick "Harvard-Oxford Cortical Structural Atlas" ->
+    Atlas Search -> tick "Harvard-Oxford Cortical Structural Atlas" ->
+    search "cingulate" -> tick "Cingulate gyrus, posterior division" ->
+    select the image "harvardoxford-cortical/prob/Cingulate Gyrus, posterior division" in the Overlay list ->
+    save to "PCC"
+
+  1.4 threshold with 50 (percent) and binarise
+
+  1.5 OPTIONAL: transform PCC mask back to native space (This is not necessary for group
+          comparison, as all analyses should be done in standard space)
+
+          applywarp -i PCC.nii.gz \
+                    -r reg/example_func.nii.gz \
+                    -o PCC_func \
+                    --postmat=reg/highres2example_func.mat \
+                    -w reg/highres2standard_warp_inv
+
+          fslmaths PCC_func -bin PCC_func
+
+2. Run seed-based analyses
+
+    H_lv_seedbased_main.sh cohortFolder \
+                           cleanup_mode \
+                           MNI_seed \
+                           proc_mode \
+                           max_Ncores \
+                           desmtx_dir_and_rootname
+
+
+
++ ---------------------------------------------------------------------------
++ SPM to conduct group ICA and dual regression in group-specific DARTEL space
++ and warping individual spatial maps to MNI space for group comparisons
++ (randomise).
++ ---------------------------------------------------------------------------
+
+1) run *FUTURE/fMRI/FSL/scripts/H-lv_spm_prepareFiles4spm.sh* to prepare files
+   for SPM
+
+2) This step is to warp preprocessed fMRI to group-specific DARTEL space. You
+   can either do it on compute node 10 (32 CPU cores) or GRID (22 CPU cores).
+
+   - ssh compute-0-10
+   - start 'matlab'
+   - run *FUTURE/fMRI/SPM/L_lv_spm_spatial_normalisation_FSLoutput_main.m*
+     with 32 CPU cores (step = 'beforeGrpICA')
+
+   alternatively, copy the cohortFolder/spm folder to GRID, and run with
+   22 CPU cores. (call *FUTURE/fMRI/SPM/L_lv_spm_spatial_normalisation_FSLoutput_main.m*,
+   step = 'beforeGrpICA').

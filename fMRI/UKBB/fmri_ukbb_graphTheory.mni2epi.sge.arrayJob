@@ -1,0 +1,141 @@
+#!/bin/bash
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+# This script inversely warps MNI space atlases back to EPI space, and #
+# apply to EPI to generate adjacency matrices                          #
+# -------------------------------------------------------------------- #
+# The script is not fully completed. Still need to copy the adjacency  #
+# matrix back to working directory, and delete temporary directory     #
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+
+#$ -N UKBB_graphTheory
+#$ -V
+#$ -cwd
+#$ -pe smp 2
+#$ -q short.q
+#$ -l h_vmem=16G
+#$ -o /data/jiyang/UKBB_rs_example/fmri_ukbb_graphTheory.out
+#$ -e /data/jiyang/UKBB_rs_example/fmri_ukbb_graphTheory.err
+#$ -t 1-5
+
+module load fsl/5.0.11
+
+# ++++++++++++++++++++++++++ #
+# customise these parameters #
+# ++++++++++++++++++++++++++ #
+working_dir=/data/jiyang/UKBB_rs_example
+iso_resample_scale=4
+eyemat=/home/jiyang/my_software/FUTURE/Atlas/MNI2MNI_4resample/MNI2MNI.mat
+atlas=/home/jiyang/my_software/FUTURE/Atlas/Yeo_JNeurophysiol11_MNI152/7rsns_Yeo_JNeurophysiol11_MNI2mm_3D.nii.gz
+atlas_abbreviation=yeo7
+
+
+# +++++++++++++++++++++++++++++++++++++++ #
+# make temporary directory for processing #
+# +++++++++++++++++++++++++++++++++++++++ #
+tmpdir=`$FSLDIR/bin/tmpnam`
+
+# if you want to set temp folder other than /tmp
+# modify the following lines
+# ----------------------------------------------
+redirected_dir=/home/jiyang/myTmp
+rand_str=$(basename $tmpdir)
+tmpdir=${redirected_dir}/${rand_str}
+
+mkdir -p ${tmpdir}
+
+
+
+# ++++++++++++++++++++ #
+# loop all subject IDs #
+# ++++++++++++++++++++ #
+curr_zip=$(ls -1 ${working_dir}/*.zip | awk "NR==${SGE_TASK_ID}")
+subjID=`echo $(basename ${curr_zip}) | awk -F '_' '{print $1}'`
+
+
+
+# +++++++++++++++++++++++++++++++++++++++ #
+# copy fMRI to temp folder for processing #
+# +++++++++++++++++++++++++++++++++++++++ #
+cp ${working_dir}/${subjID}_20227_2_0.zip ${tmpdir}
+current_dir=`pwd`
+cd ${tmpdir}
+unzip ${subjID}_20227_2_0.zip
+
+
+
+
+cd fMRI/rfMRI.ica
+
+
+#
+# April 15, 2019
+# ------------------------------------------------------------
+# - Inverse warping to native space
+# - generate GM mask to extract signal
+
+
+# inverse example_func->standard warping field to
+# standard->example_func
+invwarp --ref=example_func.nii.gz \
+		--warp=reg/example_func2standard_warp.nii.gz \
+		--out=reg/standard2example_func_warp
+
+# inverse-warp MNI-space atlas to native space
+applywarp --ref=example_func.nii.gz \
+		  --in=${atlas} \
+		  --warp=reg/standard2example_func_warp \
+		  --out=../${atlas_abbreviation}_func_space \
+		  --interp=nn
+
+
+# extract GM probability mask from T1 zip file to temp folder
+T1_zip=`ls /data3/imaging/UKBB/for_heidi/t1/*/${subjID}_*.zip`
+unzip -p ${T1_zip} T1/T1_fast/T1_brain_pve_1.nii.gz > GM_pve.nii.gz
+
+# threshold GM pve map with threshold = 0.8
+fslmaths GM_pve -thr 0.8 -bin GM_mask_t1
+
+# reverse registration of GM_mask from T1 to fMRI space
+convert_xfm -omat reg/highres2example_func.mat \
+			-inverse \
+			reg/example_func2highres.mat
+			
+
+flirt -in GM_mask_t1 \
+	  -ref example_func \
+	  -out GM_mask_fmri \
+	  -init reg/highres2example_func.mat \
+	  -applyxfm
+
+# GM_mask_fmri is not binary now due to interpolation
+# threshold GM_mask_fmri with top 90% values
+fslmaths GM_mask_fmri -thrP 50 -bin GM_mask_fmri
+
+
+# Note:
+# 1) the following code used partial correlation
+#
+# 2) program will grind to a halt if any ROI contains >10% of voxels with null timeseries
+#    (i.e. each time point is 0).
+#
+# ----------------------------------------------------------------------------------
+#
+# 2019 April 24 : added -push_thru_many_zeros to continue even >10% of voxels are zeros.
+#                 
+3dNetCorr -prefix ${atlas_abbreviation} \
+		  -inset filtered_func_data_clean.nii.gz \
+		  -mask GM_mask_fmri.nii.gz \
+		  -in_rois ../${atlas_abbreviation}_func_space.nii.gz \
+		  -fish_z \
+		  -part_corr \
+		  -ts_out \
+		  -ts_wb_corr \
+		  -ts_wb_Z \
+		  -push_thru_many_zeros
+
+
+# copy the results back to local directory
+
+
+# delete temporary folder

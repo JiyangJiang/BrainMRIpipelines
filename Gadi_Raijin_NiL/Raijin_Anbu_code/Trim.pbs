@@ -1,0 +1,12 @@
+##!/bin/csh
+   #PBS -P ey6 
+   #PBS -q normal
+   #PBS -l walltime=01:00:00
+   #PBS -l mem=30gb
+   #PBS -l jobfs=1gb
+   #PBS -l ncpus=16
+   #PBS -l wd
+module load java
+
+java -jar /home/561/aat561/bin/trimmomatic.jar PE -threads 4 -phred33 $fil1 $fil2 $fil1p $fil1up $fil2p $fil2up ILLUMINACLIP:TrueSeqAll.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:5:20 MINLEN:50
+
