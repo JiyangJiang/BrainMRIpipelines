@@ -43,8 +43,8 @@
 #           This can be resolved by running acpcdetect. keep in mind that acpcdetect
 #           will only allow data type of short or unsigned short as input. this can be
 #           achieved by runing 'fslmaths -odt short'. In addition, running fslreorient2std
-#			prior to acpcdetect will help reduce search range. Alternatively, try reg to standard
-#           brain as suggested in the above link.
+#			(fslreorient2std <input> <output>) prior to acpcdetect will help reduce search 
+#			range. Alternatively, try reg to standard brain as suggested in the above link.
 #
 # 2) Use FSL versions before 6
 #
