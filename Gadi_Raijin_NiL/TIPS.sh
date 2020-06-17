@@ -33,7 +33,7 @@ qselect -u $USER -s R | xargs qdel
 # each submitted job needs to load separately #
 # +++++++++++++++++++++++++++++++++++++++++++ #
 module load matlab/R2019b
-module load matlab_licence/unsw
+module load matlab_license/unsw
 
 # ++++++++++++++++++ #
 # Gadi - submit jobs #
