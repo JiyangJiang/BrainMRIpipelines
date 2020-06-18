@@ -33,11 +33,15 @@
 #      debugging (and re-running) the following steps. Leave empty otherwise.
 #
 
-study_dir=$1
-mif_dir=$2
+study_dir=/g/data/ey6/Jiyang/MAS/mrtrix
+mif_dir=/g/data/ey6/Jiyang/MAS/nifti/dwi-mif
 
 
-for mif in `ls ${mif_dir}/*.mif`
+
+
+
+
+for mif in ${mif_dir}/*.mif
 do
 	subjID=$(basename ${mif} | awk -F '.' '{print $1}')
 	echo ${subjID} >> ${study_dir}/list
@@ -90,15 +94,10 @@ EOT
 ## load python 2.7 to avoid error of TypeError: decode() takes no keyword arguments
 #module load python/2.7.11
 
-	# execute
-	case ${subq_flag} in
-		subq)
-			qsub -N ${subjID}_mrtrix_preproc ${preproc_cmd}
-			;;
-		noSubq)
-			# not qsub
-			;;
-	esac
+
+# submit job
+qsub -N ${subjID}_mrtrix_preproc ${preproc_cmd}
+
 done
 
 
