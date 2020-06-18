@@ -133,133 +133,36 @@
 
 
 
-# DESCRIPTION
-# ----------------------------------------------------------------------------------------------------------------------
-# This script runs the new eddy on dwi data. The current script may not fit multi-band data.
-#
-#
-# USAGE
-# ----------------------------------------------------------------------------------------------------------------------
-#
-# $1 = DWI data with the first volume as b0.
-#
-# $2 = b0 with inverse phase encoding. Any string if $7=noTopup.
-#
-# $3 = path to acqparams.txt, or 'easy_acq_updown', or 'easy_acq_leftright'
-#
-# $4 = path to bvec
-#
-# $5 = path to bval
-#
-# $6 = path to output folder
-#
-# $7 = 'yesTopup' or 'noTopup'
-#
-# $8 = second level model (--slm) option. 'none' if high quality data with 60+ directions sampled on the whole sphere
-#                                         'linear' if fewer direction or without sampling on the whole sphere
-#
-# $9 = '1' or '2' - which line of the lines in acqparams.txt is relevant for data passed into eddy.
-#
-# $10 = eddy command - 'eddy', 'eddy_openmp', or 'eddy_cuda'
 
-
-
-eddy_corr(){
-
-dwi=$1
-invPE_b0=$2
-acqparamsTXT=$3
-bvec=$4
-bval=$5
-output_folder=$6
-topup_flag=$7
-slm_option=$8
-line_index=$9
-eddy_command=${10}
 
 # prepare acqparams.txt
-case ${acqparamsTXT} in
+printf "0 1 0 0.05\n0 -1 0 0.05" > acqparams.txt
+acqparamsTXT=acqparams.txt
 
-	easy_acq_updown)
-		printf "0 1 0 0.05\n0 -1 0 0.05" > ${output_folder}/acqparams.txt
-		acqparamsTXT=${output_folder}/acqparams.txt
-		;;
-
-	easy_acq_leftright)
-		printf "1 0 0 0.05\n-1 0 0 0.05" > ${output_folder}/acqparams.txt
-		acqparamsTXT=${output_folder}/acqparams.txt
-		;;
-
-esac
-
+# prepare index.txt (MW4 DWI seems to be PA)
+indx=""
+for ((i=1; i<=$(fslval ${dwi} dim4); i+=1)); do indx="${indx} 1"; done
+echo $indx > index.txt
 
 # eddy
-		echo "$(basename $(which $0)) : Running eddy without topup ..."
-
-		if [ -d "${output_folder}/eddy" ]; then
-			rm -fr ${output_folder}/eddy
-		fi
-		mkdir -p ${output_folder}/eddy
-
-
-		# Step 1 : Prepare for eddy
-		# ------------------------------------------------------------------------------------------------------------
-		# brain mask - using the first volume in dwi data (which is b0)
-		fslroi ${dwi} \
-			   ${output_folder}/eddy/b0 \
-			   0 1
-
-		# bet ${output_folder}/eddy/b0 \
-		# 	${output_folder}/eddy/b0_brain \
-		# 	-m
-		#
-		# Use dwi2mask to extract brain which is more reliable (https://bookdown.org/u0243256/tbicc/preprocessing-diffusion-images.html#mask-b0)
-
-		# create index file - which line of acqparams.txt is relevant for data passed to eddy
-		# refer to https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/Faq
-		indx=""
-		for ((i=1; i<=$(fslval ${dwi} dim4); i+=1)); do indx="${indx} ${line_index}"; done
-		echo $indx > ${output_folder}/eddy/index.txt
-
-
-		# Step 2 : Run eddy
-		# ------------------------------------------------------------------------------------------------------------
-		${eddy_command} --imain=${dwi} \
-						--mask=${output_folder}/eddy/b0_brain_mask \
-						--acqp=${acqparamsTXT} \
-						--index=${output_folder}/eddy/index.txt \
-						--slm=${slm_option} \
-						--bvecs=${bvec} \
-						--bvals=${bval} \
-						--repol \
-						--out=${output_folder}/eddy/eddy_corrected
-
-		eddy_cuda9.1 --imain=mrdegibbs \
-					 --mask=b0_brain_mask \
-					 --acqp=acqparam.txt \
-					 --index=idx \
-					 --slm=linear \
-					 --bvecs=bvec \
-					 --bvals=bval \
-					 --repol \
-					 --out=eddy/out \
-					 --niter=8 \
-					 --fwhm=10,6,4,2,0,0,0,0 \
-					 --ol_type=both \
-					 --mporder=8 \
-					 --s2v_niter=8 \
-					 --verbose
+eddy_cuda9.1 --imain=mrdegibbs \
+			 --mask=mask \
+			 --acqp=acqparam.txt \
+			 --index=idx \
+			 --slm=linear \
+			 --bvecs=bvec \
+			 --bvals=bval \
+			 --repol \
+			 --out=eddy/out \
+			 --niter=8 \
+			 --fwhm=10,6,4,2,0,0,0,0 \
+			 --ol_type=both \
+			 --mporder=8 \
+			 --s2v_niter=8 \
+			 --verbose
 
 		mv ${acqparamsTXT} ${output_folder}/eddy/.
 
-		;;
-
-esac
-
-
-}
-
-eddy_corr $1 $2 $3 $4 $5 $6 $7 $8 $9 ${10}
 
 
 

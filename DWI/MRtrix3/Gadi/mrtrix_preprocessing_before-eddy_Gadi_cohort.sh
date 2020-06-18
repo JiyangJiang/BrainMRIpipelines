@@ -43,7 +43,7 @@ do
 
 	# individual folders
 	mkdir -p ${study_dir}/mrtrix/${subjID}/cmd/oe
-	mkdir -p ${study_dir}/mrtrix/${subjID}/fslpreproc
+	mkdir -p ${study_dir}/mrtrix/${subjID}/eddy
 
 	out_dir=${study_dir}/mrtrix/${subjID}
 
@@ -73,76 +73,33 @@ dwidenoise -force -nthreads 12 -noise noise.mif \
 mrdegibbs -force -axes 0,1 -nthreads 12 \
 			dwidenoise.mif mrdegibbs.mif
 
+# fsl eddy
+# --------
+cp mrdegibbs.mif eddy/.
+cd eddy
+
+mrconvert -force -export_grad_fsl bvec bval \
+			mrdegibbs.mif mrdegibbs.nii.gz
+
 dwi2mask -force \
 			mrdegibbs.mif mask.mif
 
 mrconvert -force \
 			mask.mif mask.nii.gz
-
-# fsl eddy
-# --------
-cp mrdegibbs.mif fslpreproc/.
-cd fslpreproc
-mrconvert -force -export_grad_fsl bvec bval \
-			mrdegibbs.mif mrdegibbs.nii.gz
-
-export PATH=$(dirname $(which $0)):$PATH
-
-fsl_eddy_max.sh ${out_dir}/fslpreproc/mrdegibbs.nii.gz \
-				no_invPE \
-				easy_acq_updown \
-				${out_dir}/fslpreproc/bvec \
-				${out_dir}/fslpreproc/bval \
-				${out_dir}/fslpreproc \
-				noTopup \
-				linear \
-				2 \
-				eddy_cuda9.1
-
 EOT
 ## load python 2.7 to avoid error of TypeError: decode() takes no keyword arguments
 #module load python/2.7.11
 
-	# mrconvert nii.gz to mif
-	rotated_bvec=${BIDS_folder}/derivatives/mrtrix/preproc/${basedir}/${subjID}_eddy/eddy/eddy_corrected.eddy_rotated_bvecs
-	eddyCorr_dwi=${BIDS_folder}/derivatives/mrtrix/preproc/${basedir}/${subjID}_eddy/eddy/eddy_corrected.nii.gz
-	orig_bval=${bval}
-	echo "mrconvert -force \
-					-fslgrad ${rotated_bvec} ${orig_bval} \
-					${eddyCorr_dwi} \
-					${BIDS_folder}/derivatives/mrtrix/preproc/${basedir}/${unr_mif_filename}_preproc.mif" >> ${preproc_cmd}
-
-	# ++++++++++++++++++++++++++++++ #
-	# Step 4 : Bias field correction #
-	# ++++++++++++++++++++++++++++++ #
-	preproc_mif=${BIDS_folder}/derivatives/mrtrix/preproc/${basedir}/${unr_mif_filename}_preproc.mif
-	preproc_mif_filename=${unr_mif_filename}_preproc
-	echo "dwibiascorrect -force \
-						 -ants \
-						 ${preproc_mif} \
-						 ${BIDS_folder}/derivatives/mrtrix/biascorrect/${basedir}/${preproc_mif_filename}_unbiased.mif \
-						 -bias ${BIDS_folder}/derivatives/mrtrix/biascorrect/${basedir}/${preproc_mif_filename}_bias.mif " >> ${preproc_cmd}
-
-	# ++++++++++++++++++++++++++ #
-	# Step 5 : Generate DWI mask #
-	# ++++++++++++++++++++++++++ #
-	unbiased_mif=${BIDS_folder}/derivatives/mrtrix/biascorrect/${basedir}/${preproc_mif_filename}_unbiased.mif
-	unbiased_mif_filename=${preproc_mif_filename}_unbiased
-	echo "dwi2mask -force \
-				   ${unbiased_mif} \
-				   ${BIDS_folder}/derivatives/mrtrix/dwi_mask/${basedir}/${unbiased_mif_filename}_mask.mif" >> ${preproc_cmd}
-
-
-	# execute
-	case ${subq_flag} in
-		subq)
-			qsub -N ${subjID}_mrtrix_preprocessing \
-				 ${preproc_cmd}
-			;;
-		noSubq)
-			# not qsub
-			;;
-	esac
+# execute
+case ${subq_flag} in
+	subq)
+		qsub -N ${subjID}_mrtrix_preprocessing \
+			 ${preproc_cmd}
+		;;
+	noSubq)
+		# not qsub
+		;;
+esac
 done
 
 
