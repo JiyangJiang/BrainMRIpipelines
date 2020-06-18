@@ -131,43 +131,45 @@
 #
 #       For details, refer to https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/Faq#How_do_I_know_what_to_put_into_my_--acqp_file
 
+study_dir=$1
 
+while read id
+do
 
+	cd ${study_dir}/${id}/eddy
 
+	# prepare acqparams.txt
+	printf "0 1 0 0.05" > acqparams.txt
+	acqparamsTXT=acqparams.txt
 
-# prepare acqparams.txt
-printf "0 1 0 0.05\n0 -1 0 0.05" > acqparams.txt
-acqparamsTXT=acqparams.txt
-
-# prepare index.txt (MW4 DWI seems to be PA)
-indx=""
-for ((i=1; i<=$(fslval ${dwi} dim4); i+=1)); do indx="${indx} 1"; done
-echo $indx > index.txt
+	# prepare index.txt (MW4 DWI seems to be PA)
+	indx=""
+	for ((i=1; i<=$(fslval ${dwi} dim4); i+=1)); do indx="${indx} 1"; done
+	echo $indx > index.txt
 
 # eddy
+cat << EOT > ../cmd/eddy.cmd
 eddy_cuda9.1 --imain=mrdegibbs \
 			 --mask=mask \
-			 --acqp=acqparam.txt \
-			 --index=idx \
+			 --acqp=acqparams.txt \
+			 --index=index.txt \
 			 --slm=linear \
 			 --bvecs=bvec \
 			 --bvals=bval \
 			 --repol \
-			 --out=eddy/out \
+			 --out=out \
 			 --niter=8 \
 			 --fwhm=10,6,4,2,0,0,0,0 \
 			 --ol_type=both \
 			 --mporder=8 \
 			 --s2v_niter=8 \
 			 --verbose
+EOT
 
-		mv ${acqparamsTXT} ${output_folder}/eddy/.
+chmod +x ../cmd/eddy.cmd
+sh ../cmd/eddy.cmd > ../cmd/oe/eddy.out
 
-
-
-
-
-
+done < ${study_dir}/list
 
 # ================================================================== #
 #                            eddy output                             #

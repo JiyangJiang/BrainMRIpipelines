@@ -40,6 +40,7 @@ mif_dir=$2
 for mif in `ls ${mif_dir}/*.mif`
 do
 	subjID=$(basename ${mif} | awk -F '.' '{print $1}')
+	echo ${subjID} >> ${study_dir}/list
 
 	# individual folders
 	mkdir -p ${study_dir}/mrtrix/${subjID}/cmd/oe
@@ -51,11 +52,10 @@ do
 
 cat << EOT > ${preproc_cmd}
 #PBS -P ey6
-#PBS -q gpuvolta
+#PBS -q normal
 #PBS -l walltime=01:00:00
-#PBS -l ngpus=1
-#PBS -l ncpus=12
-#PBS -l mem=48GB
+#PBS -l ncpus=2
+#PBS -l mem=8GB
 #PBS -l jobfs=2GB
 #PBS -l wd
 #PBS -V
@@ -90,16 +90,15 @@ EOT
 ## load python 2.7 to avoid error of TypeError: decode() takes no keyword arguments
 #module load python/2.7.11
 
-# execute
-case ${subq_flag} in
-	subq)
-		qsub -N ${subjID}_mrtrix_preprocessing \
-			 ${preproc_cmd}
-		;;
-	noSubq)
-		# not qsub
-		;;
-esac
+	# execute
+	case ${subq_flag} in
+		subq)
+			qsub -N ${subjID}_mrtrix_preproc ${preproc_cmd}
+			;;
+		noSubq)
+			# not qsub
+			;;
+	esac
 done
 
 
