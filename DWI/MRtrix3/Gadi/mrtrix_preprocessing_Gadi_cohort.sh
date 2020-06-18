@@ -65,31 +65,39 @@ cat << EOT > ${preproc_cmd}
 
 module load cuda/10.1
 
-dwidenoise -force -nthreads 12 -noise ${out_dir}/noise.mif \
-			${mif} ${out_dir}/dwidenoise.mif
+cd ${out_dir}
+
+dwidenoise -force -nthreads 12 -noise noise.mif \
+			${mif} dwidenoise.mif
 
 mrdegibbs -force -axes 0,1 -nthreads 12 \
-			${out_dir}/dwidenoise.mif ${out_dir}/mrdegibbs.mif
+			dwidenoise.mif mrdegibbs.mif
+
+dwi2mask -force \
+			mrdegibbs.mif mask.mif
+
+mrconvert -force \
+			mask.mif mask.nii.gz
 
 # fsl eddy
 # --------
-cp ${out_dir}/mrdegibbs.mif ${out_dir}/fslpreproc/.
-cd ${out_dir}/fslpreproc
+cp mrdegibbs.mif fslpreproc/.
+cd fslpreproc
 mrconvert -force -export_grad_fsl bvec bval \
 			mrdegibbs.mif mrdegibbs.nii.gz
 
 export PATH=$(dirname $(which $0)):$PATH
 
-fsl_eddy.sh ${out_dir}/fslpreproc/mrdegibbs.nii.gz \
-			no_invPE \
-			easy_acq_updown \
-			${out_dir}/fslpreproc/bvec \
-			${out_dir}/fslpreproc/bval \
-			${out_dir}/fslpreproc \
-			noTopup \
-			linear \
-			2 \
-			eddy_cuda10.1
+fsl_eddy_max.sh ${out_dir}/fslpreproc/mrdegibbs.nii.gz \
+				no_invPE \
+				easy_acq_updown \
+				${out_dir}/fslpreproc/bvec \
+				${out_dir}/fslpreproc/bval \
+				${out_dir}/fslpreproc \
+				noTopup \
+				linear \
+				2 \
+				eddy_cuda9.1
 
 EOT
 ## load python 2.7 to avoid error of TypeError: decode() takes no keyword arguments

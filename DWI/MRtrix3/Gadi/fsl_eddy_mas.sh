@@ -194,77 +194,6 @@ esac
 
 
 # eddy
-case ${topup_flag} in
-
-	yesTopup)
-
-		echo "$(basename $(which $0)) : Running eddy with topup ..."
-
-		if [ -d "${output_folder}/topup" ]; then
-			rm -fr ${output_folder}/topup
-		fi
-		mkdir -p ${output_folder}/topup
-		if [ -d "${output_folder}/eddy" ]; then
-			rm -fr ${output_folder}/eddy
-		fi
-		mkdir -p ${output_folder}/eddy
-
-		# Step 1 : Prepare data for topup to correct for susceptibility induced off-resonance field
-		# ------------------------------------------------------------------------------------------------------------
-		fslroi ${dwi} \
-			   ${output_folder}/topup/b0_PE \
-			   0 1
-
-		fslmerge -t ${output_folder}/topup/b0_PEpair \
-				 ${output_folder}/topup/b0_PE \
-				 ${invPE_b0}
-
-		# Step 2 : Run topup
-		# ------------------------------------------------------------------------------------------------------------
-		topup --imain=${output_folder}/topup/b0_PEpair \
-			  --datain=${acqparamsTXT} \
-			  --config=b02b0.cnf \
-			  --out=${output_folder}/topup/topup_results \
-			  --iout=${output_folder}/topup/topup_unwarped
-
-		# Step 3 : Prepare for eddy
-		# ------------------------------------------------------------------------------------------------------------
-		# brain mask - since eddy works in non-distorted space, we use topup_unwarped (i.e. the --iout from topup) to
-		#              generate mask.
-		fslmaths ${output_folder}/topup/topup_unwarped \
-				 -Tmean \
-				 ${output_folder}/topup/topup_unwarped_Tmean
-
-		bet ${output_folder}/topup/topup_unwarped_Tmean \
-			${output_folder}/topup/topup_unwarped_Tmean_brain \
-			-m
-
-		# create index file - which line of acqparams.txt is relevant for data passed to eddy
-		indx=""
-		for ((i=1; i<=$(fslval ${dwi} dim4); i+=1)); do indx="${indx} ${line_index}"; done
-		echo $indx > ${output_folder}/topup/index.txt
-
-		# Step 4 : Run eddy
-		# ------------------------------------------------------------------------------------------------------------
-		${eddy_command} --imain=${dwi} \
-						--mask=${output_folder}/topup/topup_unwarped_Tmean_brain_mask \
-						--acqp=${acqparamsTXT} \
-						--index=${output_folder}/topup/index.txt \
-						--slm=${slm_option} \
-						--bvecs=${bvec} \
-						--bvals=${bval} \
-						--topup=${output_folder}/topup/topup_results \
-						--repol \
-						--out=${output_folder}/eddy/eddy_corrected \
-						--estimate_move_by_susceptibility
-
-		mv ${acqparamsTXT} ${output_folder}/topup/.
-
-		;;
-
-
-	noTopup)
-
 		echo "$(basename $(which $0)) : Running eddy without topup ..."
 
 		if [ -d "${output_folder}/eddy" ]; then
@@ -280,9 +209,11 @@ case ${topup_flag} in
 			   ${output_folder}/eddy/b0 \
 			   0 1
 
-		bet ${output_folder}/eddy/b0 \
-			${output_folder}/eddy/b0_brain \
-			-m
+		# bet ${output_folder}/eddy/b0 \
+		# 	${output_folder}/eddy/b0_brain \
+		# 	-m
+		#
+		# Use dwi2mask to extract brain which is more reliable (https://bookdown.org/u0243256/tbicc/preprocessing-diffusion-images.html#mask-b0)
 
 		# create index file - which line of acqparams.txt is relevant for data passed to eddy
 		# refer to https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/Faq
