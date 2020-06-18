@@ -133,10 +133,13 @@
 
 study_dir=$1
 
+
+
+
 while read id
 do
 
-	cd ${study_dir}/${id}/eddy
+	cd ${study_dir}/mrtrix/${id}/eddy
 
 	# prepare acqparams.txt
 	printf "0 1 0 0.05" > acqparams.txt
@@ -169,7 +172,7 @@ EOT
 chmod +x ../cmd/eddy.cmd
 sh ../cmd/eddy.cmd > ../cmd/oe/eddy.out
 
-done < ${study_dir}/list
+done < ${study_dir}/mrtrix/list
 
 # ================================================================== #
 #                            eddy output                             #

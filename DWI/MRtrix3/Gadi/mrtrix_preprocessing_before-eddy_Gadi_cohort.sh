@@ -33,7 +33,7 @@
 #      debugging (and re-running) the following steps. Leave empty otherwise.
 #
 
-study_dir=/g/data/ey6/Jiyang/MAS/mrtrix
+study_dir=/g/data/ey6/Jiyang/MAS
 mif_dir=/g/data/ey6/Jiyang/MAS/nifti/dwi-mif
 
 
@@ -44,11 +44,12 @@ mif_dir=/g/data/ey6/Jiyang/MAS/nifti/dwi-mif
 for mif in ${mif_dir}/*.mif
 do
 	subjID=$(basename ${mif} | awk -F '.' '{print $1}')
-	echo ${subjID} >> ${study_dir}/list
 
 	# individual folders
 	mkdir -p ${study_dir}/mrtrix/${subjID}/cmd/oe
 	mkdir -p ${study_dir}/mrtrix/${subjID}/eddy
+
+	echo ${subjID} >> ${study_dir}/mrtrix/list
 
 	out_dir=${study_dir}/mrtrix/${subjID}
 
