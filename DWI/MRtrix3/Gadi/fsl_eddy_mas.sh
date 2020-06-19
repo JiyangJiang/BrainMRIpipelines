@@ -131,7 +131,7 @@
 #
 #       For details, refer to https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/Faq#How_do_I_know_what_to_put_into_my_--acqp_file
 
-study_dir=$1
+study_dir=/data_int/jiyang/tmp/MAS
 
 
 
@@ -142,12 +142,12 @@ do
 	cd ${study_dir}/mrtrix/${id}/eddy
 
 	# prepare acqparams.txt
-	printf "0 1 0 0.05" > acqparams.txt
+	echo "0 1 0 0.05" > acqparams.txt
 	acqparamsTXT=acqparams.txt
 
 	# prepare index.txt (MW4 DWI seems to be PA)
 	indx=""
-	for ((i=1; i<=$(fslval ${dwi} dim4); i+=1)); do indx="${indx} 1"; done
+	for ((i=1; i<=$(fslval mrdegibbs dim4); i+=1)); do indx="${indx} 1"; done
 	echo $indx > index.txt
 
 # eddy
@@ -162,8 +162,8 @@ eddy_cuda9.1 --imain=mrdegibbs \
 			 --repol \
 			 --out=out \
 			 --niter=8 \
-			 --fwhm=10,6,4,2,0,0,0,0 \
-			 --ol_type=both \
+			 --fwhm=10,8,4,2,0,0,0,0 \
+			 --ol_type=sw \
 			 --mporder=8 \
 			 --s2v_niter=8 \
 			 --verbose
