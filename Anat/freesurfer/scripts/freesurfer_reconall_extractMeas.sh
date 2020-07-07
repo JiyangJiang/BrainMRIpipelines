@@ -8,16 +8,30 @@ $(basename $0) : extract measures after recon-all processing"
 
 Usage : $(basename $0) "
 
-        -s, --subjects_dir      <subjects_dir>          Subjects directory where all recon-all results are stored (defaults is SUBJECTS_DIR).
+        -s, --subjects_dir      <subjects_dir>          Subjects directory where all recon-all results are stored 
+                                                        (defaults is SUBJECTS_DIR).
+
         -o, --output_dir        <output_dir>            Path to output directory (default is current dir).
+
         -p, --filename_prefix   <filename_prefix>       Filename prefix (default=reconall).
-        -a, --append            <text>                  Text to append to the end of filename (e.g. FreeSurfer version, specific options used in recon-all, etc. Default=date).
+
+        -a, --append            <text>                  Text to append to the end of filename (e.g. FreeSurfer version, 
+                                                        specific options used in recon-all, etc. Default=date).
+
+        -d, --divide            <pattern>               For data with multiple time points, the first step of recon-all
+                                                        can be run on all time pooints in cross-sectional fashion. This 
+                                                        option separates cross-sectional results into different Waves
+                                                        according to <pattern> which is delimited by comma (e.g.,
+                                                        _w1,_w2,_w4). No dividing will be done if this flag is unset.
+
         -h, --help                                      Display this message.
 
 EOF
 }
 
 # resolve arguments
+div_flag=0
+
 for arg in $@
 do
         case "$arg" in
@@ -42,6 +56,12 @@ do
                         shift 2
                         ;;
 
+                -d | --divide)
+                        div_flag=1
+                        div=$2
+                        shift 2
+                        ;;
+
                 -h | --help)
                         usage
                         exit 0
@@ -59,7 +79,9 @@ done
 [ -z ${fname_prefix+x} ] && fname_prefix=reconall
 [ -z ${append+x} ]       && append=$(date | sed -e 's/ /_/g' | sed -e 's/:/-/g')
 
-#append=FSv7p1_wsatlas_$(date | sed -e 's/ /_/g' | sed -e 's/:/-/g')
+# dividing into Waves requires to specify dividers
+[ "${div_flag}" -eq 1 ]  && [ -z ${div+x} ] && usage && exit 1
+
 export SUBJECTS_DIR=${subj_dir}
 
 # generate subjects list
@@ -69,6 +91,7 @@ find -L ${subj_dir}     -mindepth 1 \
                         -and -not -name fsaverage \
                         -print0 \
                         | xargs -0 -n1 basename > ${subj_dir}/subjs.list
+
 subj_list=${subj_dir}/subjs.list
 
 # extract measures
@@ -141,3 +164,16 @@ asegstats2table --stats wmparc.stats \
                 --all-segs \
                 --delimiter=comma \
                 --etiv
+
+# dividing into different Waves
+if [ "${div_flag}" -eq 1 ]
+then
+        for i in ${out_dir}/*.aseg.* ${out_dir}/*.aparc.*
+        do
+                for j in $(echo ${div} | sed "s/,/ /g")
+                do
+                        awk 'NR==1' $i > ${i}.${j}
+                        grep $j $i >> ${i}.${j}
+                done
+        done
+fi
