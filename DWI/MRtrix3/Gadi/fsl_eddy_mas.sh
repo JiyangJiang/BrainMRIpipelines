@@ -131,7 +131,7 @@
 #
 #       For details, refer to https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/Faq#How_do_I_know_what_to_put_into_my_--acqp_file
 
-study_dir=/data_int/jiyang/tmp/MAS
+study_dir=/data2/jiyang/MW4_DWI_eddy
 
 
 
