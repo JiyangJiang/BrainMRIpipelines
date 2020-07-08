@@ -4,9 +4,9 @@ usage(){
 
 cat << EOF
 
-$(basename $0) : extract measures after recon-all processing"
+$(basename $0) : extract measures after recon-all processing
 
-Usage : $(basename $0) "
+Usage : $(basename $0) [OPTIONS]
 
         -s, --subjects_dir      <subjects_dir>          Subjects directory where all recon-all results are stored 
                                                         (defaults is SUBJECTS_DIR).
@@ -146,19 +146,21 @@ done
 
 export SUBJECTS_DIR=${subj_dir}
 
-# generate subjects list
-echo "$(basename $0) : generating ${subj_dir}/subjs.list."
-find -L ${subj_dir}     -mindepth 1 \
-                        -maxdepth 1 \
-                        -type d \
-                        -and -not -name fsaverage \
-                        -print0 \
-                        | xargs -0 -n1 basename > ${subj_dir}/subjs.list
-
 subj_list=${subj_dir}/subjs.list
 
 # extract standard recon-all measures
 if [ "${reconall_flag}" -eq 1 ]; then
+
+        # generate subjects list
+        echo "$(basename $0) : generating ${subj_dir}/subjs.list."
+        find -L ${subj_dir}     -mindepth 1 \
+                                -maxdepth 1 \
+                                -type d \
+                                -and -not -name fsaverage \
+                                -print0 \
+                                | xargs -0 -n1 basename > ${subj_dir}/subjs.list
+
+        # extract measures
         for aseg_meas in volume mean std
         do
                 echo "$(basename $0) : ${aseg_meas} from aseg."
@@ -238,35 +240,35 @@ fi
 if [ "${hipp_flag}" -eq 1 ];then
         if [ "${long_flag}" -eq 1 ];then
                 echo "$(basename $0) : longitudinal hippocampal subfields."
-                quantifyHAsubregions.sh hippoSf T1.long ${out_dir}/${fname_prefix}.${append}.hippoSf_long ${subj_dir}
+                quantifyHAsubregions.sh hippoSf T1.long ${out_dir}/${fname_prefix}.${append}.hippoSf_long ${subj_dir} >> $(basename $0).log
                 sed -i '' 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.hippoSf_long
         else
                 echo "$(basename $0) : hippocampal subfields."
-                quantifyHAsubregions.sh hippoSf T1 ${out_dir}/${fname_prefix}.${append}.hippoSf ${subj_dir}
+                quantifyHAsubregions.sh hippoSf T1 ${out_dir}/${fname_prefix}.${append}.hippoSf ${subj_dir} >> $(basename $0).log
                 sed -i '' 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.hippoSf
         fi
 fi
 if [ "${amyg_flag}" -eq 1 ];then
         if [ "${long_flag}" -eq 1 ];then
                 echo "$(basename $0) : longitudinal amygdalar nuclei."
-                quantifyHAsubregions.sh amygNuc T1.long ${out_dir}/${fname_prefix}.${append}.amygNuc_long ${subj_dir}
+                quantifyHAsubregions.sh amygNuc T1.long ${out_dir}/${fname_prefix}.${append}.amygNuc_long ${subj_dir} >> $(basename $0).log
                 sed -i '' 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.amygNuc_long
         else
                 echo "$(basename $0) : amygdalar nuclei."
-                quantifyHAsubregions.sh amygNuc T1 ${out_dir}/${fname_prefix}.${append}.amygNuc ${subj_dir}
+                quantifyHAsubregions.sh amygNuc T1 ${out_dir}/${fname_prefix}.${append}.amygNuc ${subj_dir} >> $(basename $0).log
                 sed -i '' 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.amygNuc
         fi
 fi
 if [ "${brnstm_flag}" -eq 1 ];then
         echo "$(basename $0) : brainstem substructures."
-        quantifyBrainstemStructures.sh ${out_dir}/${fname_prefix}.${append}.brnstm_substruct ${subj_dir}
+        quantifyBrainstemStructures.sh ${out_dir}/${fname_prefix}.${append}.brnstm_substruct ${subj_dir} >> $(basename $0).log
         sed -i '' 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.brnstm_substruct
         # on the website, longitudinal data are suggested to be treated as cross-sectional in brainstem substructure
         # extraction.
 fi
 if [ "${thalam_flag}" -eq 1 ];then
         echo "$(basename $0) : thalamic nuclei."
-        quantifyThalamicNuclei.sh  ${out_dir}/${fname_prefix}.${append}.thalamNuc T1 ${subj_dir}
+        quantifyThalamicNuclei.sh  ${out_dir}/${fname_prefix}.${append}.thalamNuc T1 ${subj_dir} >> $(basename $0).log
         sed -i '' 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.thalamNuc
         # no suggestion on longitudinal on the website.
 fi
