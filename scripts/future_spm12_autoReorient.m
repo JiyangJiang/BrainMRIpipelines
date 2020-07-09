@@ -54,7 +54,7 @@ parfor i=1:size(imglist,1)
     %% Initialize batch
     spm_jobman('initcfg');
     matlabbatch = {};
-    
+
     matlabbatch{1}.spm.spatial.coreg.estimate.ref = {fullfile(spm('dir'),'toolbox','DARTEL','icbm152.nii,1')};
     matlabbatch{1}.spm.spatial.coreg.estimate.source = {deblank(imglist{i,1})};
     matlabbatch{1}.spm.spatial.coreg.estimate.other = {''};
