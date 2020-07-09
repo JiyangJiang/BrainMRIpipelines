@@ -52,16 +52,16 @@ end
 % spm_figure('Create','Graphics','Graphics','on');
 
 %% Coregister images with icbm152.nii under spm12/toolbox/DARTEL
-for i=1:size(imglist,1)
-    matlabbatch{i}.spm.spatial.coreg.estimate.ref = {fullfile(spm('dir'),'toolbox','DARTEL','icbm152.nii,1')};
-    matlabbatch{i}.spm.spatial.coreg.estimate.source = {deblank(imglist{i,1})};
-    matlabbatch{i}.spm.spatial.coreg.estimate.other = {''};
-    matlabbatch{i}.spm.spatial.coreg.estimate.eoptions.cost_fun = 'nmi';
-    matlabbatch{i}.spm.spatial.coreg.estimate.eoptions.sep = [4 2];
-    matlabbatch{i}.spm.spatial.coreg.estimate.eoptions.tol = [0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001];
-    matlabbatch{i}.spm.spatial.coreg.estimate.eoptions.fwhm = [7 7];
-end
+parfor i=1:size(imglist,1)
+    matlabbatch{1}.spm.spatial.coreg.estimate.ref = {fullfile(spm('dir'),'toolbox','DARTEL','icbm152.nii,1')};
+    matlabbatch{1}.spm.spatial.coreg.estimate.source = {deblank(imglist{i,1})};
+    matlabbatch{1}.spm.spatial.coreg.estimate.other = {''};
+    matlabbatch{1}.spm.spatial.coreg.estimate.eoptions.cost_fun = 'nmi';
+    matlabbatch{1}.spm.spatial.coreg.estimate.eoptions.sep = [4 2];
+    matlabbatch{1}.spm.spatial.coreg.estimate.eoptions.tol = [0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001];
+    matlabbatch{1}.spm.spatial.coreg.estimate.eoptions.fwhm = [7 7];
 
-%% Run batch
-%spm_jobman('interactive',matlabbatch);
-spm_jobman('run',matlabbatch);
+    %% Run batch
+    %spm_jobman('interactive',matlabbatch);
+    spm_jobman('run',matlabbatch);
+end
