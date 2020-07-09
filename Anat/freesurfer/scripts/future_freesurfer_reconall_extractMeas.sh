@@ -6,7 +6,17 @@ cat << EOF
 
 $(basename $0) : extract measures after recon-all processing
 
-USAGE : $(basename $0) [OPTIONS]
+USAGE : 
+
+        $(basename $0) [OPTIONS]
+
+
+COMPULSORY :
+
+        None
+
+
+OPTIONAL :
 
         -s, --subjects_dir      <subjects_dir>          Subjects directory where all recon-all results are stored 
                                                         (defaults is SUBJECTS_DIR).

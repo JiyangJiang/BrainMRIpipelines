@@ -6,7 +6,18 @@ cat << EOF
 
 $(basename $0) : generate a list of subjects in SUBJECTS_DIR.
 
-USAGE : $(basename $0) [OPTIONS]
+
+USAGE : 
+
+	$(basename $0) [OPTIONS]
+
+
+COMPULSORY :
+
+	None
+
+
+OPTIONAL :
 
 	-s, --subjects_dir 		<subjects_dir>			Directory where all subjects are stored (defaults is SUBJECTS_DIR).
 
@@ -70,15 +81,17 @@ if [ "${long_flag}" -eq 1 ];then
 	                        -name "*.long.*" \
 	                        -and -not -name fsaverage \
 	                        -print0 \
-	                        | xargs -0 -n1 basename > ${out_dir}/subjs.list
+	                        | xargs -0 -n1 basename \
+	                        | sort > ${out_dir}/subjs.list
 else
-	
+
 	find -L ${subj_dir}     -mindepth 1 \
 	                        -maxdepth 1 \
 	                        -type d \
 	                        -and -not -name fsaverage \
 	                        -print0 \
-	                        | xargs -0 -n1 basename > ${out_dir}/subjs.list
+	                        | xargs -0 -n1 basename \
+	                        | sort > ${out_dir}/subjs.list
 fi
 
 # argument out
