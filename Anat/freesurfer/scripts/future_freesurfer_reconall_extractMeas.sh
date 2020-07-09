@@ -6,7 +6,7 @@ cat << EOF
 
 $(basename $0) : extract measures after recon-all processing
 
-Usage : $(basename $0) [OPTIONS]
+USAGE : $(basename $0) [OPTIONS]
 
         -s, --subjects_dir      <subjects_dir>          Subjects directory where all recon-all results are stored 
                                                         (defaults is SUBJECTS_DIR).
@@ -42,7 +42,10 @@ Usage : $(basename $0) [OPTIONS]
         -h, --help                                      Display this message.
 
 
-        ** TO-DO : Longitudinal datasets may still need to be tested.
+OUTPUT : None
+
+
+TO-DO : Longitudinal datasets may still need to be tested.
 
 EOF
 }
@@ -146,19 +149,11 @@ done
 
 export SUBJECTS_DIR=${subj_dir}
 
-subj_list=${subj_dir}/subjs.list
-
 # extract standard recon-all measures
 if [ "${reconall_flag}" -eq 1 ]; then
 
-        # generate subjects list
-        echo "$(basename $0) : generating ${subj_dir}/subjs.list."
-        find -L ${subj_dir}     -mindepth 1 \
-                                -maxdepth 1 \
-                                -type d \
-                                -and -not -name fsaverage \
-                                -print0 \
-                                | xargs -0 -n1 basename > ${subj_dir}/subjs.list
+        # generate subjects lists
+        subj_list=`future_freesurfer_genSubjList -s ${subj_dir} -o ${subj_dir}`
 
         # extract measures
         for aseg_meas in volume mean std
