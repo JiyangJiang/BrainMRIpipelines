@@ -241,35 +241,35 @@ if [ "${hipp_flag}" -eq 1 ];then
         if [ "${long_flag}" -eq 1 ];then
                 echo "$(basename $0) : longitudinal hippocampal subfields."
                 quantifyHAsubregions.sh hippoSf T1.long ${out_dir}/${fname_prefix}.${append}.hippoSf_long ${subj_dir} >> $(basename $0).log
-                sed -i '' 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.hippoSf_long
+                sed -i 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.hippoSf_long
         else
                 echo "$(basename $0) : hippocampal subfields."
                 quantifyHAsubregions.sh hippoSf T1 ${out_dir}/${fname_prefix}.${append}.hippoSf ${subj_dir} >> $(basename $0).log
-                sed -i '' 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.hippoSf
+                sed -i 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.hippoSf
         fi
 fi
 if [ "${amyg_flag}" -eq 1 ];then
         if [ "${long_flag}" -eq 1 ];then
                 echo "$(basename $0) : longitudinal amygdalar nuclei."
                 quantifyHAsubregions.sh amygNuc T1.long ${out_dir}/${fname_prefix}.${append}.amygNuc_long ${subj_dir} >> $(basename $0).log
-                sed -i '' 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.amygNuc_long
+                sed -i 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.amygNuc_long
         else
                 echo "$(basename $0) : amygdalar nuclei."
                 quantifyHAsubregions.sh amygNuc T1 ${out_dir}/${fname_prefix}.${append}.amygNuc ${subj_dir} >> $(basename $0).log
-                sed -i '' 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.amygNuc
+                sed -i 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.amygNuc
         fi
 fi
 if [ "${brnstm_flag}" -eq 1 ];then
         echo "$(basename $0) : brainstem substructures."
         quantifyBrainstemStructures.sh ${out_dir}/${fname_prefix}.${append}.brnstm_substruct ${subj_dir} >> $(basename $0).log
-        sed -i '' 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.brnstm_substruct
+        sed -i 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.brnstm_substruct
         # on the website, longitudinal data are suggested to be treated as cross-sectional in brainstem substructure
         # extraction.
 fi
 if [ "${thalam_flag}" -eq 1 ];then
         echo "$(basename $0) : thalamic nuclei."
         quantifyThalamicNuclei.sh  ${out_dir}/${fname_prefix}.${append}.thalamNuc T1 ${subj_dir} >> $(basename $0).log
-        sed -i '' 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.thalamNuc
+        sed -i 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.thalamNuc
         # no suggestion on longitudinal on the website.
 fi
 
