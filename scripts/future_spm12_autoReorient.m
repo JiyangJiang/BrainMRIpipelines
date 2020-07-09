@@ -29,9 +29,6 @@ elseif nargin==0
     imglist = cellstr(spm_select(Inf,'image','Choose MRI you want to set AC-PC'));
 end
 
-%% Initialize batch
-spm_jobman('initcfg');
-matlabbatch = {};
 
 %% Set the origin to the center of the image
 % This part is written by Fumio Yamashita.
@@ -53,6 +50,11 @@ end
 
 %% Coregister images with icbm152.nii under spm12/toolbox/DARTEL
 parfor i=1:size(imglist,1)
+
+    %% Initialize batch
+    spm_jobman('initcfg');
+    matlabbatch = {};
+    
     matlabbatch{1}.spm.spatial.coreg.estimate.ref = {fullfile(spm('dir'),'toolbox','DARTEL','icbm152.nii,1')};
     matlabbatch{1}.spm.spatial.coreg.estimate.source = {deblank(imglist{i,1})};
     matlabbatch{1}.spm.spatial.coreg.estimate.other = {''};
