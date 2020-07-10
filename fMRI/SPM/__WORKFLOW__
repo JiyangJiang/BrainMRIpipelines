@@ -1,8 +1,0 @@
-cohortFolder/spm/coreg_epi_anat  --  should contain 'ID_anat.nii' and 'ID_preproc_func.nii' for all subjects
-cohortFolder/spm/grp1            --  should contain 'ID_anat.nii' for grp1
-cohortFolder/spm/grp2            --  should contain 'ID_anat.nii' for grp2
-
-any .nii.gz needs to be gunzipped
-
-ID_preproc_func.nii is preprocessed fMRI data in individual space
-(i.e. nuisanceReg_Tfiltered_cleanedup_func.nii.gz)

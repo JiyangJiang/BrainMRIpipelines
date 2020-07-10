@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+# this script extract adjacency matrices (CC, FZ, PC, PCB) from AFNI's 3dNetCorr output #
+# and output separate comma-delimited files with corresponding matrices                 #
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+
+
+#$ -N UKBB_graphTheory_2
+#$ -V
+#$ -cwd
+#$ -pe smp 1
+#$ -q limited.q
+#$ -l h_vmem=4G
+#$ -o /data3/imaging/UKBB/ukbb_freesurfer/processing/measures/fMRI_graphTheory/netcc/fmri_ukbb_graphTheory_2.out
+#$ -e /data3/imaging/UKBB/ukbb_freesurfer/processing/measures/fMRI_graphTheory/netcc/fmri_ukbb_graphTheory_2.err
+#$ -t 1-19814
+
+N_nodes=17
+working_dir=/data3/imaging/UKBB/ukbb_freesurfer/processing/measures/fMRI_graphTheory/netcc
+
+
+
+
+curr_netcc=$(ls -1 ${working_dir}/*.netcc | awk "NR==${SGE_TASK_ID}")
+curr_subjID=$(basename ${curr_netcc} | awk -F '_' '{print $1}')
+
+
+
+[ -f "${working_dir}/${curr_subjID}_CC.mtx" ] && \
+	rm -f ${working_dir}/${curr_subjID}_CC.mtx
+
+[ -f "${working_dir}/${curr_subjID}_FZ.mtx" ] && \
+	rm -f ${working_dir}/${curr_subjID}_FZ.mtx
+
+[ -f "${working_dir}/${curr_subjID}_PC.mtx" ] && \
+	rm -f ${working_dir}/${curr_subjID}_PC.mtx
+
+[ -f "${working_dir}/${curr_subjID}_PCB.mtx" ] && \
+	rm -f ${working_dir}/${curr_subjID}_PCB.mtx
+
+for i in $(seq 1 ${N_nodes})
+do
+	CC_current_line=`cat ${curr_netcc} | awk "NR==$((i + 6))"`
+	FZ_current_line=`cat ${curr_netcc} | awk "NR==$((i + 24))"`
+	PC_current_line=`cat ${curr_netcc} | awk "NR==$((i + 42))"`
+	PCB_current_line=`cat ${curr_netcc} | awk "NR==$((i + 60))"`
+
+	commaDelimited_CC_current_line=""
+	commaDelimited_FZ_current_line=""
+	commaDelimited_PC_current_line=""
+	commaDelimited_PCB_current_line=""
+
+	for j in $(seq 1 ${N_nodes})
+	do
+		curr_CC_value=`echo ${CC_current_line} | awk -v k=$j '{print $k}'`
+		curr_FZ_value=`echo ${FZ_current_line} | awk -v k=$j '{print $k}'`
+		curr_PC_value=`echo ${PC_current_line} | awk -v k=$j '{print $k}'`
+		curr_PCB_value=`echo ${PCB_current_line} | awk -v k=$j '{print $k}'`
+
+		commaDelimited_CC_current_line=`echo -n "${commaDelimited_CC_current_line}${curr_CC_value},"`
+		commaDelimited_FZ_current_line=`echo -n "${commaDelimited_FZ_current_line}${curr_FZ_value},"`
+		commaDelimited_PC_current_line=`echo -n "${commaDelimited_PC_current_line}${curr_PC_value},"`
+		commaDelimited_PCB_current_line=`echo -n "${commaDelimited_PCB_current_line}${curr_PCB_value},"`
+	done
+
+	# remove the last comma
+	commaDelimited_CC_current_line=${commaDelimited_CC_current_line%?}
+	commaDelimited_FZ_current_line=${commaDelimited_FZ_current_line%?}
+	commaDelimited_PC_current_line=${commaDelimited_PC_current_line%?}
+	commaDelimited_PCB_current_line=${commaDelimited_PCB_current_line%?}
+
+	# writing out
+	echo ${commaDelimited_CC_current_line} >> ${working_dir}/${curr_subjID}_CC.mtx
+	echo ${commaDelimited_FZ_current_line} >> ${working_dir}/${curr_subjID}_FZ.mtx
+	echo ${commaDelimited_PC_current_line} >> ${working_dir}/${curr_subjID}_PC.mtx
+	echo ${commaDelimited_PCB_current_line} >> ${working_dir}/${curr_subjID}_PCB.mtx
+done
+
+

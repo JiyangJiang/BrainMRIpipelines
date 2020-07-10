@@ -1,0 +1,64 @@
+#!/bin/bash
+
+#$ -N UKBB_1771idps
+#$ -V
+#$ -cwd
+#$ -pe smp 2
+#$ -q tmp.q
+#$ -l h_vmem=8G
+#$ -o /data3/imaging/UKBB/ukbb_freesurfer/processing/measures/1771_rsfMRI_IDPs/oe/fmri_ukbb_1771idps.out
+#$ -e /data3/imaging/UKBB/ukbb_freesurfer/processing/measures/1771_rsfMRI_IDPs/oe/fmri_ukbb_1771idps.err
+#$ -t 1-20598
+
+module load fsl/5.0.11
+
+# ++++++++++++++++++++++++++ #
+# customise these parameters #
+# ++++++++++++++++++++++++++ #
+working_dir=/data3/imaging/UKBB/for_heidi/rs
+output_dir=/data3/imaging/UKBB/ukbb_freesurfer/processing/measures/1771_rsfMRI_IDPs/individual
+
+
+# +++++++++++++++++++++++++++++++++++++++ #
+# make temporary directory for processing #
+# +++++++++++++++++++++++++++++++++++++++ #
+tmpdir=`$FSLDIR/bin/tmpnam`
+
+# if you want to set temp folder other than /tmp
+# modify the following lines
+# ----------------------------------------------
+redirected_dir=/data/jiyang/my_tmp
+rand_str=$(basename $tmpdir)
+tmpdir=${redirected_dir}/${rand_str}
+
+mkdir -p ${tmpdir}
+
+
+
+# ++++++++++++++++++++ #
+# loop all subject IDs #
+# ++++++++++++++++++++ #
+# curr_zip=$(ls -1 ${working_dir}/[0-9]*/*.zip | awk "NR==${SGE_TASK_ID}")
+curr_zip=$(cat ${working_dir}/list | awk "NR==${SGE_TASK_ID}")
+subjID=`echo $(basename ${curr_zip}) | awk -F '_' '{print $1}'`
+
+
+
+# +++++++++++++++++++++++++++++++++++++++ #
+# copy fMRI to temp folder for processing #
+# +++++++++++++++++++++++++++++++++++++++ #
+cp ${working_dir}/${curr_zip} ${tmpdir}
+current_dir=`pwd`
+cd ${tmpdir}
+unzip ${subjID}_20227_2_0.zip -d ${subjID}_fmri
+
+matlab -nodesktop -nosplash -r "addpath ('/home/jiyang/my_software/FUTURE/fMRI/UKBB');\
+								bb_netmats ('${subjID}_fmri','${tmpdir}');\
+								exit"
+
+for i in `ls ${tmpdir}/${subjID}_fmri/fMRI/*.txt`
+do
+	mv ${i} ${output_dir}/${subjID}_$(basename $i)
+done
+
+rm -fr ${tmpdir}

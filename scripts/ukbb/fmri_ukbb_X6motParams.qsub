@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#$ -N Jmod_ukbb
+#$ -V
+#$ -cwd
+#$ -pe smp 1
+#$ -q all.q
+#$ -l h_vmem=4G
+#$ -o /data3/imaging/UKBB/for_heidi/rs/Jmod/oe/fmri_ukbb_extract6motionParams.out
+#$ -e /data3/imaging/UKBB/for_heidi/rs/Jmod/oe/fmri_ukbb_extract6motionParams.err
+#$ -t 1-20598
+
+curr_zip=$(cat /data3/imaging/UKBB/for_heidi/rs/list | awk "NR==${SGE_TASK_ID}")
+
+subjID=`echo $(basename ${curr_zip}) | awk -F '_' '{print $1}'`
+
+unzip -p /data3/imaging/UKBB/for_heidi/rs/${curr_zip} fMRI/rfMRI.ica/mc/prefiltered_func_data_mcf.par \
+			> /data3/imaging/UKBB/for_heidi/rs/Jmod/6motionParams/${subjID}.6motionParams
