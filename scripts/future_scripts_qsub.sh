@@ -195,7 +195,7 @@ fi
 # NiL, list
 # =====================================================
 if [ "$nil_flag" -eq 1 ] && [ "$list_flag" -eq 1 ]; then
-while read cmd
+while read cmd;do
 idx=`awk '{print NR, $0}'`
 cat << EOF > ${jobs_dir}/job.${idx}
 
@@ -253,7 +253,7 @@ fi
 # NiL, list
 # =====================================================
 if [ "$gadi_flag" -eq 1 ] && [ "$list_flag" -eq 1 ]; then
-while read cmd
+while read cmd;do
 idx=`awk '{print NR, $0}'`
 cat << EOF > ${jobs_dir}/job.${idx}
 
