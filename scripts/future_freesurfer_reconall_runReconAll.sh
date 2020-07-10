@@ -30,7 +30,7 @@ COMPULSORY :
 
 	-d,  --grid											Work on multi-core workstation, GRID. (NOT IMPLEMENTED YET)
 
-	-S, --scrpt_dir				<job_scripts_dir>		Directory to store job scripts.
+	-c, --scrpt_dir				<job_scripts_dir>		Directory to store job scripts.
 
 
 OPTIONAL :
@@ -160,7 +160,7 @@ do
 			shift
 			;;
 
-		-S | --scrpt_dir)
+		-c | --scrpt_dir)
 			scrpt_dir=$2
 			shift 2
 			;;
@@ -181,6 +181,13 @@ done
 [ -z ${subj_dir+x} ] && subj_dir=$SUBJECTS_DIR
 [ "${gadi_flag}" -eq 1 ] && [ "${nil_flag}" -eq 1 ] && echo Either Gadi or NiL can be specified. && exit 1
 
+# Gadi cannot run subcortical subfields due to matlab runtime issues
+if [ "${gadi_flag}" -eq 1 ]; then
+	hippoAmyg_flag=0
+	brnstm_flag=0
+	thalam_flag=0
+fi
+
 [ -f ${scrpt_dir}/jobs.list ] && rm -f ${scrpt_dir}/jobs.list
 
 for i in ${t1_dir}/*.nii*
@@ -191,7 +198,7 @@ do
 	if [ "${noReconAll_flag}" -eq 0 ]; then
 		case $useFLAIR_flag in
 			0)
-				echo "recon-all -s ${reconall_subj} -i $i -wsatlas --no-isrunning -all -sd ${subj_dir}" >> ${scrpt_dir}/${reconall_subj}.jobs
+				echo "recon-all -s ${reconall_subj} -i $i -wsatlas -no-isrunning -all -sd ${subj_dir}" >> ${scrpt_dir}/${reconall_subj}.jobs
 				;;
 			1)
 				# commands using FLAIR in recon-all
