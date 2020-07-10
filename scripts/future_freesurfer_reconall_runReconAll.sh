@@ -179,11 +179,75 @@ do
 done
 
 [ -z ${subj_dir+x} ] && subj_dir=$SUBJECTS_DIR
+[ "${gadi_flag}" -eq 1 ] && [ "${nil_flag}" -eq 1 ] && echo Either Gadi or NiL can be specified. && exit 1
+
+hippoAmyg_flag=0
+noReconAll_flag=0
+brnstm_flag=0
+thalam_flag=0
+
+[ -f ${scrpt_dir}/jobs.list ] && rm -f ${scrpt_dir}/jobs.list
 
 for i in ${t1_dir}/*.nii*
 do
 	reconall_subj=$(basename $(imglob $i))
-	echo "recon-all -s ${reconall_subj} -i $i -wsatlas --no-isrunning -all -sd ${subj_dir}" >> ${scrpt_dir}/recon-all.jobs
+
+	# recon-all
+	if [ "${noReconAll_flag}" -eq 0 ]; then
+		case $useFLAIR_flag in
+			0)
+				echo "recon-all -s ${reconall_subj} -i $i -wsatlas --no-isrunning -all -sd ${subj_dir}" >> ${scrpt_dir}/${reconall_subj}.jobs
+				;;
+			1)
+				# commands using FLAIR in recon-all
+				;;
+		esac
+	fi
+
+	# segment hippocampal subfields and amygdalar nuclei
+	if [ "${hippoAmyg_flag}" -eq 1 ]; then
+		case $useFLAIR_flag in
+			0)
+				echo "segmentHA_T1.sh ${reconall_subj} ${subj_dir}" >> ${scrpt_dir}/${reconall_subj}.jobs
+				;;
+			1)
+				# commands using FLAIR in HA segmentation
+				;;
+		esac
+	fi
+
+	# segment brainstem
+	if [ "${brnstm_flag}" -eq 1 ]; then
+		echo "segmentBS.sh ${reconall_subj} ${subj_dir}" >> ${scrpt_dir}/${reconall_subj}.jobs
+	fi
+
+	# segment thalamic nuclei
+	if [ "${thalam_flag}" -eq 1 ]; then
+		echo "segmentThalamicNuclei.sh ${reconall_subj} ${subj_dir}" >> ${scrpt_dir}/${reconall_subj}.jobs
+	fi
+
+	# add to jobs list
+	echo "${scrpt_dir}/${reconall_subj}.jobs" >> ${scrpt_dir}/jobs.list
+
 done
 
-[ "${gadi_flag}" -eq 1 ] && future_scripts_qsub.sh -g -t ${scrpt_dir}/recon-all.jobs
+# submit jobs
+if [ "${gadi_flag}" -eq 1 ]; then
+	case ${notSubmit_flag} in
+		0)
+			future_scripts_qsub.sh -g -l ${scrpt_dir}/jobs.list
+			;;
+		1)
+			future_scripts_qsub.sh -ns -g -l ${scrpt_dir}/jobs.list
+			;;
+	esac
+elseif [ "${nil_flag}" -eq 1 ]; then
+	case ${notSubmit_flag} in
+		0)
+			future_scripts_qsub.sh -n -l ${scrpt_dir}/jobs.list
+			;;
+		1)
+			future_scripts_qsub.sh -ns -n -l ${scrpt_dir}/jobs.list
+			;;
+	esac
+fi

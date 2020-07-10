@@ -36,10 +36,10 @@ OPTIONAL :
 	-ns, --noSubmit								Only prepare job text files, not submitting to
 												scheduler.
 
-	-c, --cores			<n_cpu_cores>			Number of CPU cores.
+	-c, --cores			<n_cpu_cores>			Number of CPU cores. Default is 2.
 
 	-m, --memory		<n_memory>				Number of memory in GB. Only specify the number (e.g.,
-												8 for 8GB).
+												8 for 8GB). Default is 8GB.
 
 	-wt, --walltime		<wall_time>				Wall time for NCI Gadi jobs (e.g. 48:00:00 for 48 hours).
 												Default is 48 hrs.
