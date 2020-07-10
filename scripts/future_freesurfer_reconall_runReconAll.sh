@@ -181,11 +181,6 @@ done
 [ -z ${subj_dir+x} ] && subj_dir=$SUBJECTS_DIR
 [ "${gadi_flag}" -eq 1 ] && [ "${nil_flag}" -eq 1 ] && echo Either Gadi or NiL can be specified. && exit 1
 
-hippoAmyg_flag=0
-noReconAll_flag=0
-brnstm_flag=0
-thalam_flag=0
-
 [ -f ${scrpt_dir}/jobs.list ] && rm -f ${scrpt_dir}/jobs.list
 
 for i in ${t1_dir}/*.nii*
@@ -241,7 +236,7 @@ if [ "${gadi_flag}" -eq 1 ]; then
 			future_scripts_qsub.sh -ns -g -l ${scrpt_dir}/jobs.list
 			;;
 	esac
-elseif [ "${nil_flag}" -eq 1 ]; then
+elif [ "${nil_flag}" -eq 1 ]; then
 	case ${notSubmit_flag} in
 		0)
 			future_scripts_qsub.sh -n -l ${scrpt_dir}/jobs.list
