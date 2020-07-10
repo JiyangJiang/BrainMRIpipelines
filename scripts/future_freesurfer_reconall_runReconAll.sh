@@ -185,3 +185,5 @@ do
 	reconall_subj=$(basename $(imglob $i))
 	echo "recon-all -s ${reconall_subj} -i $i -wsatlas --no-isrunning -all -sd ${subj_dir}" >> ${scrpt_dir}/recon-all.jobs
 done
+
+[ "${gadi_flag}" -eq 1 ] && future_scripts_qsub.sh -g -t ${scrpt_dir}/recon-all.jobs
