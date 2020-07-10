@@ -168,8 +168,9 @@ exit 1
 # NiL, single txt
 # =====================================================
 if [ "$nil_flag" -eq 1 ] && [ "$txt_flag" -eq 1 ]; then
+idx=0
 while read cmd;do
-idx=`awk '{print NR, $0}'`
+idx=$((idx+1))
 cat << EOF > ${jobs_dir}/job.${idx}
 
 #!/bin/bash
@@ -195,8 +196,9 @@ fi
 # NiL, list
 # =====================================================
 if [ "$nil_flag" -eq 1 ] && [ "$list_flag" -eq 1 ]; then
+idx=0
 while read cmd;do
-idx=`awk '{print NR, $0}'`
+idx=$((idx+1))
 cat << EOF > ${jobs_dir}/job.${idx}
 
 #!/bin/bash
@@ -223,8 +225,9 @@ fi
 # Gadi, single txt
 # =====================================================
 if [ "$gadi_flag" -eq 1 ] && [ "$txt_flag" -eq 1 ]; then
+idx=0
 while read cmd;do
-idx=`awk '{print NR, $0}'`
+idx=$((idx+1))
 cat << EOF > ${jobs_dir}/job.${idx}
 
 #!/bin/bash
@@ -253,8 +256,9 @@ fi
 # NiL, list
 # =====================================================
 if [ "$gadi_flag" -eq 1 ] && [ "$list_flag" -eq 1 ]; then
+idx=0
 while read cmd;do
-idx=`awk '{print NR, $0}'`
+idx=$((idx+1))
 cat << EOF > ${jobs_dir}/job.${idx}
 
 #!/bin/bash
