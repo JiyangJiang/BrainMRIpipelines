@@ -1,0 +1,54 @@
+#!/bin/bash
+
+cohortFolder=$1
+cleanup_mode=$2
+
+N_grps=$3
+
+queue_name=$4
+
+
+
+
+curr_dir=$(dirname $(which $0))
+
+
+[ -f "${cohortFolder}/SGE_commands/nan_wrfunc.fslsub" ] && \
+	rm -f ${cohortFolder}/SGE_commands/nan_wrfunc.fslsub
+
+
+
+# nan SPM output
+N_wrfunc=`ls -1 ${cohortFolder}/spm/grp*/wr*_preproc_func_indSpace.nii | wc -l`
+for i in $(seq 1 ${N_wrfunc})
+do
+	wrfunc=`ls -1 ${cohortFolder}/spm/grp*/wr*_preproc_func_indSpace.nii | awk "NR==$i"`
+	subjID=`basename ${wrfunc} | cut -d '_' -f 1 | cut -d 'r' -f 2`
+
+	echo "fslmaths ${wrfunc} -nan $(dirname ${wrfunc})/${subjID}_preproc_func_dartelSpace" \
+		>> ${cohortFolder}/SGE_commands/nan_wrfunc.fslsub
+done
+
+nan_wrfunc_jid=$($FSLDIR/bin/fsl_sub  -T 60 \
+									  -N nan_wrfunc \
+									  -q ${queue_name} \
+									  -l ${cohortFolder}/SGE_commands/oe \
+									  -t ${cohortFolder}/SGE_commands/nan_wrfunc.fslsub)
+
+
+# call Ini_genLists.sh with 'spm' to generate spm output lists
+cat << EOF > ${cohortFolder}/SGE_commands/genList_spm.fslsub
+${curr_dir}/Ini_genLists.sh ${cohortFolder} \
+							${cleanup_mode} \
+							spm \
+							${N_grps}
+EOF
+genList_spm_jid=$($FSLDIR/bin/fsl_sub -j ${nan_wrfunc_jid} \
+									  -T 5 \
+									  -N genList_spm \
+									  -q ${queue_name} \
+									  -l ${cohortFolder}/SGE_commands/oe \
+									  -t ${cohortFolder}/SGE_commands/genList_spm.fslsub)
+
+
+

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cohortFolder=$1
+
+# generating slices pictures for QC
+
+curr_dir=$(dirname $(which $0))
+
+${curr_dir}/L-lv_qc_nativeSpace_slices.sh ${cohortFolder} \
+										  yesQsub
