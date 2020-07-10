@@ -10,41 +10,41 @@ USAGE :
 
 COMPULSORY :
 
-	-n, --nil 									Submit to CHeBA NiL cluster.
+  -n,--nil                    Submit to CHeBA NiL cluster.
 
-	-g, --gadi 									Submit to NCI Gadi cluster.
+  -g, --gadi                  Submit to NCI Gadi cluster.
 
-	-t, --txt			<job_textfile>			Text file with each job in a separate line. If each
-												job contains multiple lines of commands, create a
-												separate text file for each job, and pass a list
-												of these text files to -l or --list.
+  -t,--txt    <job_textfile>  Text file with each job in a separate line. If each
+                              job contains multiple lines of commands, create a
+                              separate text file for each job, and pass a list
+                              of these text files to -l or --list.
 
-	-l, --list			<job_list>				A list containing text files. Each text file contains 
-												a series of commands. If only one line of command
-												is run for each data/scan, use -t or --txt.
+  -l,--list       <job_list>  A list containing text files. Each text file contains 
+                              a series of commands. If only one line of command
+                              is run for each data/scan, use -t or --txt.
 
 
 OPTIONAL :
 
-	-q, --queue 		<queue>					If submitting to CHeBA NiL, which queue to submit 
-												the jobs to. Default is all.q on NiL, and normal
-												on Gadi.
+  -q,--queue         <queue>  If submitting to CHeBA NiL, which queue to submit 
+                              the jobs to. Default is all.q on NiL, and normal
+                              on Gadi.
 
-	-w, --wait			<job_id>				Wait <job_id> to finish before submit the job.
-												(YET TO IMPLEMENT)
+  -w,--wait         <job_id>  Wait <job_id> to finish before submit the job.
+                              (YET TO IMPLEMENT)
 
-	-ns, --noSubmit								Only prepare job text files, not submitting to
-												scheduler.
+  -ns,--noSubmit              Only prepare job text files, not submitting to
+                              scheduler.
 
-	-c, --cores			<n_cpu_cores>			Number of CPU cores. Default is 2.
+  -c,--cores   <n_cpu_cores>  Number of CPU cores. Default is 2.
 
-	-m, --memory		<n_memory>				Number of memory in GB. Only specify the number (e.g.,
-												8 for 8GB). Default is 8GB.
+  -m,--memory     <n_memory>  Number of memory in GB. Only specify the number (e.g.,
+                              8 for 8GB). Default is 8GB.
 
-	-wt, --walltime		<wall_time>				Wall time for NCI Gadi jobs (e.g. 48:00:00 for 48 hours).
-												Default is 48 hrs.
+  -wt,--walltime <wall_time>  Wall time for NCI Gadi jobs (e.g. 48:00:00 for 48 hours).
+                              Default is 48 hrs.
 
-	-h, --help									Display this message.
+  -h, --help                  Display this message.
 
 EOF
 

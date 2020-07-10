@@ -30,46 +30,46 @@ COMPULSORY :
 
   -d,--grid                           Work on multi-core workstation, GRID. (NOT IMPLEMENTED YET)
 
-  -c,--scrpt_dir  <job_scripts_dir>   Directory to store job scripts.
+  -c,--scrpt_dir   <job_scripts_dir>  Directory to store job scripts.
 
 
 OPTIONAL :
 
-    -s, --subjects_dir   	    <subjects_dir>          Subjects directory where all recon-all results will be stored 
-                           	                    	    (defaults is SUBJECTS_DIR).
+  -s,--subjects_dir  <subjects_dir>  Subjects directory where all recon-all results will be stored 
+                                     (defaults is SUBJECTS_DIR).
 
-    -f, --flair					<flair_nifti_dir>		If FLAIR's are used together with T1 for surface reconstruction
-    													in FreeSurfer recon-all, path to directory with all FLAIR nifti 
-    													files needs to be passed to command. NOT IMPLEMENTED YET.
+  -f,--flair      <flair_nifti_dir>  If FLAIR's are used together with T1 for surface reconstruction
+                                     in FreeSurfer recon-all, path to directory with all FLAIR nifti 
+                                     files needs to be passed to command. NOT IMPLEMENTED YET.
 
-	-ns, --notSubmit 									If -g, --gadi, -n, or --nil is used, and do not want to submit
-														jobs to job scheduler (i.e. only generating job text files), 
-														-ns or --noSubmit should be specified. Default is automatically 
-														submitting. NOT IMPLEMENTED YET.
+  -ns,--notSubmit                    If -g, --gadi, -n, or --nil is used, and do not want to submit
+                                     jobs to job scheduler (i.e. only generating job text files), 
+                                     -ns or --noSubmit should be specified. Default is automatically 
+                                     submitting. NOT IMPLEMENTED YET.
 
-    -ha, --hippoAmyg									Segmenting hippocampal subfields and amygdalar nuclei after
-    													standard recon-all. Default is running recon-all only.
-    													NOT IMPLEMENTED YET.
+  -ha,--hippoAmyg                    Segmenting hippocampal subfields and amygdalar nuclei after
+                                     standard recon-all. Default is running recon-all only.
+                                     NOT IMPLEMENTED YET.
 
-    -oha, --onlyHippoAmyg								Only segmenting hippocampal subfields. Assuming recon-all has
-    													been run, and resultant subjects directories are stored in
-    													subjects_dir. NOT IMPLEMENTED YET.
+  -oha,--onlyHippoAmyg               Only segmenting hippocampal subfields. Assuming recon-all has
+                                     been run, and resultant subjects directories are stored in
+                                     subjects_dir. NOT IMPLEMENTED YET.
 
-    -b, --brnstm										Segmenting brainstem substrucutres after standard recon-all.
-													    Default is running recon-all only. NOT IMPLEMENTED YET.
+  -b,--brnstm                        Segmenting brainstem substrucutres after standard recon-all.
+                                     Default is running recon-all only. NOT IMPLEMENTED YET.
 
-	-ob, --onlyBrnstm									Only segmenting brainstem substrucutres. Assuming recon-all has
-    													been run, and resultant subjects directories are stored in
-    													subjects_dir. NOT IMPLEMENTED YET.
+  -ob,--onlyBrnstm                   Only segmenting brainstem substrucutres. Assuming recon-all has
+                                     been run, and resultant subjects directories are stored in
+                                     subjects_dir. NOT IMPLEMENTED YET.
 
-	-t, --thalam										Segmenting thalamic nuclei after standard recon-all. Default
-														is running recon-all only. NOT IMPLEMENTED YET.
+  -t,--thalam                        Segmenting thalamic nuclei after standard recon-all. Default
+                                     is running recon-all only. NOT IMPLEMENTED YET.
 
-	-ot, --onlyThalam									Only segmenting thalamic nuclei. Assuming recon-all has
-    													been run, and resultant subjects directories are stored in
-    													subjects_dir. NOT IMPLEMENTED YET.
+  -ot,--onlyThalam                   Only segmenting thalamic nuclei. Assuming recon-all has
+                                     been run, and resultant subjects directories are stored in
+                                     subjects_dir. NOT IMPLEMENTED YET.
 
-    -h, --help											Display this message.
+  -h,--help                          Display this message.
 
 
 EOF
