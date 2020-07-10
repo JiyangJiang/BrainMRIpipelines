@@ -187,7 +187,7 @@ ${cmd}
 
 EOF
 if [ "${nsub_flag}" -eq 0 ]; then
-	qsub job.${idx}
+	qsub ${jobs_dir}/job.${idx}
 fi
 done < ${txt}
 fi
@@ -214,7 +214,7 @@ $(cat $cmd)
 
 EOF
 if [ "${nsub_flag}" -eq 0 ]; then
-	qsub job.${idx}
+	qsub ${jobs_dir}/job.${idx}
 fi
 done < ${list}
 fi
@@ -245,7 +245,7 @@ ${cmd}
 
 EOF
 if [ "${nsub_flag}" -eq 0 ]; then
-	qsub job.${idx}
+	qsub ${jobs_dir}/job.${idx}
 fi
 done < ${txt}
 fi
@@ -275,7 +275,7 @@ $(cat $cmd)
 
 EOF
 if [ "${nsub_flag}" -eq 0 ]; then
-	qsub job.${idx}
+	qsub ${jobs_dir}/job.${idx}
 fi
 done < ${list}
 fi
