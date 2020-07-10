@@ -92,7 +92,7 @@ for arg in $@
 do
 	case "$arg" in
 		-t1 | --t1_nifti_dir)
-			t1_dir=$2
+			t1_dir=$(readlink -f $2)
 			shift 2
 			;;
 
@@ -112,13 +112,13 @@ do
 			;;
 
 		-s | --subjects_dir)
-			subj_dir=$2
+			subj_dir=$(readlink -f $2)
 			shift 2
 			;;
 
 		-f | --flair)
 			useFLAIR_flag=1
-			flair_dir=$2
+			flair_dir=$(readlink -f $2)
 			shift 2
 			;;
 
@@ -161,7 +161,7 @@ do
 			;;
 
 		-c | --scrpt_dir)
-			scrpt_dir=$2
+			scrpt_dir=$(readlink -f $2)
 			shift 2
 			;;
 
