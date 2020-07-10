@@ -14,23 +14,23 @@ USAGE :
 
 COMPULSORY :
 
-	-t1, --t1_nifti_dir 		<t1_nifti_dir>			Directory where all T1 nifti files are stored.
+  -t1,--t1_nifti_dir  <t1_nifti_dir>  Directory where all T1 nifti files are stored.
 
-	-g,  --gadi											Work on PBS-based NCI Gadi cluster. -ns or --noSubmit needs 
-														to be specified to stop submiting jobs (i.e. only generate jobs
-														as text). Default is automatically submitting jobs. Note that
-														hippocampal subfields, amygdalar nuclei, brainstem substructure,
-														and thalamic nuclei cannot be segmented on Gadi due to the
-														required MATLAB runtime. Run them on NiL instead.
+  -g,--gadi                           Work on PBS-based NCI Gadi cluster. -ns or --noSubmit needs 
+                                      to be specified to stop submiting jobs (i.e. only generate jobs
+                                      as text). Default is automatically submitting jobs. Note that
+                                      hippocampal subfields, amygdalar nuclei, brainstem substructure,
+                                      and thalamic nuclei cannot be segmented on Gadi due to the
+                                      required MATLAB runtime. Run them on NiL instead.
 
-	-n,  --nil											Work on SGE-based CHeBA NiL cluster using fsl_sub. -ns or 
-														--noSubmit needs to be specified to stop submiting jobs (i.e. 
-														only generate jobs as text). Default is automatically submitting 
-														jobs.
+  -n,--nil                            Work on SGE-based CHeBA NiL cluster using fsl_sub. -ns or 
+                                      --noSubmit needs to be specified to stop submiting jobs (i.e. 
+                                      only generate jobs as text). Default is automatically submitting 
+                                      jobs.
 
-	-d,  --grid											Work on multi-core workstation, GRID. (NOT IMPLEMENTED YET)
+  -d,--grid                           Work on multi-core workstation, GRID. (NOT IMPLEMENTED YET)
 
-	-c, --scrpt_dir				<job_scripts_dir>		Directory to store job scripts.
+  -c,--scrpt_dir  <job_scripts_dir>   Directory to store job scripts.
 
 
 OPTIONAL :
