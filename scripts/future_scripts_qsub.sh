@@ -172,7 +172,6 @@ idx=0
 while read cmd;do
 idx=$((idx+1))
 cat << EOF > ${jobs_dir}/job.${idx}
-
 #!/bin/bash
 
 #$ -N job.${idx}
@@ -200,7 +199,6 @@ idx=0
 while read cmd;do
 idx=$((idx+1))
 cat << EOF > ${jobs_dir}/job.${idx}
-
 #!/bin/bash
 
 #$ -N job.${idx}
@@ -229,7 +227,6 @@ idx=0
 while read cmd;do
 idx=$((idx+1))
 cat << EOF > ${jobs_dir}/job.${idx}
-
 #!/bin/bash
 #PBS -P ey6
 #PBS -q ${queue}
@@ -260,7 +257,6 @@ idx=0
 while read cmd;do
 idx=$((idx+1))
 cat << EOF > ${jobs_dir}/job.${idx}
-
 #!/bin/bash
 #PBS -P ey6
 #PBS -q ${queue}
