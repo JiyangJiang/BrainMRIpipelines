@@ -9,7 +9,7 @@ $(basename $0) : run freesurfer recon-all.
 
 USAGE : 
 
-	$(basename $0) [OPTIONS]
+  $(basename $0) [OPTIONS]
 
 
 COMPULSORY :
