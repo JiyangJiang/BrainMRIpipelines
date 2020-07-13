@@ -250,7 +250,7 @@ fi
 done < ${txt}
 fi
 
-# NiL, list
+# Gadi, list
 # =====================================================
 if [ "$gadi_flag" -eq 1 ] && [ "$list_flag" -eq 1 ]; then
 idx=0
