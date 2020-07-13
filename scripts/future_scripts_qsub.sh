@@ -187,7 +187,7 @@ ${cmd}
 
 EOF
 if [ "${nsub_flag}" -eq 0 ]; then
-	qsub ${jobs_dir}/job.${idx}
+	echo $(qsub ${jobs_dir}/job.${idx}) | awk '{ print $3 }'
 fi
 done < ${txt}
 fi
@@ -214,7 +214,7 @@ $(cat $cmd)
 
 EOF
 if [ "${nsub_flag}" -eq 0 ]; then
-	qsub ${jobs_dir}/job.${idx}
+	echo $(qsub ${jobs_dir}/job.${idx}) | awk '{ print $3 }'
 fi
 done < ${list}
 fi
