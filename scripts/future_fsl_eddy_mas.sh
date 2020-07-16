@@ -21,7 +21,7 @@ COMPULSORY :
 
 OPTIONAL :
 
-	-a,--all                               Run both FSL eddy and eddyqc. This
+    -a,--all                               Run both FSL eddy and eddyqc. This
                                            is default.
 
     -e,--oeddy                             Only run FSL eddy.

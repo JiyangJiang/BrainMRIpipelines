@@ -19,9 +19,9 @@ COMPULSORY :
 
 OPTIONAL :
 
-	-s, --subjects_dir 		<subjects_dir>			Directory where all subjects are stored (defaults is SUBJECTS_DIR).
+    -s, --subjects_dir 		<subjects_dir>			Directory where all subjects are stored (defaults is SUBJECTS_DIR).
 
-	-o, --output_dir        <output_dir>            Path to output directory (default is subjects_dir).
+    -o, --output_dir        <output_dir>            Path to output directory (default is subjects_dir).
 
     -l, --longitudinal                              Treat as longitudinal datasets (default is cross-sectional).
 
