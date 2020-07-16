@@ -109,7 +109,7 @@ fi
 # eddy qc
 if [ "${eddyqc_flag}" -eq 1 ];then
 cat << EOT > ../cmd/eddy_qc.cmd
-eddy_quad 	${study_dir}/mrtrix/${id}/eddy \
+eddy_quad 	${study_dir}/mrtrix/${id}/eddy/out \
 			-idx index.txt \
 			-par acqparams.txt \
 			-m mask \
