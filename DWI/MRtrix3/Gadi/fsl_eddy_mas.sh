@@ -1,5 +1,135 @@
 #!/bin/bash
 
+# study_dir=/data2/jiyang/MW4_DWI_eddy
+
+usage(){
+
+cat << EOF
+
+$(basename $0) : run FSL eddy and eddyqc.
+
+USAGE :
+	$(basename $0) -s <study_dir> --all
+	$(basename $0) -s <study_dir> --oeddy
+	$(basename $0) -s <study_dir> --oeddyqc
+
+COMPULSORY :
+
+    -s,--study_dir    <study_directory>    Study directory that contains a
+                                           'mrtrix' directory which contains
+                                           one directory for each subject.
+
+OPTIONAL :
+
+	-a,--all                               Run both FSL eddy and eddyqc. This
+                                           is default.
+
+    -e,--oeddy                             Only run FSL eddy.
+
+    -q,--oeddyqc                           Only run FSL eddyqc.
+
+    -h,--help                              Display this message.
+
+EOF
+}
+
+# defaults
+eddy_flag=1
+eddyqc_flag=1
+
+# resolve options
+for arg in $@
+do
+	case "$arg" in
+		-s|--study_dir)
+			study_dir=$2
+			shift 2
+			;;
+		-a|--all)
+			shift
+			;;
+		-e|--oeddy)
+			eddyqc_flag=0
+			shift
+			;;
+		-q|--oeddyqc)
+			eddy_flag=0
+			shift
+			;;
+		-h|--help)
+			usage
+			exit 0
+			;;
+		-*)
+			usage
+			exit 1
+			;;
+	esac
+done
+
+[ -f ${study_dir}/mrtrix/eddy_qc.list ] && rm -f ${study_dir}/mrtrix/eddy_qc.list
+
+while read id
+do
+
+	cd ${study_dir}/mrtrix/${id}/eddy
+
+	# prepare acqparams.txt
+	echo "0 1 0 0.05" > acqparams.txt
+	acqparamsTXT=acqparams.txt
+
+	# prepare index.txt (MW4 DWI seems to be PA)
+	indx=""
+	for ((i=1; i<=$(fslval mrdegibbs dim4); i+=1)); do indx="${indx} 1"; done
+	echo $indx > index.txt
+
+# eddy
+if [ "${eddy_flag}" -eq 1 ];then
+cat << EOT > ../cmd/eddy.cmd
+eddy_cuda9.1 --imain=mrdegibbs \
+			 --mask=mask \
+			 --acqp=acqparams.txt \
+			 --index=index.txt \
+			 --slm=linear \
+			 --bvecs=bvec \
+			 --bvals=bval \
+			 --repol \
+			 --out=out \
+			 --niter=8 \
+			 --fwhm=10,8,4,2,0,0,0,0 \
+			 --ol_type=sw \
+			 --mporder=8 \
+			 --s2v_niter=8 \
+			 --verbose
+EOT
+chmod +x ../cmd/eddy.cmd
+sh ../cmd/eddy.cmd > ../cmd/oe/eddy.out
+fi
+
+# eddy qc
+if [ "${eddyqc_flag}" -eq 1 ];then
+cat << EOT > ../cmd/eddy_qc.cmd
+eddy_quad 	${study_dir}/mrtrix/${id}/eddy \
+			-idx index.txt \
+			-par acqparams.txt \
+			-m mask \
+			-b bval \
+			-g bvec \
+			-v
+EOT
+chmod +x ../cmd/eddy_qc.cmd
+sh ../cmd/eddy_qc.cmd > ../cmd/oe/eddy_qc.out
+echo ${study_dir}/mrtrix/${id}/eddy >> ${study_dir}/mrtrix/eddy_qc.list
+fi
+
+done < ${study_dir}/mrtrix/list
+
+if [ "${eddyqc_flag}" -eq 1 ];then
+	eddy_squad ${study_dir}/mrtrix/eddy_qc.list
+fi
+
+
+
 # - eddy is a new tool for correcting both eddy current-induced distortion and SUBJECT MOVEMENTS
 #
 # - able to work with higher b-values than eddy_correct (earlier tool for eddy current corr)
@@ -131,48 +261,8 @@
 #
 #       For details, refer to https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/Faq#How_do_I_know_what_to_put_into_my_--acqp_file
 
-study_dir=/data2/jiyang/MW4_DWI_eddy
 
 
-
-
-while read id
-do
-
-	cd ${study_dir}/mrtrix/${id}/eddy
-
-	# prepare acqparams.txt
-	echo "0 1 0 0.05" > acqparams.txt
-	acqparamsTXT=acqparams.txt
-
-	# prepare index.txt (MW4 DWI seems to be PA)
-	indx=""
-	for ((i=1; i<=$(fslval mrdegibbs dim4); i+=1)); do indx="${indx} 1"; done
-	echo $indx > index.txt
-
-# eddy
-cat << EOT > ../cmd/eddy.cmd
-eddy_cuda9.1 --imain=mrdegibbs \
-			 --mask=mask \
-			 --acqp=acqparams.txt \
-			 --index=index.txt \
-			 --slm=linear \
-			 --bvecs=bvec \
-			 --bvals=bval \
-			 --repol \
-			 --out=out \
-			 --niter=8 \
-			 --fwhm=10,8,4,2,0,0,0,0 \
-			 --ol_type=sw \
-			 --mporder=8 \
-			 --s2v_niter=8 \
-			 --verbose
-EOT
-
-chmod +x ../cmd/eddy.cmd
-sh ../cmd/eddy.cmd > ../cmd/oe/eddy.out
-
-done < ${study_dir}/mrtrix/list
 
 # ================================================================== #
 #                            eddy output                             #
