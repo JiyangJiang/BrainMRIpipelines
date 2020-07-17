@@ -119,7 +119,7 @@ eddy_quad 	${study_dir}/mrtrix/${id}/eddy/out \
 EOT
 chmod +x ../cmd/eddy_qc.cmd
 sh ../cmd/eddy_qc.cmd > ../cmd/oe/eddy_qc.out
-echo ${study_dir}/mrtrix/${id}/eddy >> ${study_dir}/mrtrix/eddy_qc.list
+echo ${study_dir}/mrtrix/${id}/eddy/out.qc >> ${study_dir}/mrtrix/eddy_qc.list
 fi
 
 done < ${study_dir}/mrtrix/list
