@@ -273,9 +273,33 @@ if [ "${brnstm_flag}" -eq 1 ];then
 fi
 if [ "${thalam_flag}" -eq 1 ];then
         echo "$(basename $0) : thalamic nuclei."
-        quantifyThalamicNuclei.sh  ${out_dir}/${fname_prefix}.${append}.thalamNuc T1 ${subj_dir} >> $(basename $0).log
-        sed -i 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.thalamNuc
+        
+        # quantifyThalamicNuclei.sh  ${out_dir}/${fname_prefix}.${append}.thalamNuc T1 ${subj_dir} >> $(basename $0).log
+        # sed -i 's/ /,/g' ${out_dir}/${fname_prefix}.${append}.thalamNuc
         # no suggestion on longitudinal on the website.
+
+        # 20/07/20 UPDATE
+        # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # The 'quantifyThalamicNuclei.sh' script somehow does not work. No results
+        # are generated, neither is any error message... asegstats2table is now
+        # used to extract from .stats files.
+        for hemi in lh rh
+        do
+                asegstats2table --subjectsfile=${subj_list} \
+                                --statsfile=thalamic-nuclei.${hemi}.v12.T1.stats \
+                                --tablefile=${out_dir}/${fname_prefix}.${append}.aseg.thalamNuc.${hemi} \
+                                --skip \
+                                --all-segs \
+                                --delimiter=comma >> $(basename $0).log
+
+                asegstats2table --subjectsfile=${subj_list} \
+                                --statsfile=thalamic-nuclei.${hemi}.v12.T1.stats \
+                                --tablefile=${out_dir}/${fname_prefix}.${append}.aseg.thalamNuc.${hemi}.etiv_perc \
+                                --skip \
+                                --all-segs \
+                                --delimiter=comma \
+                                --etiv >> $(basename $0).log
+        done
 fi
 
 
