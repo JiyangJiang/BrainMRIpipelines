@@ -163,7 +163,7 @@ export SUBJECTS_DIR=${subj_dir}
 if [ "${reconall_flag}" -eq 1 ]; then
 
         # generate subjects lists
-        subj_list=`future_freesurfer_genSubjList -s ${subj_dir} -o ${subj_dir}`
+        subj_list=`future_freesurfer_genSubjList.sh -s ${subj_dir} -o ${subj_dir}`
 
         # extract measures
         for aseg_meas in volume mean std
