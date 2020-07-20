@@ -291,14 +291,6 @@ if [ "${thalam_flag}" -eq 1 ];then
                                 --skip \
                                 --all-segs \
                                 --delimiter=comma >> $(basename $0).log
-
-                asegstats2table --subjectsfile=${subj_list} \
-                                --statsfile=thalamic-nuclei.${hemi}.v12.T1.stats \
-                                --tablefile=${out_dir}/${fname_prefix}.${append}.aseg.thalamNuc.${hemi}.etiv_perc \
-                                --skip \
-                                --all-segs \
-                                --delimiter=comma \
-                                --etiv >> $(basename $0).log
         done
 fi
 
