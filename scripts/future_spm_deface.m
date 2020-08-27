@@ -4,7 +4,11 @@ if 7==exist(fullfile(folder,'future_spm_deface'),'dir')
 	st = rmdir(fullfile(folder,'future_spm_deface'),'s')
 end
 
-gunzipped_nii = future_io_gunzip ('dir',folder,fullfile(folder,'future_spm_deface'));
+if size(dir(fullfile(folder,'*.gz')),1) == 0
+	mkdir (fullfile(folder,'future_spm_deface'));
+else
+	gunzipped_nii = future_io_gunzip ('dir',folder,fullfile(folder,'future_spm_deface'));
+end
 
 nii = dir (fullfile(folder,'*.nii'));
 
