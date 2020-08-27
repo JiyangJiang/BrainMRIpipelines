@@ -1,7 +1,7 @@
 function defaced_nii = future_spm_deface (folder)
 
 if 7==exist(fullfile(folder,'future_spm_deface'),'dir')
-	st = rmdir(fullfile(folder,'future_spm_deface'),'s')
+	st = rmdir(fullfile(folder,'future_spm_deface'),'s');
 end
 
 if size(dir(fullfile(folder,'*.gz')),1) == 0
