@@ -11,6 +11,8 @@ libsvm_path='/data_pub/Software/FSL/fsl-5.0.11/FSLNets/LIBSVM/libsvm-3.23/matlab
 tr = 0.735;
 netts_dir = '/data2/jiyang/heidi_regularisedPartialCorr/netts_transposed';
 
+nROI = 7;
+
 addpath  (FSLnets_path);
 addpath (sprintf('%s/etc/matlab', getenv ('FSLDIR')));
 addpath (libsvm_path);
@@ -28,7 +30,7 @@ parfor i = 1 : size(Pnetmats,1)
 	tmp = strsplit (all_txt(i).name,'_');
 	id  = tmp{1};
 
-	mtx = reshape (Pnetmats(i,:),400,400);
+	mtx = reshape (Pnetmats(i,:),nROI,nROI);
 
 	csvwrite(fullfile('regularised_partial_correlation',...
 					  [id '_ridgep0p1.txt']),...
