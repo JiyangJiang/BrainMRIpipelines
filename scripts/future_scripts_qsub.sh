@@ -161,7 +161,7 @@ echo Either txt or list needs to be specified. && \
 exit 1
 
 # default queues
-[ -z ${queue+x} ] && [ "$nil_flag" -eq 1 ] && queue=all.q
+[ -z ${queue+x} ] && [ "$nil_flag" -eq 1 ] && queue=short.q
 [ -z ${queue+x} ] && [ "$gadi_flag" -eq 1 ] && queue=normal
 
 
