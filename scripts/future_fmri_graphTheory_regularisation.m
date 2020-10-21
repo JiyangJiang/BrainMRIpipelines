@@ -1,7 +1,12 @@
 
 % NOTE
 % ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% Exclude netts with inconsistent number of columns/rows
+% prior to running this script:
+%
+% 1. transpose rows/columns by running future_fmri_graphTheory_transpose.sh
+%
+%
+% 2. Exclude netts with inconsistent number of columns/rows
 %
 % for i in *.txt;do ncol=$(awk '{print NF; exit}' $i);[ "$ncol" != 7 ] && mv $i not7col/.;done
 % for i in *.txt;do nrow=$(wc -l $i | awk '{print $1}');[ "$nrow" != 490 ] && mv $i not490rows/.;done
