@@ -114,6 +114,8 @@ done
 # 	fslmerge -t NBTR_wrFLAIR_inm_4D $(ls -1 *_intensityNormalised.nii.gz | tr '\n' ' ')
 #
 # 4. 2020 April 23 : Do we need to normalise intensity across 4D as well ??
+#
+# 5. 2020 Nov 11 : smooth
 
 
 
