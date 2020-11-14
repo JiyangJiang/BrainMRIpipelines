@@ -1,24 +1,46 @@
+# FreeSurfer thickness and pial area maps
+# ==============================================================
 
-# create brain mask in T1 space with c1/c2/c3
-for i in SCS.list W2.list W4.list
-do
-	while read id
-	do
-		fslmaths c123/c1sub-${id}*_anat.nii \
-				 -add c123/c2sub-${id}*_anat.nii \
-				 -add c123/c3sub-${id}*_anat.nii \
-				 -thr 0.3 \
-				 -bin \
-				 -fillh \
-				 -ero \
-				 -ero \
-				 ${id}_T1_brainmask
-	done < ${i}
-done
+# export SUBJECTS_DIR=/data4/jiyang/MW24+SCS_FLICA/freesurfer
+# ln -s /data_pub/Software/FreeSurfer/FS-7.1.0/subjects/fsaverage ${SUBJECTS_DIR}/.
+# for i in lh rh
+# do
+#         for j in thickness area.pial
+#         do
+#                 mris_preproc --fsgd g1v0.fsgd \
+#                                          --target fsaverage \
+#                                          --hemi ${i} \
+#                                          --meas ${j} \
+#                                          --out ${i}.g1v0.${j}.00.mgh
+#         done
+# done
+# for m in lh rh
+# do
+#         for n in thickness area.pial
+#         do
+#                 for k in 5 10 15
+#                 do
+#                         mri_surf2surf --hemi ${m} \
+#                                                   --s fsaverage \
+#                                                   --sval ${m}.g1v0.${n}.00.mgh \
+#                                                   --fwhm ${k} \
+#                                                   --cortex \
+#                                                   --tval ${m}.g1v0.${n}.${k}.mgh
+#                 done
+#         done
+# done
 
 
-# create spherical ROI from published world-coordinate for fMRI
-# --------------------------------------------------------------
+
+# FSLVBM
+# ==============================================================
+# 1. use brainmask.mgz from FreeSurfer's recon-all output
+# 2. run from fslvbm step 2
+
+
+
+# DMN & FPCN activation maps
+# ==============================================================
 #
 # 1. Open the standard brain (4mm in this case) with FSLVIEW
 #
@@ -115,83 +137,36 @@ done
 #
 # 4. 2020 April 23 : Do we need to normalise intensity across 4D as well ??
 #
-
-
-
-# ++++++++++++++++++++++++++++++++++
-#              FLICA
-# ++++++++++++++++++++++++++++++++++
+# 5. 2020 Nov 11 : smooth (FWHM = 5 mm)
 #
-# MATLAB code
-#
+#   3dBlurToFWHM -input flair_4D.nii.gz -prefix flair_4D_fwhm5 -automask -FWHM 5
+
 addpath([getenv('FSLDIR') '/etc/matlab/']);
 addpath ('/home/jiyang/Software/flica_Jmod');
 
 % note / in the end of outdir path
-outdir = '/data_int/jiyang/FLICA/no_dementia/output_FSLVBMs2_FLAIR_DMN_FPCN_d100_5000perm_onGRID/';
+outdir = '/data4/jiyang/MW24+SCS_FLICA/flica/flica_new20201113_fslvbm_freesurferThickArea/';
 
-% DMN and FPCN using seed
 Yfiles = {
-['/data_int/jiyang/FLICA/no_dementia/GM_mod_merg_s2_N319.nii.gz'],
-['/data_int/jiyang/FLICA/no_dementia/NBTRwrFLAIRrestore_N319.nii.gz'],
-['/data_int/jiyang/FLICA/no_dementia/DMN_Zmap_N319.nii.gz'],
-['/data_int/jiyang/FLICA/no_dementia/FPCN_Zmap_N319.nii.gz']
+	['/data4/jiyang/MW24+SCS_FLICA/flica/?h.g1v0.thickness.10.mgh']
+	['/data4/jiyang/MW24+SCS_FLICA/flica/?h.g1v0.area.pial.10.mgh'],
+	['/data4/jiyang/MW24+SCS_FLICA/flica/GM_mod_merg_s2.nii.gz']
 };
 
-[Y,fileinfo] = flica_load(Yfiles);
-fileinfo.shortNames = {'fslvbm_s2','FLAIRintensity','DMNactivationMap','FPCNactivationMap'};
+% Log-transform area; everything else uses defaults.
+% Note that 4 arguments for each Yfiles input - log, subtractThis,
+% divideByThis, single/double (refer to the MATLAB code)
+transformsIn = {'','','',''; 'log','','',''; '','','',''};
 
+[Y,fileinfo] = flica_load(Yfiles, transformsIn);
+fileinfo.shortNames = {'Thickness','Area','VBM'};
+
+%% Non-default option setting (to see a list of options: run flica_parseoptions, with no arguments.)
 opts = struct();
-opts.num_components = 100;
-opts.maxits = 5000;
+opts.num_components = 70; % number of maximum components
+opts.maxits = 1000;
 opts.calcFits = 'all'; % Be more careful, check F increases every iteration.
+
 
 % Run FLICA
 Morig = flica(Y, opts);
-[M,weights] = flica_reorder(Morig); % Sort components sensibly
-flica_save_everything(outdir, M, fileinfo);
-
-% post hoc correlation
-% Jmod - this part is different from Smith 2019 code.
-%        this part is according to online FLICA instruction.
-clear des
-des.Subject_Index = (1:size(Y{1},2))';
-des.Age = load('/data_int/jiyang/FLICA/no_dementia/age_N319.txt');
-des.Sex = load('/data_int/jiyang/FLICA/no_dementia/sex_N319.txt');
-des.Edu = load('/data_int/jiyang/FLICA/no_dementia/edu_N319.txt');
-des.ICV = load('/data_int/jiyang/FLICA/no_dementia/TIVfromCAT12_N319.txt');
-flica_posthoc_correlations(outdir, des)
-
-
-# SHELL
-# generate reports (using high resolution output)
-#
-cd /data_int/jiyang/FLICA/no_dementia/output_FSLVBMs2_FLAIR_DMN_FPCN_d100_5000perm_onGRID
-export PATH=/home/jiyang/Software/flica_Jmod:$PATH
-mv niftiOut_mi2.nii.gz niftiOut_mi2_DARTEL.nii.gz
-flirt -in niftiOut_mi2_DARTEL -ref ../DARTEL2MNI/MNI152_T1_2mm_brain.nii.gz -init ../DARTEL2MNI/dartel2mni.mat -applyxfm -out niftiOut_mi2
-# Ref : https://www.jiscmail.ac.uk/cgi-bin/webadmin?A2=fsl;32d186a0.0812
-mv niftiOut_mi3.nii.gz niftiOut_mi3_4mm.nii.gz;flirt -in niftiOut_mi3_4mm.nii.gz -ref ../DARTEL2MNI/MNI152_T1_2mm_brain.nii.gz -init ../eye.mat -applyxfm -out niftiOut_mi3
-mv niftiOut_mi4.nii.gz niftiOut_mi4_4mm.nii.gz;flirt -in niftiOut_mi4_4mm.nii.gz -ref ../DARTEL2MNI/MNI152_T1_2mm_brain.nii.gz -init ../eye.mat -applyxfm -out niftiOut_mi4
-render_lightboxes_all.sh
-flica_html_report.sh
-
-
-# SHELL
-# Calculation of the variance explained
-#
-cd /data_int/jiyang/FLICA/no_dementia/output_FSLVBMs2_FLAIR_DMN_FPCN_d100_5000perm_onGRID
-fslmaths niftiOut_mi1.nii.gz -sqr tmp1.nii.gz;fslstats -t tmp1.nii.gz -m > energy1.txt;fslmaths niftiOut_mi2.nii.gz -sqr tmp2.nii.gz;fslstats -t tmp2.nii.gz -m > energy2.txt;fslmaths niftiOut_mi3.nii.gz -sqr tmp3.nii.gz;fslstats -t tmp3.nii.gz -m > energy3.txt;paste energy1.txt energy2.txt energy3.txt > energy_tmp.txt
-
-%% In MATLAB
-cd /data_int/jiyang/FLICA/no_dementia/output_FSLVBMs2_FLAIR_DMN_FPCN_d100_5000perm_onGRID
-energy_tmp = load ('energy_tmp.txt');
-energy = energy_tmp * diag(1./sum(energy_tmp)) * 100;
-fid_energy = fopen('energy.txt','w');
-for i = 1:size(energy,1)
-	fprintf(fid_energy,'%.5f\t%.5f\t%.5f\n',energy(i,1),energy(i,2),energy(i,3));
-end
-
-% save environment/variables in MATLAB
-cd /data_int/jiyang/FLICA/no_dementia
-save ('output_FSLVBMs2_FLAIR_DMN_FPCN_d100_5000perm_onGRID', '-v7.3');
