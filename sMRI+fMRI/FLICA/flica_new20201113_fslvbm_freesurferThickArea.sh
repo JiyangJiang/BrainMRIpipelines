@@ -170,3 +170,5 @@ opts.calcFits = 'all'; % Be more careful, check F increases every iteration.
 
 % Run FLICA
 Morig = flica(Y, opts);
+[M,weights] = flica_reorder(Morig); % Sort components sensibly
+flica_save_everything(outdir, M, fileinfo);
