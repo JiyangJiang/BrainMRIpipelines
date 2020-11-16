@@ -150,7 +150,7 @@ outdir = '/data4/jiyang/MW24+SCS_FLICA/flica/flica_new20201113_fslvbm_freesurfer
 Yfiles = {
 	['/data4/jiyang/MW24+SCS_FLICA/flica/?h.g1v0.thickness.10.mgh']
 	['/data4/jiyang/MW24+SCS_FLICA/flica/?h.g1v0.area.pial.10.mgh'],
-	['/data4/jiyang/MW24+SCS_FLICA/flica/GM_mod_merg_s2.nii.gz']
+	['/data4/jiyang/MW24+SCS_FLICA/flica/GM_mod_merg_s2_N310.nii.gz']
 };
 
 % Log-transform area; everything else uses defaults.
