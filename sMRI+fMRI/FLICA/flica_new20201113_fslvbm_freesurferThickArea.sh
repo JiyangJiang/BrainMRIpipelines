@@ -145,13 +145,19 @@ addpath([getenv('FSLDIR') '/etc/matlab/']);
 addpath ('/home/jiyang/Software/flica_Jmod');
 
 % note / in the end of outdir path
-outdir = '/data4/jiyang/MW24+SCS_FLICA/flica/flica_new20201113_fslvbm_freesurferThickArea/';
+outdir = '/data4/jiyang/MW24+SCS_FLICA/flica/flica_new20201117_fslvbmS4_freesurferThickAreaFWHM15/';
 
 Yfiles = {
 	['/data4/jiyang/MW24+SCS_FLICA/flica/?h.g1v0.thickness.10.mgh']
 	['/data4/jiyang/MW24+SCS_FLICA/flica/?h.g1v0.area.pial.10.mgh'],
 	['/data4/jiyang/MW24+SCS_FLICA/flica/GM_mod_merg_s2_N310.nii.gz']
 };
+
+# Yfiles = {
+# 	['/data4/jiyang/MW24+SCS_FLICA/flica/?h.g1v0.thickness.15.mgh']
+# 	['/data4/jiyang/MW24+SCS_FLICA/flica/?h.g1v0.area.pial.15.mgh'],
+# 	['/data4/jiyang/MW24+SCS_FLICA/flica/GM_mod_merg_s4_N310.nii.gz']
+# };
 
 % Log-transform area; everything else uses defaults.
 % Note that 4 arguments for each Yfiles input - log, subtractThis,
@@ -186,7 +192,8 @@ flica_posthoc_correlations(outdir, des)
 
 # copy mgh to NiL cluster to generate freesurfer figures
 # ------------------------------------------------------
-outdir=/data4/jiyang/MW24+SCS_FLICA/flica/flica_new20201113_fslvbm_freesurferThickArea
+# outdir=/data4/jiyang/MW24+SCS_FLICA/flica/flica_new20201117_fslvbmS4_freesurferThickAreaFWHM15
+outdir=/data4/jiyang/MW24+SCS_FLICA/flica/flica_new20201117_fslvbm_freesurferThickArea
 rsync -avrPS ${outdir}/*.mgh jiyang@129.94.18.57:/home/jiyang/Downloads/.
 ssh -XY jiyang@129.94.18.57
 cd ~/Downloads
