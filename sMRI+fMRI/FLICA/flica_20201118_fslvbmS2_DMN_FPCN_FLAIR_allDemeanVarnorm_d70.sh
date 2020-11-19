@@ -1,0 +1,54 @@
+# demean + varnorm
+# +++++++++++++++++
+# fslmaths 4d -Tmean -mul -1 -add 4d demeaned_4d
+# fslmaths 4d -Tstd 4d_Tstd
+# fslmaths demeaned_4d -div 4d_Tstd 4d_demean_varnorm
+#
+# for vbm map, apply MNI_2mm brain mask to 4d_demean_varnorm.
+# otherwise, variance also exist outside of brain.
+
+addpath([getenv('FSLDIR') '/etc/matlab/']);
+addpath ('/home/jiyang/Software/flica_Jmod');
+
+% note / in the end of outdir path
+outdir = '/data4/jiyang/MW24+SCS_FLICA/flica/flica_20201118_fslvbmS2_DMN_FPCN_FLAIR_allDemeanVarnorm_d70/';
+
+Yfiles = {
+	['/data4/jiyang/MW24+SCS_FLICA/flica/GM_mod_merg_s2_N310_demean_varnorm_brain.nii.gz']
+	['/data4/jiyang/MW24+SCS_FLICA/flica/DMN_Zmap_N310_demean_varnorm.nii.gz']
+	['/data4/jiyang/MW24+SCS_FLICA/flica/FPCN_Zmap_N310_demean_varnorm.nii.gz']
+	['/data4/jiyang/MW24+SCS_FLICA/flica/NBTRwrFLAIRrestore_N310_fwhm5_demean_varnorm_MNI2mm.nii.gz']
+};
+
+[Y,fileinfo] = flica_load(Yfiles);
+fileinfo.shortNames = {'vbm','dmn','fpcn','flair'};
+
+opts = struct();
+opts.num_components = 70;
+opts.maxits = 1000;
+opts.calcFits = 'all';
+
+Morig = flica(Y, opts);
+[M,weights] = flica_reorder(Morig);
+flica_save_everything(outdir, M, fileinfo);
+
+clear des
+des.Subject_Index = (1:size(Y{1},2))';
+des.Age = load('/data4/jiyang/MW24+SCS_FLICA/flica/covariates/age_N310.txt');
+des.Sex = load('/data4/jiyang/MW24+SCS_FLICA/flica/covariates/sex_N310.txt');
+des.Edu = load('/data4/jiyang/MW24+SCS_FLICA/flica/covariates/edu_N310.txt');
+des.ICV = load('/data4/jiyang/MW24+SCS_FLICA/flica/covariates/eTIVfromFreeSurfer_N310.txt');
+flica_posthoc_correlations(outdir, des)
+
+
+# SHELL
+# ++++++++++++++++++++++++++++++++++++++++++++++++++
+# resample to MNI 2mm
+mv niftiOut_mi2.nii.gz niftiOut_mi2_4mm.nii.gz
+flirt -in niftiOut_mi2_4mm.nii.gz -ref ../MNI152_T1_2mm_brain.nii.gz -applyisoxfm 2 -init ../eye.mat -out niftiOut_mi2
+mv niftiOut_mi3.nii.gz niftiOut_mi3_4mm.nii.gz
+flirt -in niftiOut_mi3_4mm.nii.gz -ref ../MNI152_T1_2mm_brain.nii.gz -applyisoxfm 2 -init ../eye.mat -out niftiOut_mi3
+
+export PATH=/home/jiyang/Software/flica_Jmod:$PATH
+render_lightboxes_all.sh
+flica_html_report.sh
