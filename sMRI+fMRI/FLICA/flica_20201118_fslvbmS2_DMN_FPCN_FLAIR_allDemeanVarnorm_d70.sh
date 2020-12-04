@@ -6,6 +6,15 @@
 #
 # for vbm map, apply MNI_2mm brain mask to 4d_demean_varnorm.
 # otherwise, variance also exist outside of brain.
+#
+# For FreeSurfer mgh files :
+#
+# mri_concat 4d.mgh --o avg.mgh --mean
+# mri_concat 4d.mgh --o std.mgh --std
+# mri_convert 4d.mgh 3d.mgh --split
+# for i in 3d????.mgh;do fscalc --o $(echo $i | cut -d. -f1)_demean.mgh $i sub avg.mgh;done
+# for i in 3d????.mgh;do fscalc --o $(echo $i | cut -d. -f1)_demean_varnorm.mgh $(echo $i | cut -d. -f1)_demean.mgh div std.mgh;done
+# mri_concat 3d*_demean_varnorm.mgh --o 4d_demean_varnorm.mgh
 
 addpath([getenv('FSLDIR') '/etc/matlab/']);
 addpath ('/home/jiyang/Software/flica_Jmod');
