@@ -20,20 +20,22 @@ addpath([getenv('FSLDIR') '/etc/matlab/']);
 addpath ('/home/jiyang/Software/flica_Jmod');
 
 % note / in the end of outdir path
-outdir = '/data4/jiyang/MW24+SCS_FLICA/flica/flica_20201118_fslvbmS2_DMN_FPCN_FLAIR_allDemeanVarnorm_d70/';
+outdir = '/data4/jiyang/MW24+SCS_FLICA/flica/flica_20201207_cat12vbmFWHM10_FSthickAreaFWHM10_flair_dmn_fpcn_allDemeanVarnorm_d100/';
 
 Yfiles = {
-	['/data4/jiyang/MW24+SCS_FLICA/flica/GM_mod_merg_s2_N310_demean_varnorm_brain.nii.gz']
+	['/data4/jiyang/MW24+SCS_FLICA/flica/cat12vbm_N310_FWHM10mm_demeaned_varnorm_MNI2mm.nii.gz']
+	['/data4/jiyang/MW24+SCS_FLICA/flica/?h.g1v0.thickness.10.demeanVarnorm.mgh']
+	['/data4/jiyang/MW24+SCS_FLICA/flica/?h.g1v0.area.pial.10.demeanVarnorm.mgh']
+	['/data4/jiyang/MW24+SCS_FLICA/flica/NBTRwrFLAIRrestore_N310_fwhm5_demean_varnorm_MNI2mm.nii.gz']
 	['/data4/jiyang/MW24+SCS_FLICA/flica/DMN_Zmap_N310_demean_varnorm.nii.gz']
 	['/data4/jiyang/MW24+SCS_FLICA/flica/FPCN_Zmap_N310_demean_varnorm.nii.gz']
-	['/data4/jiyang/MW24+SCS_FLICA/flica/NBTRwrFLAIRrestore_N310_fwhm5_demean_varnorm_MNI2mm.nii.gz']
 };
 
 [Y,fileinfo] = flica_load(Yfiles);
-fileinfo.shortNames = {'vbm','dmn','fpcn','flair'};
+fileinfo.shortNames = {'vbm','thickness','area','flair','dmn','fpcn'};
 
 opts = struct();
-opts.num_components = 70;
+opts.num_components = 100;
 opts.maxits = 1000;
 opts.calcFits = 'all';
 
