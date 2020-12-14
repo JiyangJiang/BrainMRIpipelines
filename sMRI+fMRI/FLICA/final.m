@@ -2,7 +2,7 @@ addpath([getenv('FSLDIR') '/etc/matlab/']);
 addpath ('/home/jiyang/Software/flica_Jmod');
 
 flica_dir= '/data4/jiyang/MW24+SCS_FLICA/new_flica';
-outdir = '/data4/jiyang/MW24+SCS_FLICA/new_flica/d100/';
+outdir = '/data4/jiyang/MW24+SCS_FLICA/new_flica/d70/';
 
 Yfiles = {
 	[flica_dir '/all_cat12vbm_N295_4D_demeanVarnorm.nii.gz']
@@ -20,8 +20,18 @@ Yfiles = {
 fileinfo.shortNames = {'vbm','thickness','area','flair','fa','md','mo','dmn','fpcn'};
 
 opts = struct();
-opts.num_components = 100;
+opts.num_components = 70;
 opts.maxits = 5000;
 opts.calcFits = 'all';
 
 Morig = flica(Y, opts);
+[M,weights] = flica_reorder(Morig);
+flica_save_everything(outdir, M, fileinfo);
+
+clear des
+des.Subject_Index = (1:size(Y{1},2))';
+des.Age = load('/data4/jiyang/MW24+SCS_FLICA/new_flica/covariates/age_N295.txt');
+des.Sex = load('/data4/jiyang/MW24+SCS_FLICA/new_flica/covariates/sex_N295.txt');
+des.Edu = load('/data4/jiyang/MW24+SCS_FLICA/new_flica/covariates/edu_N295.txt');
+des.ICV = load('/data4/jiyang/MW24+SCS_FLICA/new_flica/covariates/cat12icv_N295.txt');
+flica_posthoc_correlations(outdir, des)
