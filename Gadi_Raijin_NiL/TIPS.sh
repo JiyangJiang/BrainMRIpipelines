@@ -1,3 +1,9 @@
+# Gadi - copy/move to mdss
+# ========================
+
+# Ref: https://opus.nci.org.au/display/Help/Massdata+User+Guide
+netcp -l storage=scratch/ey6+gdata/ey6,mem=16gb -C -t backup.tar backup Jiyang # copy w/o removing
+
 
 # ++++++++++++++++++ #
 # Gadi - interactive #
