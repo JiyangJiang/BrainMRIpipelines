@@ -1,3 +1,14 @@
+# KATANA - jobs
+# +++++++++++++
+#!/bin/bash
+#PBS -l select=1:ncpus=2:mem=8gb
+#PBS -l walltime=02:00:00
+#PBS -j oe
+#PBS -N prep
+#PBS -o /srv/scratch/cheba/NiL/UKB/wmh/training_2021SEP06_trainFrom20k/1003977.oe
+
+
+
 # Gadi - copy/move to mdss
 # ========================
 
