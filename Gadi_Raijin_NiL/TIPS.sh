@@ -8,6 +8,11 @@
 #PBS -o /srv/scratch/cheba/NiL/UKB/wmh/training_2021SEP06_trainFrom20k/1003977.oe
 
 
+# KATANA - interactive job
+# ++++++++++++++++++++++++
+qsub -I -l ncpus=2,mem=8gb,walltime=05:00:00
+
+
 
 # Gadi - copy/move to mdss
 # ========================
