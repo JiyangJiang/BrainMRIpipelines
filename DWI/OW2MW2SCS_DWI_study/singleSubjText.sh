@@ -38,13 +38,15 @@ echo "0 1 0 0.00" >> acqparams.txt
 # 3. susceptibility distortion correction with Synb0-DISCO
 cp $path2FSlicense .
 mv T1_optiBET_brain_mask.nii.gz T1_mask.nii.gz
+mkdir INPUTS OUTPUTS
+mv b0.nii.gz T1.nii.gz acqparams.txt T1_mask.nii.gz INPUTS/.
 
 sudo docker run --rm \
--v $(pwd):/INPUTS/ \
--v $(pwd):/OUTPUTS/ \
+-v $(pwd)/INPUTS/:/INPUTS/ \
+-v $(pwd)/OUTPUTS/:/OUTPUTS/ \
 -v $(pwd)/license.txt:/extra/freesurfer/license.txt \
 --user $(id -u):$(id -g) \
-hansencb/synb0
+justinblaber/synb0_25iso
 
 
 
