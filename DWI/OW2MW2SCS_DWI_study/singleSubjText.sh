@@ -1,6 +1,6 @@
 #!/bin/bash
 
-path2FSlicense=/Users/z3402744/Work/test2/100181/license.txt
+path2FSlicense=/home/jiyang/Work/dwi_test/license.txt
 
 # extract b0
 fslroi dwi b0 0 1
