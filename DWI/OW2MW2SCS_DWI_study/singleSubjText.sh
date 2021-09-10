@@ -69,7 +69,7 @@ for ((i=1; i<=$(fslval dwi dim4); i+=1)); do indx="${indx} 1"; done
 echo $indx > index.txt
 
 eddy_openmp --imain=eddy/dwi_den_unr \
-			--mask=eddy/b0_all_topup_Tmean_brain \
+			--mask=eddy/b0_all_topup_Tmean_brain_mask \
 			--acqp=INPUTS/acqparams.txt \
 			--index=index.txt \
 			--bvecs=eddy/dwi_den_unr.bvec \
