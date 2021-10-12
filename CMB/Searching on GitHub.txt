@@ -1,0 +1,13 @@
+1) 3d-multi-resolution-rcnn
++++++++++++++++++++++++++++
+
+URL: https://github.com/arthur801031/3d-multi-resolution-rcnn
+
+local env: Conda env cmb-rcnn on GRID
+
+Prograss:
+2021.09.27 : 	Lack of data/Stroke_v4/COCO-full-vol/annotations/instances_train2019_full.json
+				and details on format of training CMBs - cannot proceed
+
+Comments:
+1) Uses MMdetect

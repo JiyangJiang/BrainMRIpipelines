@@ -25,7 +25,7 @@ netcp -l storage=scratch/ey6+gdata/ey6,mem=16gb -C -t backup.tar backup Jiyang #
 # Gadi - interactive #
 # ++++++++++++++++++ #
 qsub -I -P ey6 -q express -l ncpus=16,mem=64GB,walltime=10:00:00,wd,storage=gdata/ey6,software=matlab_unsw,jobfs=8GB
-qsub -I -P ey6 -q gpuvolta -l ngpus=2,ncpus=24,mem=96GB,walltime=05:00:00,wd,storage=gdata/ey6,software=matlab_unsw,jobfs=8GB
+qsub -I -P ey6 -q gpuvolta -l ngpus=1,ncpus=12,mem=96GB,walltime=10:00:00,wd,storage=gdata/ey6,software=matlab_unsw,jobfs=8GB
 qsub -I -P ey6 -q copyq -l ncpus=1,mem=4GB,walltime=10:00:00,wd,storage=gdata/ey6,software=matlab_unsw
 
 # +++++++++++++++++++ #
