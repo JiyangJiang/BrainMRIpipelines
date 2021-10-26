@@ -1,0 +1,81 @@
+#!/bin/bash
+
+#$ -N UKBB_FS_extract_aseg_aparc
+#$ -V
+#$ -cwd
+#$ -pe smp 1
+#$ -q standard.q
+#$ -l h_vmem=4G
+#$ -o /data3/imaging/UKBB/ukbb_freesurfer/processing/measures/misc/ext.out
+#$ -e /data3/imaging/UKBB/ukbb_freesurfer/processing/measures/misc/ext.err
+#$ -t 1-19336
+
+module load fsl/5.0.11 freesurfer/6.0.0
+
+cd /data3/imaging/UKBB/ukbb_freesurfer/processing
+
+list=/data3/imaging/UKBB/ukbb_freesurfer/processing/measures/misc/fs_list.txt
+
+tar_file=`cat ${list} | awk "NR==${SGE_TASK_ID}"`
+
+if [ -f "/data3/imaging/UKBB/ukbb_freesurfer/processing/${tar_file}" ]; then
+
+	# tmp_dir=/data3/imaging/UKBB/ukbb_freesurfer/processing/measures/misc/tmp
+	tmp_dir=`mktemp -d`
+
+	cp ${tar_file} ${tmp_dir}/.
+
+	cd ${tmp_dir}
+
+	tar xf $(basename ${tar_file})
+
+	export SUBJECTS_DIR=${tmp_dir}
+
+	subjID=`echo $(basename ${tar_file}) | awk -F '.' '{print $1}'`
+
+	quantifyHippocampalSubfields.sh T1 ${subjID}.hipposubf
+
+	asegstats2table --subjects ${subjID} \
+					--meas volume \
+					--tablefile ${subjID}.aseg \
+					--skip \
+					--all-segs
+
+
+	for meas in area thickness volume thicknessstd meancurv gauscurv foldind curvind
+	do
+		aparcstats2table --subjects ${subjID} \
+						 --hemi rh \
+						 --meas ${meas} \
+						 --tablefile ${subjID}.rh.${meas}.aparc \
+						 --skip
+
+		aparcstats2table --subjects ${subjID} \
+						 --hemi lh \
+						 --meas ${meas} \
+						 --tablefile ${subjID}.lh.${meas}.aparc \
+						 --skip
+
+		aparcstats2table --subjects ${subjID} \
+						 --hemi rh \
+						 --meas ${meas} \
+						 --parc=aparc.a2009s \
+						 --tablefile ${subjID}.rh.${meas}.aparc.a2009s \
+						 --skip
+
+		aparcstats2table --subjects ${subjID} \
+						 --hemi lh \
+						 --meas ${meas} \
+						 --parc=aparc.a2009s \
+						 --tablefile ${subjID}.lh.${meas}.aparc.a2009s \
+						 --skip
+	done
+
+	cd /data3/imaging/UKBB/ukbb_freesurfer/processing/measures
+
+	while read meas
+	do
+	mv ${tmp_dir}/${subjID}.${meas} ${meas}/.
+
+	done < ./misc/measure.list
+fi
