@@ -10,15 +10,19 @@
 
 # KATANA - interactive job
 # ++++++++++++++++++++++++
-qsub -I -l ncpus=2,mem=8gb,walltime=05:00:00
+qsub -I -l ncpus=2,mem=16gb,walltime=12:00:00
 
+
+# --=== KATANA oneDrive ===---
+rclone config reconnect myOneDrive:
+rclone mount myOneDrive: /srv/scratch/cheba/NiL/jiyang/1drive --daemon --vfs-cache-mode writes
 
 
 # Gadi - copy/move to mdss
 # ========================
 
 # Ref: https://opus.nci.org.au/display/Help/Massdata+User+Guide
-netcp -l storage=scratch/ey6+gdata/ey6,mem=16gb -C -t backup.tar backup Jiyang # copy w/o removing
+netcp -l storage=scratch/ey6+gdata/ey6,mem=16gb -C -t w2_w3.tar w2_w3 Jiyang/OATS/freesurfer/v7.1.0/recon-all_cross-sectional # copy w/o removing
 
 
 # ++++++++++++++++++ #
