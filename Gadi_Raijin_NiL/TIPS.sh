@@ -22,9 +22,8 @@ rclone mount myOneDrive: /srv/scratch/cheba/NiL/jiyang/1drive --daemon --vfs-cac
 # ========================
 
 # Ref: https://opus.nci.org.au/display/Help/Massdata+User+Guide
-netcp -l storage=scratch/ey6+gdata/ey6,mem=16gb -C -t w2_w3.tar w2_w3 Jiyang/OATS/freesurfer/v7.1.0/recon-all_cross-sectional # copy w/o removing
-mdss get Jiyang/UKB/dti2mni_forJing/fa.tar .    # download from mdss
-mdss put ./ABC.tar Jiyang/UKB/dti2mni_forJing/. # upload   to   mdss
+netcp -l storage=scratch/ey6+gdata/ey6,mem=16gb -C -t w2_w3.tar w2_w3 Jiyang/OATS/freesurfer/v7.1.0/recon-all_cross-sectional # upload to mdss; copy w/o removing
+qsub -P ey6 -q copyq -l ncpus=1,mem=4GB,walltime=10:00:00,wd,storage=gdata/ey6+scratch/ey6+massdata/ey6 -- mdss get Jiyang/UKB/dti2mni_forJing/fa.tar # download from mdss, note no destination is needed
 
 
 # ++++++++++++++++++ #
