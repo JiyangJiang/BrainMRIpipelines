@@ -21,6 +21,7 @@ qsub -I -l ncpus=2,mem=8gb,walltime=05:00:00
 netcp -l storage=scratch/ey6+gdata/ey6,mem=16gb -C -t backup.tar backup Jiyang # copy w/o removing
 
 
+
 # ++++++++++++++++++ #
 # Gadi - interactive #
 # ++++++++++++++++++ #
