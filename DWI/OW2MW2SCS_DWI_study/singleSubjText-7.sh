@@ -16,20 +16,30 @@ mrmath -force [0-9]*/dwi_mask_in_template_space.mif min template/mask_intersecti
 # Compute a template AFD peaks fixel image:
 fod2fixel -force template/wmfod_template.mif -mask template/mask_intersection.mif template/fixel_temp -peak peaks.mif
 
-# VISUALISATION REQUIRED : Next view the peaks file using the fixel plot tool in mrview and identify an appropriate 
-#                          threshold that removes peaks from grey matter, yet does not introduce any ‘holes’ in your 
-#                          white matter.
-#
-# mrview template/wmfod_template.mif => Tools => Fixel plot => open fixel image => select 'template/fixel_temp/peaks.mif'
+# Ref: https://mrtrix.readthedocs.io/en/latest/fixel_based_analysis/mt_fibre_density_cross-section.html (Step 12)
+# fod2fixel -mask template/mask_intersection.mif -fmls_peak_value 0.06 template/wmfod_template.mif template/fixel_mask
 
-# Threshold the peaks fixel image:
-thr1=0.25
+
+
+# 10 Nov 2021
+# Based on ref https://mrtrix.readthedocs.io/en/latest/fixel_based_analysis/mt_fibre_density_cross-section.html,
+# the following steps are not needed.
+#
+
+# # VISUALISATION REQUIRED : Next view the peaks file using the fixel plot tool in mrview and identify an appropriate 
+# #                          threshold that removes peaks from grey matter, yet does not introduce any ‘holes’ in your 
+# #                          white matter.
+# #
+# # mrview template/wmfod_template.mif => Tools => Fixel plot => open fixel image => select 'template/fixel_temp/peaks.mif'
+
+# # Threshold the peaks fixel image:
+thr1=0.20
 mrthreshold -force template/fixel_temp/peaks.mif -abs ${thr1} template/fixel_temp/mask.mif
 
 # Generate an analysis voxel mask from the fixel mask. The median filter in this step should remove spurious voxels outside 
 # the brain, and fill in the holes in deep white matter where you have small peaks due to 3-fibre crossings:
-fixel2voxel -force template/fixel_temp/mask.mif max - | mrfilter - median template/voxel_mask.mif -force
-rm -rf template/fixel_temp
+fixel2voxel -force template/fixel_temp/mask.mif max - | mrfilter - median template/voxel_mask.mif
+# rm -rf template/fixel_temp
 
 # Recompute the fixel mask using the analysis voxel mask. Using the mask allows us to use a lower AFD threshold than possible 
 # in the steps above, to ensure we have included fixels with low AFD inside white matter (e.g. areas with fibre crossings):
