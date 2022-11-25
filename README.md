@@ -1,13 +1,13 @@
-# Jpipe - pipelines for neuroimaging data processing
+# BrainMRIpipelines (BMP) - pipelines for neuroimaging data processing
 
-Jpipe contains pipelines neuroimaging data processing. It includes pipelines for converting DICOM to NIFTI data, and processing structural, diffusion, and functional MRI data. Although the scripts are developed to run on computational resources available at Centre for Healthy Brain Ageing (CHeBA), University of New South Wales, they are written with generalisation in mind. Most of them can be applied to different datasets with different computational resources (multi-core workstations, PBS-based HPC, etc.).
+BrainMRIpipelines contains pipelines neuroimaging data processing. It includes pipelines for converting DICOM to NIFTI data, and processing structural, diffusion, and functional MRI data. Although the scripts are developed to run on computational resources available at Centre for Healthy Brain Ageing (CHeBA), University of New South Wales, they are written with generalisation in mind. Most of them can be applied to different datasets with different computational resources (multi-core workstations, PBS-based HPC, etc.).
 
 **NOTE CURRENT DEVELOPMENT MAINLY ON MULTI-CORE WORKSTATIONS**
 
 
-## 3rd-party software installation
+## Third-party software installation
 
-Jpipe requires the following 3rd party software:
+BrainMRIpipelines requires the following third party software:
 
 - [Dcm2Bids](https://unfmontreal.github.io/Dcm2Bids/)
 - [BIDS-Validator (docker/singularity)](https://github.com/bids-standard/bids-validator)
@@ -18,7 +18,7 @@ Jpipe requires the following 3rd party software:
 
 The workflow for converting DICOM data to BIDS format will run <code>Dcm2Bids</code> and <code>BIDS Validator</code>.
 
-- *Step 1 : converting DICOM to BIDS* Call <code>/path/to/Jpipe/BIDS/Jpipe_dcm2bids.sh</code>. Examples of configuration files for dcm2bids are included in <code>/path/to/Jpipe/BIDS/config_files</code>.
+- *Step 1 : converting DICOM to BIDS* Call <code>/path/to/Jpipe/BIDS/bmp_dcm2bids.sh</code>. Examples of configuration files for dcm2bids are included in <code>/path/to/Jpipe/BIDS/config_files</code>.
 
 
 ## Workflow for structural MRI
