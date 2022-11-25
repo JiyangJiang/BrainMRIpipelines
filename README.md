@@ -18,7 +18,7 @@ BrainMRIpipelines requires the following third party software:
 
 The workflow for converting DICOM data to BIDS format will run <code>Dcm2Bids</code> and <code>BIDS Validator</code>.
 
-- *Step 1 : converting DICOM to BIDS* Call <code>/path/to/Jpipe/BIDS/bmp_dcm2bids.sh</code>. Examples of configuration files for dcm2bids are included in <code>/path/to/Jpipe/BIDS/config_files</code>.
+- *Step 1 : converting DICOM to BIDS* Call <code>/path/to/BrainMRIpipelines/BIDS/bmp_dcm2bids.sh</code>. Examples of configuration files for dcm2bids are included in <code>/path/to/BrainMRIpipelines/BIDS/config_files</code>.
 
 
 ## Workflow for structural MRI
