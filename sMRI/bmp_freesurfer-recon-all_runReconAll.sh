@@ -237,19 +237,19 @@ done
 if [ "${gadi_flag}" -eq 1 ]; then
 	case ${notSubmit_flag} in
 		0)
-			Jpipe_scripts_qsub.sh -g -l ${scrpt_dir}/jobs.list
+			bmp_scripts_qsub.sh -g -l ${scrpt_dir}/jobs.list
 			;;
 		1)
-			Jpipe_scripts_qsub.sh -ns -g -l ${scrpt_dir}/jobs.list
+			bmp_scripts_qsub.sh -ns -g -l ${scrpt_dir}/jobs.list
 			;;
 	esac
 elif [ "${nil_flag}" -eq 1 ]; then
 	case ${notSubmit_flag} in
 		0)
-			Jpipe_scripts_qsub.sh -n -l ${scrpt_dir}/jobs.list
+			bmp_scripts_qsub.sh -n -l ${scrpt_dir}/jobs.list
 			;;
 		1)
-			Jpipe_scripts_qsub.sh -ns -n -l ${scrpt_dir}/jobs.list
+			bmp_scripts_qsub.sh -ns -n -l ${scrpt_dir}/jobs.list
 			;;
 	esac
 fi

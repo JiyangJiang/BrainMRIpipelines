@@ -1,6 +1,0 @@
-#!/bin/bash
-
-
-bids_dir=/data1/work/bids
-
-docker run --rm -it -v ${bids_dir}:/data:ro bids/validator:latest /data --verbose
