@@ -166,7 +166,7 @@ if [ "$install_mriqc" == 1 ]; then
 		echo "[$(date)] : $(basename $0) : Installing MRIQC (version = ${MRIQC_version}) through singularity."
 
 		singularity build $BMP_3RD_PATH/singularity_images/mriqc_${MRIQC_version}.simg \
-					docker://nipreps/mriqc:$MRIQC_version
+								docker://nipreps/mriqc:$MRIQC_version
 
 		echo "[$(date)] : $(basename $0) : MRIQC (version = $MRIQC_version) singularity image has been created."
 		echo "[$(date)] : $(basename $0) : -> $BMP_3RD_PATH/singularity_images/mriqc_${MRIQC_version}.simg"
@@ -178,5 +178,7 @@ if [ "$install_mriqc" == 1 ]; then
 		docker pull nipreps/mriqc:${MRIQC_version}
 
 		echo "[$(date)] : $(basename $0) : MRIQC (version = ${MRIQC_version}) has been installed."
+
+	fi
 
 fi
