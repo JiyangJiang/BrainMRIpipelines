@@ -16,10 +16,9 @@ Jpipe requires the following 3rd party software:
 
 ## Workflow for converting DICOM to BIDS
 
-The workflow for converting DICOM data to BIDS format will run <code>dcm2bids</code> and <code>bids validator</code>. Examples of configuration files for dcm2bids are included in <code>/path/to/Jpipe/BIDS/config_files</code>.
+The workflow for converting DICOM data to BIDS format will run <code>Dcm2Bids</code> and <code>BIDS Validator</code>.
 
-
-### workflow_dicom2bids step 1
+- *Step 1 : converting DICOM to BIDS* Call <code>/path/to/Jpipe/BIDS/Jpipe_dcm2bids.sh</code>. Examples of configuration files for dcm2bids are included in <code>/path/to/Jpipe/BIDS/config_files</code>.
 
 
 ## Workflow for structural MRI
