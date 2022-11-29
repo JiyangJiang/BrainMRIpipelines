@@ -4,23 +4,12 @@ BrainMRIpipelines contains pipelines neuroimaging data processing. It includes p
 
 **NOTE CURRENT DEVELOPMENT MAINLY ON MULTI-CORE WORKSTATIONS**
 
-
-## Third-party software installation
-
-BrainMRIpipelines requires the following third party software:
-
-- [Dcm2Bids](https://unfmontreal.github.io/Dcm2Bids/)
-- [BIDS-Validator (docker/singularity)](https://github.com/bids-standard/bids-validator)
-- [MRIQC (docker/singularity)](https://mriqc.readthedocs.io/en/latest/)
+## Global environment setup
 
 
-## Workflow for converting DICOM to BIDS
+## Workflows
 
-The workflow for converting DICOM data to BIDS format will run <code>Dcm2Bids</code> and <code>BIDS Validator</code>.
+Please go to specific folders for details:
 
-- *Step 1 : converting DICOM to BIDS* Call <code>/path/to/BrainMRIpipelines/BIDS/bmp_dcm2bids.sh</code>. Examples of configuration files for dcm2bids are included in <code>/path/to/BrainMRIpipelines/BIDS/config_files</code>.
-
-
-## Workflow for structural MRI
-
-sMRI workflow includes <code>MRIQC</code>
+- BIDS workflow()
+- sMRI workflow
