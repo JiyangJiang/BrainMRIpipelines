@@ -99,7 +99,6 @@ echo "[$(date)] : $(basename $0) : Setting PATH."
 [ "${PATH#*$BMP_PATH/init:}" == "$PATH" ]      && export PATH="$BMP_PATH/init:$PATH"      # init
 [ "${PATH#*$BMP_PATH/BIDS:}" == "$PATH" ]      && export PATH="$BMP_PATH/BIDS:$PATH"      # BIDS
 [ "${PATH#*$BMP_PATH/sMRI:}" == "$PATH" ]      && export PATH="$BMP_PATH/sMRI:$PATH"      # sMRI
-[ "${PATH#*$BMP_PATH/workflows:}" == "$PATH" ] && export PATH="$BMP_PATH/workflows:$PATH" # workflows
 
 echo "[$(date)] : $(basename $0) : Finished ($?)."
 echo "[$(date)] : $(basename $0) : If you haven't install required third party software, you can call bmp_install.sh to install."
