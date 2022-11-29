@@ -11,5 +11,5 @@ BrainMRIpipelines contains pipelines neuroimaging data processing. It includes p
 
 Please go to specific folders for details:
 
-- BIDS workflow()
-- sMRI workflow
+- [BIDS workflow](https://github.com/JiyangJiang/BrainMRIpipelines/tree/master/BIDS)
+- [sMRI workflow](https://github.com/JiyangJiang/BrainMRIpipelines/tree/master/sMRI)
