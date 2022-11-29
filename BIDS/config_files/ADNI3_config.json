@@ -1,0 +1,21 @@
+{
+    "descriptions": [
+        {
+            "dataType":      "perf",
+            "modalityLabel": "asl",
+            "customLabels":  "desc-raw",
+            "criteria": {
+                "SeriesDescription": "Axial 3D PASL (Eyes Open)"
+            }
+        },
+        {
+            "dataType": "perf",
+            "modalityLabel": "asl",
+            "customLabels": "desc-perfw",
+            "criteria": {
+                "SeriesDescription": "Perfusion_Weighted"
+            }
+        }
+        
+    ]
+}

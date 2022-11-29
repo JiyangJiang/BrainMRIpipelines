@@ -1,13 +1,13 @@
-function bmp_BIDSconverter (varargin)
+function bmp_prepConfig (varargin)
 %
 % DESCRIPTION
 %   
-%   This script aims to convert DICOM into BIDS format.
-%   The first aim is to convert ASL data.
+%   This script aims to output unique values for fields in
+%   DICOM header.
 %
 % USAGE
 %
-%   bmp_BIDSconverter ([<DICOM_directory>], Name, Value, ...)
+%   bmp_prepConfig ([<DICOM_directory>], Name, Value)
 %
 %
 % ARGUMENTS
@@ -20,12 +20,7 @@ function bmp_BIDSconverter (varargin)
 %     Name  : 'KeyFields'.
 %     Value : A cell arry to specify fields in DICOM info to distinguish
 %             different imaging modality. Current default is 
-%             {'ProtocolName'; 'SeriesDescription'}.
-%
-%     Name  : 'Preset'
-%     value : A string to specify if preset will be used. Currently supported
-%             presets include 'ADNI3'. If no preset is to be used, use
-%             'general'.
+%             {'SeriesDescription'}.
 %
 %
 % DEPENDENCIES
@@ -43,24 +38,18 @@ function bmp_BIDSconverter (varargin)
 %   - 
 
 	defaultDICOMdirectory        = pwd;
-	defaultKeyFields             = {'ProtocolName'; 'SeriesDescription'};
-	defaultPreset                = 'general';
-	expectedPreset               = {'general', 'ADNI3'};
+	defaultKeyFields             = {'SeriesDescription'};
 
 	p = inputParser;
 
 	addOptional  (p, 'DICOM_directory',     defaultDICOMdirectory,      @isfolder);
 	addParameter (p, 'KeyFields',           defaultKeyFields,           @iscell);
-	addParameter (p, 'Preset',              defaultPreset,              @(x) any(validatestring(x, expectedPreset)));
 
 	parse (p, varargin{:});
 
 
 	fprintf ('%s : Started (%s).\n', mfilename, string(datetime));
 
-	if ~ strcmp (p.Results.Preset, 'general')
-		[p, descriptions] = preset (p, p.Results.Preset);
-	end
 
 	% Get paths to all DICOM files
 	all_dir = dir (fullfile (p.Results.DICOM_directory, '**'));
@@ -92,39 +81,6 @@ function bmp_BIDSconverter (varargin)
 		end
 	end
 
-
-
-
 	fprintf ('%s : Finished (%s).\n', mfilename, string(datetime));
 end
 
-
-
-% preset
-% ==================================================================
-% currently ASL only.
-%
-% Refs : 
-%
-%    1) https://www.nature.com/articles/s41597-022-01615-9
-%
-% Notes :
-%
-%    1) There is a scaling difference between ASL and M0. It is not
-%       included in BIDS fields, but expected to take into account
-%       when converting to NIFTI (see Ref 1, and 
-%       https://bids-standard.github.io/bids-starter-kit/tutorials/asl.html#)
-function [p, descriptions] = preset (p, coh)
-
-	switch coh
-
-		case 'ADNI3'
-
-			p.Results.KeyFields = {'SeriesDescription'};
-
-			mapping = struct ("descriptions", 	struct ("data_type",       	"perf", ...
-														"M0Type",			"absent", ... % seems no M0 acquired.
-											  			"modalityLabel",  ""));
-	end
-
-end
