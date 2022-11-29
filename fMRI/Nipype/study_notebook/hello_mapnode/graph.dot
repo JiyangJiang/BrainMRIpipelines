@@ -1,9 +1,0 @@
-strict digraph  {
-"a_plus_b (utility)";
-"add_1 (utility)";
-"join_scale_data (utility)";
-"concat_a_b (utility)";
-"a_plus_b (utility)" -> "concat_a_b (utility)";
-"add_1 (utility)" -> "join_scale_data (utility)";
-"concat_a_b (utility)" -> "add_1 (utility)";
-}

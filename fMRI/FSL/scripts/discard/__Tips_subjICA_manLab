@@ -1,6 +1,0 @@
-To pass the noise component to fsl_regfilt
-
-The last line in the label.txt contains the ICs that should be regressed out.
-To pass these ICs to fsl_regfilt:
-
-	tail -1 Rest_EPI.ica/labels.txt | tr --delete [] | sed 's/ //g'

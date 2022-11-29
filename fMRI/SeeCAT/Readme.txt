@@ -1,1 +1,0 @@
-预处理：remove前n个time points
