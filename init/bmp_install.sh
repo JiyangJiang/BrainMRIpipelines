@@ -29,12 +29,14 @@ OPTIONAL :
 
   -v, --bids_validator    <BIDS_Validator_version>    Install BIDS Validator.
 
+  -b, --bids_matlab                                   Install BIDS-MATLAB.
+
   -m, --mriqc             <MRIQC_version>             Install MRIQC.
 
   -s, --singularity                                   Convert docker to singularity.
                                                       Singularity images can then be
                                                       used on HPC.
-
+conda install -c conda-forge octave
   -h, --help                                          Display this message.
 
 
@@ -48,6 +50,11 @@ DEPENDENCIES :
                 (https://github.com/sylabs/singularity/releases)
                 sudo apt install cryptsetup-bin
 
+  - MATLAB
+
+  - parallel (sudo apt-get install parallel)
+
+
 EOF
 
 }
@@ -55,6 +62,7 @@ EOF
 # defaults
 install_dcm2bids=0
 install_bidsvalidator=0
+install_bidsmatlab=0
 install_mriqc=0
 singularity=0
 
@@ -77,6 +85,12 @@ do
 
 			BIDS_Validator_version=$2
 			install_bidsvalidator=1
+			shift
+			;;
+
+		-b|--bids_matlab)
+
+			install_bidsmatlab=1
 			shift
 			;;
 
@@ -152,6 +166,14 @@ if [ "$install_bidsvalidator" == 1 ]; then
 
 	fi
 
+fi
+
+# MATLAB-BIDS
+# ---------------------------------------------------------------------
+# Ref : https://bids-matlab.readthedocs.io/en/latest/general_information.html#installation
+
+if [ "$install_bidsmatlab" == 1 ]; then
+	git clone https://github.com/bids-standard/bids-matlab.git $BMP_3RD_PATH/bids-matlab
 fi
 
 

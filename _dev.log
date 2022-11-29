@@ -1,0 +1,4 @@
+sMRI workflow - up to MRIQC
+              - MRIQC needs to set default additional options.
+              - MRIQC docker needs to run group level.
+              - MRIQC singularity needs to run both participant and group level.

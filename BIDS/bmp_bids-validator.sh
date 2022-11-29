@@ -18,25 +18,27 @@ DESCRIPTION :
 
 USAGE :
 
-  $(basename $0) {-b|--bids_directory} <BIDS_directory> [{-s|--singularity}] [{-d|--docker}]
+  $(basename $0) {-b|--bids_directory} <BIDS_directory> [{-s|--singularity}|{-d|--docker}]
 
 
 COMPULSORY :
 
   -b, --bids_directory    <BIDS_directory>                Path to BIDS directory.
 
-  -s, --singularity       <BIDS_Validator_version>        Use singularity image. Either 
+  -s, --singularity       <BIDS_Validator_version>        Use singularity image with version
+                                                          <BIDS_Validatory_verion>. Either 
                                                           {-s|--singularity} or
                                                           {-d|--docker} needs to be set.
 
-  -d, --docker            <BIDS_Validator_version>        Use docker image. Either 
+  -d, --docker            <BIDS_Validator_version>        Use docker image with version
+                                                          <BIDS_Validatory_verion>. Either 
                                                           {-s|--singularity} or
                                                           {-d|--docker} needs to be set.
 
 
 OPTIONAL :
 
-  -h, --help                                  Display this message.
+  -h, --help                                              Display this message.
 
 
 DEPENDENCIES :
@@ -50,6 +52,7 @@ EOF
 
 use_singularity=0
 use_docker=0
+additionalOptoins=" --verbose"
 
 for arg in $@
 do
@@ -101,8 +104,12 @@ mkdir -p $BIDS_directory/derivatives/bmp/bids-validator
 
 if [ "${use_docker}" == "1" ]; then
 
-	docker run --rm -it -v ${BIDS_directory}:/data:ro bids/validator:${BIDS_Validator_version} /data --verbose \
+	docker run --rm -it -v ${BIDS_directory}:/data:ro bids/validator:${BIDS_Validator_version} /data $additionalOptoins \
 			> $BIDS_directory/derivatives/bmp/bids-validator/bmp_bids-validator.log
+
+	echo "[$(date)] : $(basename $0) : BIDS Validator finished using docker."
+	echo "[$(date)] : $(basename $0) : BIDS Validator can be found in the following path:"
+	echo "[$(date)] : $(basename $0) : -> $BIDS_directory/derivatives/bmp/bids-validator/bmp_bids-validator.log"
 
 elif [ "${use_singularity}" == "1" ]; then
 
@@ -116,12 +123,17 @@ elif [ "${use_singularity}" == "1" ]; then
 				    --bind ${BIDS_directory}:/data:ro \
 				    $BMP_3RD_PATH/singularity_images/bids-validator_${BIDS_Validator_version}.simg \
 				    /data \
+				    $additionalOptoins \
 				    > $BIDS_directory/derivatives/bmp/bids-validator/bmp_bids-validator.log
+
+	echo "[$(date)] : $(basename $0) : BIDS Validator finished using singularity."
+	echo "[$(date)] : $(basename $0) : BIDS Validator can be found in the following path:"
+	echo "[$(date)] : $(basename $0) : -> $BIDS_directory/derivatives/bmp/bids-validator/bmp_bids-validator.log"
 
 fi
 
+num_err=$(grep -ow '\[ERR\]'  $BIDS_directory/derivatives/bmp/bids-validator/bmp_bids-validator.log | wc -l)
+num_war=$(grep -wo '\[WARN\]' $BIDS_directory/derivatives/bmp/bids-validator/bmp_bids-validator.log | wc -l)
+ 
+echo "[$(date)] : $(basename $0) : There were $num_err error(s) and $num_war warning(s)."
 
-## NEED TO DEAL WITH BIDS-VALIDATOR OUTPUT HERE ##
-
-
-echo "[$(date)] : $(basename $0) : Finished running BIDS Validator."
