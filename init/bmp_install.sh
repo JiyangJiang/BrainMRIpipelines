@@ -52,8 +52,6 @@ DEPENDENCIES :
 
   - MATLAB
 
-  - parallel (sudo apt-get install parallel)
-
 
 EOF
 
