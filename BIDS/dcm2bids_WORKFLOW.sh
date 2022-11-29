@@ -41,7 +41,9 @@
 #
 # =============================================================================
 #
-# Dr. Jiyang Jiang, January 2019
+# HISTORY
+#
+# - Jan 2019 : Dr. Jiyang Jiang wrote the first version.
 #
 
 

@@ -25,13 +25,13 @@ COMPULSORY :
 
 OPTIONAL :
 
-  -d, --dcm2bids                                      Install Dcm2Bids.
+  -d, --dcm2bids                                      Install Dcm2Bids (conda).
 
-  -v, --bids_validator    <BIDS_Validator_version>    Install BIDS Validator.
+  -v, --bids_validator    <BIDS_Validator_version>    Install BIDS Validator (docker/singularity).
 
   -b, --bids_matlab                                   Install BIDS-MATLAB.
 
-  -m, --mriqc             <MRIQC_version>             Install MRIQC.
+  -m, --mriqc             <MRIQC_version>             Install MRIQC (docker/singularity).
 
   -s, --singularity                                   Convert docker to singularity.
                                                       Singularity images can then be

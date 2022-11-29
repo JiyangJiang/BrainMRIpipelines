@@ -21,5 +21,7 @@ where <code>/path/to/BrainMRIpipelines</code> and <code>/path/to/install/third-p
 
 Please go to specific folders for details:
 
-- [BIDS workflow](https://github.com/JiyangJiang/BrainMRIpipelines/tree/master/BIDS)
-- [sMRI workflow](https://github.com/JiyangJiang/BrainMRIpipelines/tree/master/sMRI)
+- [Initialisation for BMP](https://github.com/JiyangJiang/BrainMRIpipelines/tree/master/init)
+- [Converting to BIDS](https://github.com/JiyangJiang/BrainMRIpipelines/tree/master/BIDS)
+- [Structural MRI workflow](https://github.com/JiyangJiang/BrainMRIpipelines/tree/master/sMRI)
+- [ASL workflow](https://github.com/JiyangJiang/BrainMRIpipelines/tree/master/ASL)
