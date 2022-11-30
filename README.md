@@ -12,6 +12,8 @@ BMP only works on Unix-based system (Linux, macOS, WSL on Windows). The followin
 
 <code>export BMP_3RD_PATH=/path/to/install/third-party/software</code>
 
+<code>export BMP_TMP_PATH=/path/to/my/temp</code>
+
 <code>source ${BMP_PATH}/init/bmp_init.sh &> /dev/null</code>
 
 

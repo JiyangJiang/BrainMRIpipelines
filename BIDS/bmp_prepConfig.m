@@ -20,7 +20,12 @@ function bmp_prepConfig (varargin)
 %     Name  : 'KeyFields'.
 %     Value : A cell arry to specify fields in DICOM info to distinguish
 %             different imaging modality. Current default is 
-%             {'SeriesDescription'}.
+%             { 
+%               'SeriesDescription'
+%               'ProtocolName'
+%				'SequenceName'
+%				'SeriesNumber'
+%			  }.
 %
 %
 % DEPENDENCIES
@@ -38,7 +43,12 @@ function bmp_prepConfig (varargin)
 %   - 
 
 	defaultDICOMdirectory        = pwd;
-	defaultKeyFields             = {'SeriesDescription'};
+	defaultKeyFields             = {
+									'SeriesDescription'
+									'ProtocolName'
+									'SequenceName'
+									'SeriesNumber'
+									};
 
 	p = inputParser;
 
@@ -64,14 +74,22 @@ function bmp_prepConfig (varargin)
 
 	keyFields = cell (size (all_DICOM, 1), size (p.Results.KeyFields, 1));
 
-	fprintf ('%s : Reading DICOM files ...', mfilename);
+	fprintf ('%s : Reading DICOM files (this takes some time) ...', mfilename);
 	for i = 1 : size (p.Results.KeyFields, 1)
 		for j = 1 : size (all_DICOM, 1)
 			dcm = dicominfo (fullfile (all_DICOM(j).folder, all_DICOM(j).name));
-			keyFields {j,i} = dcm.(p.Results.KeyFields{i,1});
+			if ~isfield (dcm, p.Results.KeyFields{i,1}) || ...
+				isempty (dcm.(p.Results.KeyFields{i,1}))
+				keyFields{j,i} = 'Field not exist or is empty';
+			else
+				keyFields {j,i} = dcm.(p.Results.KeyFields{i,1});
+				if isnumeric (keyFields{j,i}) % convert numbers to strings, otherwise unique function doesn't work
+					keyFields{j,i} = num2str (keyFields{j,i});
+				end
+			end
 		end
 	end
-	fprintf (' DONE.\n');
+	fprintf (' DONE!\n');
 
 	for i = 1 : size (p.Results.KeyFields,1)
 		uniq_val = unique (keyFields (:,i));
@@ -81,6 +99,42 @@ function bmp_prepConfig (varargin)
 		end
 	end
 
+	fprintf ('%s : Note that the following fields do not exist or are empty. They may not be good fields to distinguish modalities.\n', mfilename);
+	for i = 1 : size (p.Results.KeyFields,1)
+		if any (strcmp (keyFields(:,i), 'Field not exist or is empty'))
+			fprintf ('  - %s\n', p.Results.KeyFields{i,1});
+		end
+	end
+
+	fprintf ('%s : The following fields exist for all DICOM files, and can be used to distinguish modalities.\n', mfilename);
+	for i = 1 : size (p.Results.KeyFields,1)
+		if ~ any (strcmp (keyFields(:,i), 'Field not exist or is empty'))
+			fprintf ('  - %s\n', p.Results.KeyFields{i,1});
+		end
+	end
+
 	fprintf ('%s : Finished (%s).\n', mfilename, string(datetime));
 end
 
+
+function json = preset (coh)
+	switch coh
+		case 'ADNI3'
+			json = jsonencode ( struct ("descriptions", [...
+															struct(	...
+																	"dataType",       	"perf", ...
+																	"modalityLabel",	"asl", ...
+																	"customLabels",		"desc-raw", ...
+																	"criteria",			struct ("SeriesDescription",	"Axial 3D PASL (Eyes Open)")...
+																	); ...
+															struct( ...
+																	"dataType",			"perf", ...
+																	"modalityLabel",	"asl", ...
+																	"customLabels",		"desc-perfw", ...
+																	"criteria",			struct ("SeriesDescription",	"Perfusion_Weighted")...
+																	)...
+														]...
+										), ...
+								PrettyPrint=true);
+	end
+end
