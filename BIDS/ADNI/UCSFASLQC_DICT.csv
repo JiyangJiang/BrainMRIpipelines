@@ -1,0 +1,7 @@
+"TBLNAME","CRFNAME","LOGFORM","FLDNAME","TYPE","LENGTH","DECIML","TEXT","UNITS","RANGEVAL","CODE","MC","update_stamp"
+"UCSFASLQC","ASL Perfusion Raw QC","0","PTID","N","-4","-4","Subject Identifier","-4","-4","","-4","2013-02-11 09:43:08.0"
+"UCSFASLQC","ASL Perfusion Raw QC","0","QCRating","T","-4","-4","","-4","-4","Pass/Fail","-4","2013-02-11 09:43:08.0"
+"UCSFASLQC","ASL Perfusion Raw QC","0","QCDate","D","-4","-4","","-4","-4","","-4","2013-02-11 09:43:08.0"
+"UCSFASLQC","ASL Perfusion Raw QC","0","QCComments","T","-4","-4","","-4","-4","","-4","2013-02-11 09:43:08.0"
+"UCSFASLQC","ASL Perfusion Raw QC","0","LONIUID","N","-4","-4","The LONI Series UID for the image reviewed.","-4","-4","","-4","2013-02-18 10:49:21.0"
+"UCSFASLQC","ASL Perfusion Raw QC","0","IMAGEUID","N","-4","-4","The LONI Image UID for the image reviewed.","-4","-4","","-4","2013-02-18 10:49:21.0"

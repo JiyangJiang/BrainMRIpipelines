@@ -1,46 +1,71 @@
 function bmp_prepConfig (varargin)
 %
+% ============================================================  
 % DESCRIPTION
-%   
-%   This script aims to output unique values for fields in
-%   DICOM header.
+% ============================================================  
+%   This script aims to enquire unique values for fields in
+%   DICOM header. Results can be used to create configuration
+%   files.
 %
+% ============================================================
 % USAGE
+% ============================================================
+%   bmp_prepConfig ([<DICOM_directory>], [Name, Value])
 %
-%   bmp_prepConfig ([<DICOM_directory>], Name, Value)
-%
-%
+% ============================================================  
 % ARGUMENTS
-%
+% ============================================================
 %   DICOM_directory = Path to DICOM directory. Default is
 %                     pwd.
 %
 %   Name-Value pairs
 %
 %     Name  : 'KeyFields'.
-%     Value : A cell arry to specify fields in DICOM info to distinguish
-%             different imaging modality. Current default is 
+%
+%     Value : A cell arry to specify fields in DICOM info to 
+%             distinguish different imaging modality. Current 
+%             default is 
 %             { 
 %               'SeriesDescription'
 %               'ProtocolName'
-%				'SequenceName'
-%				'SeriesNumber'
-%			  }.
+%               'SequenceName'
+%               'SeriesNumber'
+%             }.
 %
+% ============================================================
+% OUTPUTS
+% ============================================================
+%   Enquiry results will be displayed in MATLAB
+%   Command Window.
 %
+% ============================================================  
+% EXAMPLES
+% ============================================================  
+%   bmp_prepConfig
+%
+%   bmp_prepConfig ('KeyFields', {'SeriesDescription'})
+%
+%   bmp_prepConfig ('/path/to/DICOM')
+%
+%   bmp_prepConfig ('/path/to/DICOM', ...
+%           'KeyFields', {'SeriesDescription';'Seriesnumber'})
+%
+% ============================================================
 % DEPENDENCIES
-% 
-%   Image Processing Toolbox
+% ============================================================
+%   - Image Processing Toolbox
 %
-%
+% ============================================================  
 % HISTORY
-%
+% ============================================================
 %   29 Nov 2022 - Jiyang Jiang wrote the first version.
 %
+% ============================================================  
+% KNOWN ISSUES
+% ===========================================================
+%   None.
 %
-% FUTURE DEV
-%   
-%   - 
+
 
 	defaultDICOMdirectory        = pwd;
 	defaultKeyFields             = {
@@ -116,25 +141,3 @@ function bmp_prepConfig (varargin)
 	fprintf ('%s : Finished (%s).\n', mfilename, string(datetime));
 end
 
-
-function json = preset (coh)
-	switch coh
-		case 'ADNI3'
-			json = jsonencode ( struct ("descriptions", [...
-															struct(	...
-																	"dataType",       	"perf", ...
-																	"modalityLabel",	"asl", ...
-																	"customLabels",		"desc-raw", ...
-																	"criteria",			struct ("SeriesDescription",	"Axial 3D PASL (Eyes Open)")...
-																	); ...
-															struct( ...
-																	"dataType",			"perf", ...
-																	"modalityLabel",	"asl", ...
-																	"customLabels",		"desc-perfw", ...
-																	"criteria",			struct ("SeriesDescription",	"Perfusion_Weighted")...
-																	)...
-														]...
-										), ...
-								PrettyPrint=true);
-	end
-end

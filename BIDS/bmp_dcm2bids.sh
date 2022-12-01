@@ -138,6 +138,7 @@ $(bmp_convention.sh --usage_section_title)OPTIONAL :$(bmp_shellColour.sh --reset
 $(bmp_convention.sh --usage_section_title)DEPENDENCIES :$(bmp_shellColour.sh --reset)
 
   - Dcm2Bids (bmp_install.sh --dcm2bids)
+  
 
 EOM
 )"
