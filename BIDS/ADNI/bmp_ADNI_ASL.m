@@ -1,6 +1,6 @@
 %
 % STRATEGY TO GET BIDS SESSION LABEL
-% =======================================
+% ==============================================================================================================
 %
 % [DICOM]:PatientID/PatientName.FamilyName                    <->  SUBJECT:[MRILIST.csv]:SERIESID <->  LONIUID:[UCSF FS ASL 15/22]:VISCODE2  <-> [session label in BIDS]
 %                                                                          [MRILIST.csv]:IMAGEUID <-> IMAGEUID:[UCSF FS ASL 15/22]:VISCODE2  <-> [session label in BIDS]
@@ -8,10 +8,11 @@
 %
 %
 % KNOWN ISSUES
-% =======================================
+% ==============================================================================================================
 %
 % - How to use UCSFASLQC.csv?
 %
+% ==============================================================================================================
 
 % MRI list (MRILIST.csv)
 mri_list_opts = detectImportOptions ('MRILIST.csv');
