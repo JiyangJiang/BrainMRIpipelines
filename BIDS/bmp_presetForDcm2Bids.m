@@ -1,4 +1,4 @@
-function json = bmp_presetConfig (dataset)
+function json = bmp_presetForDcm2Bids (dataset)
 %
 % ============================================================
 % DESCRIPTION
@@ -14,7 +14,7 @@ function json = bmp_presetConfig (dataset)
 % ============================================================
 % USAGE
 % ============================================================
-%   json = bmp_presetConfig (dataset)
+%   json = bmp_presetForDcm2Bids (dataset)
 %
 % ============================================================
 % ARGUMENTS

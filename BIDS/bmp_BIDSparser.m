@@ -1,4 +1,4 @@
-function bmp_bidsmatlab (BIDS_directory)
+function bmp_BIDSparser (BIDS_directory)
 %
 % DESCRIPTION
 % ======================================================
