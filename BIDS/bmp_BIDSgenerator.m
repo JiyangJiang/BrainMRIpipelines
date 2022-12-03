@@ -17,7 +17,7 @@ function bmp_BIDSgenerator (varargin)
 %   - Dataset-level mapping : All subjects in the dataset share the same criteria 
 %                             for a modality.
 %
-%   - Hybrid-level mapping : A sub-group in the dataset shares a set of criteria.
+%   - Subgroup-level mapping : A sub-group in the dataset shares a set of criteria.
 %
 %
 %

@@ -4,13 +4,20 @@ This workflow contains a few scripts and preset configuration files to convert D
 
 ## Required third-party software
 
-- [Dcm2Bids](https://unfmontreal.github.io/Dcm2Bids/)
 - [BIDS-Validator (docker/singularity)](https://github.com/bids-standard/bids-validator)
 - MATLAB (Image Processing Toolbox)
 - BIDS-MATLAB
 
-## Converting DICOM to BIDS
+## Optional third-party software
 
-### Preset configuration files
+- [Dcm2Bids](https://unfmontreal.github.io/Dcm2Bids/) (if Dcm2Bids is preferred for DICOM-to-BIDS conversion).
+
+## Enquiring DICOM information
+
+## Generating BIDS directory
+
+## Validating BIDS directory
 
 ## Parsing BIDS directory
+
+## Presets for public datasets

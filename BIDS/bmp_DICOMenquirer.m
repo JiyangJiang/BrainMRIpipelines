@@ -3,13 +3,14 @@ function varargout = bmp_DICOMenquirer (varargin)
 % DESCRIPTION
 % ===================================================================================
 %   This script aims to enquire information stored in DICOM header. The script also
-%   tries to make some guesses/suggestions to map DICOM to BIDS.
+%   generates suggested possible DICOM key fields to construct DICOM-to-BIDS mapping, 
+%   and unique values in the key fields. The outputs can then be used in
+%   'bmp_DICOMtoBIDSmapper' to create DICOM-to-BIDS mapping.
 %
 % USAGE
 % ===================================================================================
 %   [suggested_field_names, ...
-%    unique_val_in_fields, ...
-%    suggested_DICOM2BIDS_struct] = bmp_DICOMenquirer ([<DICOM_directory>], ...
+%    unique_val_in_fields] = bmp_DICOMenquirer ([<DICOM_directory>], ...
 %                                                                  [Name, Value])
 %
 % ARGUMENTS
@@ -36,9 +37,6 @@ function varargout = bmp_DICOMenquirer (varargin)
 %   varargout{2} = vertical cell array of cell arrays of unique values in suggested 
 %                  fields.
 %
-%   varargout{3} = suggested DICOM-to-BIDS mapping.
-%
-%
 %   Enquiry results will also be displayed in MATLAB Command Window.
 %
 % 
@@ -53,7 +51,7 @@ function varargout = bmp_DICOMenquirer (varargin)
 %   bmp_DICOMenquirer ('/path/to/DICOM', ...
 %           'KeyFields', {'SeriesDescription';'Seriesnumber'});
 %
-%   [fname,fval,D2B] = bmp_DICOMenquirer;
+%   [fname,fval] = bmp_DICOMenquirer;
 %
 % 
 %
@@ -153,43 +151,6 @@ function varargout = bmp_DICOMenquirer (varargin)
 			varargout{2}{end+1,1} = all_uniq_val{i,1};
 		end
 	end
-
-	fnam_arr = varargout{1};
-	fval_arr = varargout{2};
-
-
-	% Make guesses
-	fprintf ('%s : Trying to suggest field(s) for DICOM-to-BIDS convertion.\n', mfilename);
-	fprintf ('%s : ''SeriesDescription'' is prioritised from our experience.\n', mfilename);
-
-	if any (strcmp (fnam_arr, 'SeriesDescription'))
-
-		fprintf ('%s : ''SeriesDescription'' is found.\n', mfilename);
-
-		fnam = 'SeriesDescription';
-		fval = fval_arr{find (strcmp (fnam_arr, 'SeriesDescription')),1};
-
-		for i = 1 : size (fval,1)
-			if contains (fval{i,1}, 'MPRAGE', IgnoreCase=true)
-				fprintf ('%s : Substring ''MPRAGE'' (case-insensitive) exists in ''%s''. I guess this is T1w.\n', mfilename, fval{i,1});
-				% NEED A VARIABLE TO RECORD
-			end
-			if contains (fval{i,1}, 'T1', IgnoreCase=true)
-				fprintf ('%s : Substring ''T1'' (case-insensitive) exists in ''%s''. I guess this is T1w.\n', mfilename, fval{i,1});
-			end
-		end
-
-		% IF MULTIPLE FVAL FOR ONE MODALITY - QUIT - NOTHING CAN BE DONE FOR NOW.
-	end
-
-
-	% suggest DICOM2BIDS for bmp_BIDSgenerator
-	fprintf ('%s : Making suggestions for DICOM2IDS for bmp_BIDSgenerator.\n', mfilename);
-	fprintf ('%s : These suggestions may only work for cross-sectional data (i.e., single session).\n', mfilename);
-
-
-	% CONSTRUCT DICOM2BIDS
-
 
 	fprintf ('%s : Finished (%s).\n', mfilename, string(datetime));
 end
