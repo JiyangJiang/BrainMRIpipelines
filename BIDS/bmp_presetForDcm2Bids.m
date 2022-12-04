@@ -41,7 +41,7 @@ function json = bmp_presetForDcm2Bids (dataset)
 % ============================================================
 % HISTORY
 % ============================================================
-%   01 Dec 2022 - Jiyang Jiang wrote the first version.
+%   01 Dec 2022 - first version.
 %
 % ============================================================
 % KNOWN ISSUES

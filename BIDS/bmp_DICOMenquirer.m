@@ -2,19 +2,23 @@ function varargout = bmp_DICOMenquirer (varargin)
 %
 % DESCRIPTION
 % ===================================================================================
+%
 %   This script aims to enquire information stored in DICOM header. The script also
 %   generates suggested possible DICOM key fields to construct DICOM-to-BIDS mapping, 
 %   and unique values in the key fields. The outputs can then be used in
 %   'bmp_DICOMtoBIDSmapper' to create DICOM-to-BIDS mapping.
 %
+%
 % USAGE
 % ===================================================================================
-%   [suggested_field_names, ...
-%    unique_val_in_fields] = bmp_DICOMenquirer ([<DICOM_directory>], ...
-%                                                                  [Name, Value])
+%
+%   [suggested_field_names, unique_val_in_fields] ...
+%           = bmp_DICOMenquirer ([<DICOM_directory>], [Name, Value])
+%
 %
 % ARGUMENTS
 % ===================================================================================
+%
 %   DICOM_directory = Path to DICOM directory. Default is pwd.
 %
 %   Name-Value pairs
@@ -30,8 +34,10 @@ function varargout = bmp_DICOMenquirer (varargin)
 %               'SeriesNumber'
 %             }.
 %
+%
 % OUTPUTS
 % ===================================================================================
+%
 %   varargout{1} = vertical cell array of suggested field names.
 %
 %   varargout{2} = vertical cell array of cell arrays of unique values in suggested 
@@ -42,6 +48,7 @@ function varargout = bmp_DICOMenquirer (varargin)
 % 
 % EXAMPLES
 % ===================================================================================
+%
 %   bmp_DICOMenquirer;
 %
 %   bmp_DICOMenquirer ('KeyFields', {'SeriesDescription'});
@@ -57,17 +64,20 @@ function varargout = bmp_DICOMenquirer (varargin)
 %
 % DEPENDENCIES
 % ===================================================================================
+%
 %   - Image Processing Toolbox
 %
 % 
 % HISTORY
 % ===================================================================================
-%   29 Nov 2022 - Jiyang Jiang wrote the first version.
+%
+%   29 Nov 2022 - first version.
 %
 % 
 %
 % KNOWN ISSUES
 % ===================================================================================
+%
 %   None.
 %
 

@@ -1,22 +1,48 @@
 %
+% DESCRIPTION
+% ==============================================================================================================
+%
+% This script manipulates CSV files of ADNI study data downloaded from ADNI website
+% https://ida.loni.usc.edu/pages/access/studyData.jsp?project=ADNI, for generating DICOM-to-BIDS mappings and
+% clinical data for statistical analyses.
+% --------------------------------------
+%                  ^
+%                  |
+%                  ------------- To be developed.
+%
+%
+%
 % STRATEGY TO GET BIDS SESSION LABEL
 % ==============================================================================================================
 %
-% [DICOM]:PatientID/PatientName.FamilyName                    <->  SUBJECT:[MRILIST.csv]:SERIESID <->  LONIUID:[UCSF FS ASL 15/22]:VISCODE2  <-> [session label in BIDS]
-%                                                                          [MRILIST.csv]:IMAGEUID <-> IMAGEUID:[UCSF FS ASL 15/22]                          /\
-%                                                                          [MRILIST.csv]                                                                    ||
-%                                                                                                                                               explanation of session
-% [DICOM]:StudyDate/SeriesDate/AcquisitionDate/ContentDate     <-------------------------------------> EXAMDATE:[UCSF FS ASL 15/22]              label code can be found
-%                                                                                                                                               in [VISITS.csv].
+% [DICOM]:PatientID/PatientName.FamilyName <----------->  SUBJECT:[MRILIST.csv]:SERIESID <--> LONIUID:[UCSF FS ASL 15/22]:VISCODE2  <-> [session label in BIDS]
+%                                                                 [MRILIST.csv]:IMAGEUID <-> IMAGEUID:[UCSF FS ASL 15/22]                          /\
+%                                                                                                     [UCSF FS ASL 15/22]                          ||
+% [DICOM]:StudyDate/SeriesDate/AcquisitionDate/ContentDate <-------------------------------> EXAMDATE:[UCSF FS ASL 15/22]              explanation of session
+%                                                                                                                                      label code can be found
+%                                                                                                                                      in [VISITS.csv].
 %
+%
+%
+%
+% HISTORY
+% ==============================================================================================================
+%
+% 02 December 2022 - first version, considering MRLIST.csv, UCSFASLFS_11_02_15_V2.csv, and 
+%                    UCSFASLFSCBF_08_17_22.csv.
+%
+% 04 December 2022 - Taking UCSFASLQC.csv into consideration.
 %
 %
 % KNOWN ISSUES
 % ==============================================================================================================
 %
-% - How to use UCSFASLQC.csv?
+% - UCSFASLQC.csv has PTID (i.e., SUBJECT_ID), LONIUID, IMAGEUID, and QCRating, but not VISCODE or scan date. 
+%   How should session label be identified? Perhaps need to decide possible session label depending on QCDate.
+%
 %
 % ==============================================================================================================
+
 
 % MRI list (MRILIST.csv)
 mri_list_opts = detectImportOptions ('CSV_files_from_ADNI_website/MRILIST.csv');
@@ -42,6 +68,9 @@ ucsf_asl_qc_opts.ImportErrorRule = 'error';
 ucsf_asl_qc_opts.ExtraColumnsRule = 'error';
 
 ucsf_asl_qc = readtable ('CSV_files_from_ADNI_website/UCSFASLQC_Jmod2.csv', ucsf_asl_qc_opts);
+
+ucsf_asl_qc.Properties.VariableNames(find(strcmp(ucsf_asl_qc.Properties.VariableNames,'PTID'))) = {'SUBJECT_ID'};
+ucsf_asl_qc.Properties.VariableNames(find(strcmp(ucsf_asl_qc.Properties.VariableNames,'QCRating'))) = {'QC'};
 
 
 % UCSF ASL FreeSurfer 11_02_15 V2 (UCSFASLFS_11_02_15_V2.csv)
@@ -128,29 +157,69 @@ ucsf_asl_fs_all_2use.('QC')(find(strcmp(ucsf_asl_fs_all_2use.('QC'), 'TRUE')))  
 % THEREFORE, USE IMAGEUID AS THE MAIN KEY TO MATCH.
 %
 
-asl_final_table = outerjoin (mri_list_2use, ucsf_asl_fs_all_2use, 	'Keys', 		'IMAGEUID', ...
-																	'Mergekeys',	true, ...
-																	'Type',			'right');
+ASL_table_temp = outerjoin (mri_list_2use, ucsf_asl_fs_all_2use, 	'Keys', 		{'IMAGEUID','LONIUID'}, ...
+																		'MergeKeys',	true, ...
+																		'Type',			'right');
 
+ASL_table = outerjoin (ucsf_asl_qc, ASL_table_temp, 	'Keys',		{'IMAGEUID', 'LONIUID', 'SUBJECT_ID'}, ...
+																	'MergeKeys',true);
 
 %
-% There are 2 entries with empty SUBJECT_ID and SCANDATE from MRILIST.csv
+% There are 2 entries with empty SUBJECT_ID and SCANDATE
 %
 %
-% >> asl_final_table(find(strcmp(asl_final_table.('SUBJECT_ID'),'')),:)
+%  >> find(cellfun(@isempty,ASL_table.('SUBJECT_ID')))
 
 % ans =
 
-%   2×8 table
+%     22
+%    126
 
-%     SUBJECT_ID    SCANDATE    LONIUID_mri_list_2use     IMAGEUID      LONIUID_ucsf_asl_fs_all_2use    VISCODE     EXAMDATE        QC   
-%     __________    ________    _____________________    ___________    ____________________________    _______    __________    ________
 
-%     {0×0 char}      NaT            {0×0 char}          {'1021030'}             {'704606'}             {'sc' }    2018-07-13    {'Pass'}
-%     {0×0 char}      NaT            {0×0 char}          {'1224549'}             {'871489'}             {'m78'}    2019-09-06    {'Pass'}
+
+% >> ASL_table(find(cellfun(@isempty,ASL_table.('SUBJECT_ID'))),:)
+
+% ans =
+
+%   2×9 table
+
+%     SUBJECT_ID     LONIUID       IMAGEUID      QC_ucsf_asl_qc    QCDate    SCANDATE    VISCODE     EXAMDATE     QC_ASL_table_temp
+%     __________    __________    ___________    ______________    ______    ________    _______    __________    _________________
+
+%     {0×0 char}    {'704606'}    {'1021030'}      {0×0 char}       NaT        NaT       {'sc' }    2018-07-13        {'Pass'}     
+%     {0×0 char}    {'871489'}    {'1224549'}      {0×0 char}       NaT        NaT       {'m78'}    2019-09-06        {'Pass'} 
 %
 %
 % THEREFORE, USE EXAMDATE FROM UCSF_ASL_FS FILES AS PRIMARY FIELD TO MATCH DICOM, SUPPLEMENTED BY SUBJECT_ID
 %
+%
+% 04Dec2022 update : These two subjects do not exist in UCSFASLQC.csv file either.
+%
 
-save ('bmp_asl_final.mat', 'asl_final_table');
+SID_arr = ASL_table.('SUBJECT_ID');
+SID_arr(find(strcmp(SID_arr,''))) = {'UNKNOWN'};
+
+LONIUID_arr = ASL_table.('LONIUID');
+
+IMAGEUID_arr = ASL_table.('IMAGEUID');
+
+QC_arr = ASL_table.('QC_ASL_table_temp');
+QC_arr(find(cellfun(@isempty,QC_arr))) = ASL_table.('QC_ucsf_asl_qc')(find(cellfun(@isempty,QC_arr)));
+
+QCDATE_arr = erase(cellstr(ASL_table.('QCDate')),'-');
+QCDATE_arr(find(strcmp(QCDATE_arr,'NaT'))) = {'UNKNOWN'};
+
+SCANDATE_arr = erase(cellstr(ASL_table.('SCANDATE')),'-'); 	% SCANDATE is datetime array
+																	% therefore cellstr() to convert to string
+																	% erase '-' as scandate in DICOM header does not have '-'
+SCANDATE_arr(find(strcmp(SCANDATE_arr,'NaT'))) = cellstr(ASL_table.('EXAMDATE')(find(strcmp(SCANDATE_arr,'NaT'))));
+SCANDATE_arr(find(strcmp(SCANDATE_arr,'NaT'))) = {'UNKNOWN'};
+
+VISCODE_arr = ASL_table.('VISCODE');
+VISCODE_arr(find(strcmp(VISCODE_arr,''))) = {'UNKNOWN'};
+
+ADNI_ASL_table = table (SID_arr, LONIUID_arr, IMAGEUID_arr, SCANDATE_arr, QC_arr, QCDATE_arr, VISCODE_arr);
+
+ADNI_ASL_table.Properties.VariableNames = {'SID','LONIUID','IMAGEUID','SCANDATE','QC','QCDATE','VISCODE'};
+
+save ('bmp_ADNI_ASL.mat', 'ADNI_ASL_table');

@@ -12,7 +12,11 @@ This workflow contains a few scripts and preset configuration files to convert D
 
 - [Dcm2Bids](https://unfmontreal.github.io/Dcm2Bids/) (if Dcm2Bids is preferred for DICOM-to-BIDS conversion).
 
+## BMP's strategies for DICOM-to-BIDS mapping
+
 ## Enquiring DICOM information
+
+## Creating DICOM-to-BIDS mapping
 
 ## Generating BIDS directory
 
