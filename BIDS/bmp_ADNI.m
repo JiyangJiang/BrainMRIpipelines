@@ -91,6 +91,7 @@ function DICOM2BIDS = bmp_ADNI (operation_mode, varargin)
 			for i = 1 : size (ADNI_ASL, 1)
 
 				fprintf ('%s : Index %d of %d.\n', mfilename, i, size(ADNI_ASL,1));
+				
 
 				% subject label
 				DICOM2BIDS(i).subject = ['sub-ADNI' erase(ADNI_ASL.SID{i,1}, '_')];
@@ -120,6 +121,7 @@ function DICOM2BIDS = bmp_ADNI (operation_mode, varargin)
 				% BIDS - FLAIR
 				DICOM2BIDS(i).anat.FLAIR.BIDS.acquisition = 'sagittal3DFLAIR';
 				DICOM2BIDS(i).anat.FLAIR.BIDS.session = ADNI_ASL.VISCODE{i};
+
 
 			end
 
