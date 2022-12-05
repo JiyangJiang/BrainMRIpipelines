@@ -5,7 +5,7 @@ BrainMRIpipelines contains pipelines neuroimaging data processing. It includes p
 
 ## Global environment setup
 
-BMP only works on Unix-based system (Linux, macOS, WSL on Windows). The following parameters need to be included in <code>~/.bashrc</code>:
+BMP only works on Unix-based system (Linux, macOS, WSL on Windows). The following parameters need to be included in <code>~/.bashrc</code> (Linux) or <code>~/.bash_profile</code> (macOS):
 
 
 <code>export BMP_PATH=/path/to/BrainMRIpipelines</code>
@@ -14,10 +14,18 @@ BMP only works on Unix-based system (Linux, macOS, WSL on Windows). The followin
 
 <code>export BMP_TMP_PATH=/path/to/my/temp</code>
 
+<code>export PATH=$BMP_PATH/init:$PATH</code>
+
 <code>source ${BMP_PATH}/init/bmp_init.sh &> /dev/null</code>
 
 
 where <code>/path/to/BrainMRIpipelines</code> and <code>/path/to/install/third-party/software</code> need to be replaced with the path to BrainMRIpipelines and the path to install third-party software, respectively.
+
+
+## Set MATLAB paths
+
+<code>Set Path - Add with Subfolders ... - Select BrainMRIpipelines folder</code>. This will be automatically configured in <code>bmp_init.sh</code> in the future.
+
 
 ## Workflows
 

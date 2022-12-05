@@ -9,7 +9,7 @@ usage() {
 
 cat << EOF
 
-$(basename $0)
+bmp_init.sh
 
 
 DESCRIPTION :
@@ -19,7 +19,7 @@ DESCRIPTION :
 
 USAGE :
 
-  $(basename $0) [{-b|--bmp_directory} <BMP_directory> {-t|-third_directory} <third_directory>]
+  bmp_init.sh [{-b|--bmp_directory} <BMP_directory> {-t|-third_directory} <third_directory>]
 
 
 COMPULSORY :
@@ -54,7 +54,7 @@ EOF
 }
 
 
-echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Started.$(bmp_shellColour.sh --reset)"
+echo -e "$(bmp_convention.sh --text_normal)[$(date)] : bmp_init.sh : Started.$(bmp_shellColour.sh --reset)"
 
 for arg in $@
 do
@@ -89,8 +89,8 @@ do
 
 		-*|--*)
 
-			echo "[$(date)] : $(basename $0) : Unknown flag $arg"
-			echo "[$(date)] : $(basename $0) : "
+			echo "[$(date)] : bmp_init.sh : Unknown flag $arg"
+			echo "[$(date)] : bmp_init.sh : "
 			usage
 			exit 1
 			;;
@@ -98,26 +98,27 @@ do
 	esac
 done
 
-[ -z ${BMP_PATH:+x} ]     && echo -e "$(bmp_convention.sh --text_error)[$(date)] : $(basename $0) : BMP_PATH is not set.$(bmp_shellColour.sh --reset)"     && exit 1
-[ -z ${BMP_3RD_PATH:+x} ] && echo -e "$(bmp_convention.sh --text_error)[$(date)] : $(basename $0) : BMP_3RD_PATH is not set.$(bmp_shellColour.sh --reset)" && exit 1
+[ -z ${BMP_PATH:+x} ]     && echo -e "$(bmp_convention.sh --text_error)[$(date)] : bmp_init.sh : BMP_PATH is not set.$(bmp_shellColour.sh --reset)"     && exit 1
+[ -z ${BMP_3RD_PATH:+x} ] && echo -e "$(bmp_convention.sh --text_error)[$(date)] : bmp_init.sh : BMP_3RD_PATH is not set.$(bmp_shellColour.sh --reset)" && exit 1
 
 if [ -z ${BMP_TMP_PATH:+x} ]; then
 	BMP_TMP_PATH=`mktemp -d -t bmp.XXX`
 	export $BMP_TMP_PATH
-	echo -e "$(bmp_convention.sh --text_warning)[$(date)] : $(basename $0) : BMP_TMP_PATH is not set. Created one at $BMP_TMP_PATH.$(bmp_shellColour.sh --reset)"
+	echo -e "$(bmp_convention.sh --text_warning)[$(date)] : bmp_init.sh : BMP_TMP_PATH is not set. Created one at $BMP_TMP_PATH.$(bmp_shellColour.sh --reset)"
 fi
 
 # print BMP_PATH and BMP_3RD_PATH
-echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : BMP directory is set to $BMP_PATH.$(bmp_shellColour.sh --reset)"
-echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : BMP 3rd party software directory is set to $BMP_3RD_PATH.$(bmp_shellColour.sh --reset)"
-echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : BMP temporary directory is set to $BMP_TMP_PATH.$(bmp_shellColour.sh --reset)"
+echo -e "$(bmp_convention.sh --text_normal)[$(date)] : bmp_init.sh : BMP directory is set to $BMP_PATH.$(bmp_shellColour.sh --reset)"
+echo -e "$(bmp_convention.sh --text_normal)[$(date)] : bmp_init.sh : BMP 3rd party software directory is set to $BMP_3RD_PATH.$(bmp_shellColour.sh --reset)"
+echo -e "$(bmp_convention.sh --text_normal)[$(date)] : bmp_init.sh : BMP temporary directory is set to $BMP_TMP_PATH.$(bmp_shellColour.sh --reset)"
 
 # add relevant path to PATH
-echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Setting PATH.$(bmp_shellColour.sh --reset)"
+echo -e "$(bmp_convention.sh --text_normal)[$(date)] : bmp_init.sh : Setting PATH.$(bmp_shellColour.sh --reset)"
 
 [ "${PATH#*$BMP_PATH/init:}" == "$PATH" ] && export PATH="$BMP_PATH/init:$PATH"      # init
 [ "${PATH#*$BMP_PATH/BIDS:}" == "$PATH" ] && export PATH="$BMP_PATH/BIDS:$PATH"      # BIDS
 [ "${PATH#*$BMP_PATH/sMRI:}" == "$PATH" ] && export PATH="$BMP_PATH/sMRI:$PATH"      # sMRI
 
-echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Finished ($?)."
-echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : If you haven't install required third party software, you can call bmp_install.sh to install.$(bmp_shellColour.sh --reset)"
+
+echo -e "$(bmp_convention.sh --text_normal)[$(date)] : bmp_init.sh : Finished ($?)."
+echo -e "$(bmp_convention.sh --text_normal)[$(date)] : bmp_init.sh : If you haven't install required third party software, you can call bmp_install.sh to install.$(bmp_shellColour.sh --reset)"

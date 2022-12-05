@@ -37,16 +37,16 @@ function DICOM2BIDS = bmp_ADNI (operation_mode, varargin)
 %   bmp_ADNI can be ran in two modes:
 %
 %     'create'   mode : This mode is used to generate DICOM-to-BIDS mappings, and save
-%                       the mappings in a ADNI.mat file. In this mode, pass 'create'
-%                       to the argument 'operation_mode', and /path/to/save/ADNI.mat to
-%                       varargin{1}. If varargin{1} is not specified, default value
-%                       /path/to/BrainMRIpipelines/BIDS/ADNI.mat will be used.
-%
-%     'retrieve' mode : This mode load the previously created ADNI.mat file to 
-%                       retrieve the predefiend mappings. In this mode, pass 'retrieve'
-%                       to the argument 'operation_mode', and /path/to/retrieve/ADNI.mat 
+%                       the mappings in a .mat file. In this mode, pass 'create'
+%                       to the argument 'operation_mode', and /path/to/save/XXX.mat
 %                       to varargin{1}. If varargin{1} is not specified, default value
-%                       /path/to/BrainMRIpipelines/BIDS/ADNI.mat will be used.
+%                       /path/to/BrainMRIpipelines/BIDS/bmp_ADNI.mat will be used.
+%
+%     'retrieve' mode : This mode load the previously created .mat file to retrieve the 
+%                       predefiend mappings. In this mode, pass 'retrieve'
+%                       to the argument 'operation_mode', and /path/to/retrieve/XXX.mat 
+%                       to varargin{1}. If varargin{1} is not specified, default value
+%                       /path/to/BrainMRIpipelines/BIDS/bmp_ADNI.mat will be used.
 %
 %
 % SUPPORTED MODALITIES
@@ -58,7 +58,7 @@ function DICOM2BIDS = bmp_ADNI (operation_mode, varargin)
 % HISTORY
 % ====================================================================================
 %
-%   04 December 2022 - first version.
+%   05 December 2022 - first version.
 %
 %
 % KNOWN ISSUES
@@ -70,64 +70,83 @@ function DICOM2BIDS = bmp_ADNI (operation_mode, varargin)
 
 		case 'create'
 
-			if nargin == 2
+			if nargin == 2 && endsWith(varargin{1},'.mat')
 				output = varargin{1};
 			else
-				output = fullfile (BMP_PATH, 'BIDS', 'ADNI.mat');
+				output = fullfile (BMP_PATH, 'BIDS', 'bmp_ADNI.mat');
 			end
 
-			ADNI_ASL = load (fullfile (BMP_PATH, 'BIDS', 'ADNI_study_data', 'bmp_ADNI_ASL.mat'));
+			fprintf ('%s : Running in ''create'' mode. Will save DICOM2BIDS mapping to %s.\n',mfilename,output);
 
-			for i = 1 : size (ADNI_ASL.ADNI_ASL_table, 1)
+			fprintf ('%s : Loading bmp_ADNI_ASL_forDicom2BidsMapping.mat ... ', mfilename);
 
-				% for sujects with complete SID, SCANDATE, and VISCODE info,
-				% and VISCODE is not 'sc' or 'scmri'.
-				if ~strcmp(ADNI_ASL.ADNI_ASL_table.('SID'){i,1}, 'UNKNOWN') && ...
-					~strcmp(ADNI_ASL.ADNI_ASL_table.('SCANDATE'){i,1}, 'UNKNOWN') && ...
-					 ~strcmp(ADNI_ASL.ADNI_ASL_table.('VISCODE'){i,1}, 'UNKNOWN') && ...
-					  ~strcmp(ADNI_ASL.ADNI_ASL_table.('VISCODE'){i,1}, 'sc') && ...
-					   ~strcmp(ADNI_ASL.ADNI_ASL_table.('VISCODE'){i,1}, 'scmri')
+			ASL_mat = load (fullfile (BMP_PATH, 'BIDS', 'ADNI_study_data', 'bmp_ADNI_ASL_forDicom2BidsMapping.mat'));
 
-					% subject label
-					DICOM2BIDS(i).subject = ['sub-ADNI' erase(ADNI_ASL.ADNI_ASL_table.('SID'){i,1}, '_')];
-					
-					% DICOM criteria
-					DICOM2BIDS(i).perf.asl.DICOM.SeriesDescription = 'Axial 3D PASL (Eyes Open)';
-					DICOM2BIDS(i).perf.asl.DICOM.PatientID = ADNI_ASL.ADNI_ASL_table.('SID'){i,1};
-					DICOM2BIDS(i).perf.asl.DICOM.StudyDate = ADNI_ASL.ADNI_ASL_table.('SCANDATE'){i,1};
+			fprintf ('DONE!\n', mfilename);
 
-					% BIDS
-					DICOM2BIDS(i).perf.asl.BIDS.session = ADNI_ASL.ADNI_ASL_table.('VISCODE'){i,1};
+			ADNI_ASL = ASL_mat.ADNI_ASL_forDicom2BidsMapping;
 
-				else
+			fprintf ('%s : Start to create DICOM2BIDS mapping.\n', mfilename)
 
-					% SID      :   2 missing      (IMAGEUID = 1021030, 1224549)
-					% SCANDATE : 336 missing      (~ those from QC file)
-					% VISCODE  : 336 missing      (~ those from QC file)
-					%             94 with 'sc'
-					%            170 with 'scmri' 
-					
-					% ++++++++++++++++++++++++++++
-					% TO-DO :
-					% ++++++++++++++++++++++++++++
-					% 1) if not complete data.
-					% 2) what to do with sc/scmri?
+			for i = 1 : size (ADNI_ASL, 1)
 
-					% subject label
-					DICOM2BIDS(i).subject = 'placeholder';
-					
-					% DICOM criteria
-					DICOM2BIDS(i).perf.asl.DICOM.SeriesDescription = 'placeholder';
-					DICOM2BIDS(i).perf.asl.DICOM.PatientID = 'placeholder';
-					DICOM2BIDS(i).perf.asl.DICOM.StudyDate = 'placeholder';
+				fprintf ('%s : Index %d of %d.\n', mfilename, i, size(ADNI_ASL,1));
 
-					% BIDS
-					DICOM2BIDS(i).perf.asl.BIDS.session = 'placeholder';
+				% subject label
+				DICOM2BIDS(i).subject = ['sub-ADNI' erase(ADNI_ASL.SID{i,1}, '_')];
+				
+				% DICOM - ASL
+				DICOM2BIDS(i).perf.asl.DICOM.SeriesDescription = 'Axial 3D PASL (Eyes Open)';
+				DICOM2BIDS(i).perf.asl.DICOM.PatientID = ADNI_ASL.SID{i};
+				DICOM2BIDS(i).perf.asl.DICOM.StudyDate = erase(char(ADNI_ASL.SCANDATE(i)),'-');
 
-				end
+				% DICOM - T1w
+				DICOM2BIDS(i).anat.T1w.DICOM.SeriesDescription = 'Accelerated Sagittal MPRAGE';
+				DICOM2BIDS(i).anat.T1w.DICOM.PatientID = ADNI_ASL.SID{i};
+				DICOM2BIDS(i).anat.T1w.DICOM.StudyDate = erase(char(ADNI_ASL.SCANDATE(i)),'-');
+
+				% DICOM - FLAIR
+				DICOM2BIDS(i).anat.FLAIR.DICOM.SeriesDescription = 'Sagittal 3D FLAIR';
+				DICOM2BIDS(i).anat.FLAIR.DICOM.PatientID = ADNI_ASL.SID{i};
+				DICOM2BIDS(i).anat.FLAIR.DICOM.StudyDate = erase(char(ADNI_ASL.SCANDATE(i)),'-');
+
+				% BIDS - ASL
+				DICOM2BIDS(i).perf.asl.BIDS.session = ADNI_ASL.VISCODE{i};
+
+				% BIDS - T1w
+				DICOM2BIDS(i).anat.T1w.BIDS.acquisition = 'acceleratedSagittalMPRAGE';
+				DICOM2BIDS(i).anat.T1w.BIDS.session = ADNI_ASL.VISCODE{i};
+
+				% BIDS - FLAIR
+				DICOM2BIDS(i).anat.FLAIR.BIDS.acquisition = 'sagittal3DFLAIR';
+				DICOM2BIDS(i).anat.FLAIR.BIDS.session = ADNI_ASL.VISCODE{i};
 
 			end
 
+			fprintf ('%s : DICOM2BIDS mapping has been created.\n', mfilename);
+
+			fprintf ('%s : Saving DICOM2BIDS to %s ... ', mfilename, output);
+
+			save (output, 'DICOM2BIDS');
+
+			fprintf ('DONE!\n')
+
+
+		case 'retrieve'
+
+			if nargin == 2 && endsWith(varargin{1},'.mat')
+				predefined_mapping = varargin{1};
+			else
+				predefined_mapping = fullfile (BMP_PATH, 'BIDS', 'bmp_ADNI.mat');
+			end
+
+			fprintf ('%s : Running in ''retrieve'' mode. Will retrieve DICOM2BIDS mapping from %s.\n',mfilename,predefined_mapping);
+
+			fprintf ('%s : Loading %s ... ', mfilename, predefined_mapping);
+
+			DICOM2BIDS = load(predefined_mapping).DICOM2BIDS;
+
+			fprintf ('DONE!\n');
 	end
 
 end
