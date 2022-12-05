@@ -19,15 +19,16 @@ function DICOM2BIDS = bmp_ADNI (operation_mode, varargin)
 %
 %   ASL
 %
-%     For ADNI ASL data, we considered 4 CSV files of study data downloaded from 
+%     For ADNI ASL data, we considered 5 CSV files of study data downloaded from 
 %     https://ida.loni.usc.edu/pages/access/studyData.jsp?project=ADNI
 %
 %       - MRILIST.csv
+%       - UCSFASLQC.csv
 %       - UCSFASLFS_11_02_15_V2.csv
 %       - UCSFASLFSCBF_08_17_22.csv
-%       - UCSFASLQC.csv
+%       - ADNIMERGE.csv
 %
-%     For details, refer to /path/to/BrainMRIpipelines/BIDS/ADNI/bmp_ADNI_ASL.m.
+%     Refer to /path/to/BrainMRIpipelines/BIDS/ADNI_study_data/bmp_procADNIstudyData.m.
 %
 %
 % ARGUMENTS
@@ -98,8 +99,13 @@ function DICOM2BIDS = bmp_ADNI (operation_mode, varargin)
 					% BIDS
 					DICOM2BIDS(i).perf.asl.BIDS.session = ADNI_ASL.ADNI_ASL_table.('VISCODE'){i,1};
 
-
 				else
+
+					% SID      :   2 missing      (IMAGEUID = 1021030, 1224549)
+					% SCANDATE : 336 missing      (~ those from QC file)
+					% VISCODE  : 336 missing      (~ those from QC file)
+					%             94 with 'sc'
+					%            170 with 'scmri' 
 					
 					% ++++++++++++++++++++++++++++
 					% TO-DO :
