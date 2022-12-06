@@ -23,13 +23,21 @@
 %                      ADNIMERGE.csv and MRILIST.csv. This can be used as the base to merge with
 %                      individual imaging modality files, through keywords 'SID' and 'SCANDATE'.
 %
-%   bmp_ADNI_ASL.mat - All variables to map ASL DICOM to BIDS, and conduct clinical studies. Note that code
-%                      to generate this mat was written before the one for generating bmp_ADNI_all.mat. Therefore,
-%                      bmp_ADNI_all.mat was not used as base to create this mat.
 %
-%   bmp_ADNI_ASL_forDicom2BidsMapping.mat - A mat of table with 'SID', 'SCANDATE', and 'VISCODE'. Only entries
-%                                           with non-empty values for all three variables were included. This
-%                                           file is for creating DICOM-to-BIDS mapping in bmp_ADNI.m.
+%   bmp_ADNI_all_mergeASLqc.mat - All variables to map ASL DICOM to BIDS, and conduct clinical studies. The mat 
+%                                 file merged UCSFASLQC.csv, UCSFASLFS_11_02_15_V2.csv, and UCSFASLFSCBF_08_17_22.csv, 
+%                                 with MRILIST.csv and ADNIMERGE.csv. Note that code to generate this mat was 
+%                                 written before the one for generating bmp_ADNI_all.mat. Therefore, bmp_ADNI_all.mat 
+%                                 was not used as base to create this mat. Also note that this mat file was 
+%                                 NOT filtered by contains(SEQUENCE,'ASL').
+%
+%
+%   bmp_ADNI_forDicom2BidsMapping.mat - A mat of table with 'SID', 'SCANDATE', 'VISCODE', and 
+%                                       'SEQUENCE' extracted from bmp_ADNI_all_mergeASLqc.mat. Only 
+%                                       entries with non-empty values for 'SID', 'SCANDATE',  
+%                                       'VISCODE', and 'SEQUENCE' were included. This file is for 
+%                                       creating DICOM-to-BIDS mapping in bmp_ADNI.m. Note that this mat 
+%                                       file was filtered by contains (SEQUENCE, 'ASL').
 %
 %
 % HISTORY
@@ -44,6 +52,9 @@
 %                      bmp_ADNI_ASL_subsetWithClinicalData.mat.
 %
 %   05 December 2022 - Re-write to include all 4 documents together.
+%
+%   06 December 2022 - Include SEQUENCE in bmp_ADNI_forDicom2BidsMapping.mat. Update
+%                      output MAT filenames.
 %
 %
 
@@ -155,55 +166,60 @@ save ('bmp_ADNI_all.mat', 'ADNI_all');
 
 
 % ADNI ASL
-ADNI_ASL = outerjoin (ucsf_asl_fs_15,	ucsf_asl_fs_22,...
+ADNI_ASLqc = outerjoin (ucsf_asl_fs_15,	ucsf_asl_fs_22,...
 						'Keys',			{'COLPROT','RID','VISCODE','VISCODE_v','SCANDATE','VERSION','LONIUID','IMAGEUID','RUNDATE','QC'},...
 						'MergeKeys',	true);
 
-ADNI_ASL = outerjoin (ADNI_ASL,			ucsf_asl_qc,...
+ADNI_ASLqc = outerjoin (ADNI_ASLqc,			ucsf_asl_qc,...
 						'Keys',			{'LONIUID','IMAGEUID','QC'},...
 						'MergeKeys',	true);
 
-ADNI_ASL = outerjoin (ADNI_ASL,			mri_list,...
+ADNI_ASLqc = outerjoin (ADNI_ASLqc,			mri_list,...
 						'Keys',			{'LONIUID','IMAGEUID'},...
 						'MergeKeys',true);
 
-ADNI_ASL.Properties.VariableNames(find(strcmp(ADNI_ASL.Properties.VariableNames,'SCANDATE_mri_list'))) = {'SCANDATE'};
-ADNI_ASL.('SCANDATE')(find(strcmp(cellstr(ADNI_ASL.('SCANDATE')),'NaT'))) = ADNI_ASL.('SCANDATE_ADNI_ASL')(find(strcmp(cellstr(ADNI_ASL.('SCANDATE')),'NaT')));
-ADNI_ASL = removevars (ADNI_ASL, 'SCANDATE_ADNI_ASL');
+ADNI_ASLqc.Properties.VariableNames(find(strcmp(ADNI_ASLqc.Properties.VariableNames,'SCANDATE_mri_list'))) = {'SCANDATE'};
+ADNI_ASLqc.('SCANDATE')(find(strcmp(cellstr(ADNI_ASLqc.('SCANDATE')),'NaT'))) = ADNI_ASLqc.('SCANDATE_ADNI_ASLqc')(find(strcmp(cellstr(ADNI_ASLqc.('SCANDATE')),'NaT')));
+ADNI_ASLqc = removevars (ADNI_ASLqc, 'SCANDATE_ADNI_ASLqc');
 
-ADNI_ASL.Properties.VariableNames(find(strcmp(ADNI_ASL.Properties.VariableNames,'SID_mri_list'))) = {'SID'};
-ADNI_ASL.('SID')(find(cellfun(@isempty,ADNI_ASL.('SID')))) = ADNI_ASL.('SID_ADNI_ASL')(find(cellfun(@isempty,ADNI_ASL.('SID'))));
-ADNI_ASL = removevars (ADNI_ASL, 'SID_ADNI_ASL');
+ADNI_ASLqc.Properties.VariableNames(find(strcmp(ADNI_ASLqc.Properties.VariableNames,'SID_mri_list'))) = {'SID'};
+ADNI_ASLqc.('SID')(find(cellfun(@isempty,ADNI_ASLqc.('SID')))) = ADNI_ASLqc.('SID_ADNI_ASLqc')(find(cellfun(@isempty,ADNI_ASLqc.('SID'))));
+ADNI_ASLqc = removevars (ADNI_ASLqc, 'SID_ADNI_ASLqc');
 
-ADNI_ASL = outerjoin (ADNI_ASL,		adni_merge, ...
+ADNI_ASLqc = outerjoin (ADNI_ASLqc,		adni_merge, ...
 						'Keys',		{'SID','SCANDATE'},...
 						'MergeKeys',true);
 
-ADNI_ASL.Properties.VariableNames(find(strcmp(ADNI_ASL.Properties.VariableNames,'COLPROT_adni_merge'))) = {'COLPROT'};
-ADNI_ASL.COLPROT(find(cellfun(@isempty, ADNI_ASL.COLPROT))) = ADNI_ASL.COLPROT_ADNI_ASL(find(cellfun(@isempty, ADNI_ASL.COLPROT)));
-ADNI_ASL = removevars (ADNI_ASL, 'COLPROT_ADNI_ASL');
+ADNI_ASLqc.Properties.VariableNames(find(strcmp(ADNI_ASLqc.Properties.VariableNames,'COLPROT_adni_merge'))) = {'COLPROT'};
+ADNI_ASLqc.COLPROT(find(cellfun(@isempty, ADNI_ASLqc.COLPROT))) = ADNI_ASLqc.COLPROT_ADNI_ASLqc(find(cellfun(@isempty, ADNI_ASLqc.COLPROT)));
+ADNI_ASLqc = removevars (ADNI_ASLqc, 'COLPROT_ADNI_ASLqc');
 
-ADNI_ASL.Properties.VariableNames(find(strcmp(ADNI_ASL.Properties.VariableNames,'RID_adni_merge'))) = {'RID'};
-ADNI_ASL.RID(find(isnan(ADNI_ASL.RID))) = ADNI_ASL.RID_ADNI_ASL(find(isnan(ADNI_ASL.RID)));
-ADNI_ASL = removevars (ADNI_ASL, 'RID_ADNI_ASL');
+ADNI_ASLqc.Properties.VariableNames(find(strcmp(ADNI_ASLqc.Properties.VariableNames,'RID_adni_merge'))) = {'RID'};
+ADNI_ASLqc.RID(find(isnan(ADNI_ASLqc.RID))) = ADNI_ASLqc.RID_ADNI_ASLqc(find(isnan(ADNI_ASLqc.RID)));
+ADNI_ASLqc = removevars (ADNI_ASLqc, 'RID_ADNI_ASLqc');
 
-ADNI_ASL.Properties.VariableNames(find(strcmp(ADNI_ASL.Properties.VariableNames,'VISCODE_adni_merge'))) = {'VISCODE'};
-ADNI_ASL.VISCODE(find(cellfun(@isempty, ADNI_ASL.VISCODE))) = ADNI_ASL.VISCODE_ADNI_ASL(find(cellfun(@isempty, ADNI_ASL.VISCODE)));
-ADNI_ASL = removevars (ADNI_ASL, 'VISCODE_ADNI_ASL');
+ADNI_ASLqc.Properties.VariableNames(find(strcmp(ADNI_ASLqc.Properties.VariableNames,'VISCODE_adni_merge'))) = {'VISCODE'};
+ADNI_ASLqc.VISCODE(find(cellfun(@isempty, ADNI_ASLqc.VISCODE))) = ADNI_ASLqc.VISCODE_ADNI_ASLqc(find(cellfun(@isempty, ADNI_ASLqc.VISCODE)));
+ADNI_ASLqc = removevars (ADNI_ASLqc, 'VISCODE_ADNI_ASLqc');
 
 
-save ('bmp_ADNI_ASL.mat', 'ADNI_ASL');
+save ('bmp_ADNI_all_mergeASLqc.mat', 'ADNI_ASLqc');
 
 
 
 % for DICOM-to-BIDS mapping purpose
-ADNI_ASL_forDicom2BidsMapping = table(ADNI_ASL.SID,ADNI_ASL.SCANDATE,ADNI_ASL.VISCODE);
-ADNI_ASL_forDicom2BidsMapping.Properties.VariableNames = {'SID','SCANDATE','VISCODE'};
+ADNI_forDicom2BidsMapping = table(ADNI_ASLqc.SID,...
+										ADNI_ASLqc.SCANDATE,...
+										ADNI_ASLqc.VISCODE,...
+										ADNI_ASLqc.SEQUENCE);
+ADNI_forDicom2BidsMapping.Properties.VariableNames = {'SID','SCANDATE','VISCODE','SEQUENCE'};
 
-ADNI_ASL_forDicom2BidsMapping(find (cellfun(@isempty,ADNI_ASL_forDicom2BidsMapping.SID)),:)=[];
-ADNI_ASL_forDicom2BidsMapping(find(cellfun(@isempty,cellstr(ADNI_ASL_forDicom2BidsMapping.SCANDATE))),:) =[];
-ADNI_ASL_forDicom2BidsMapping(find (cellfun(@isempty,ADNI_ASL_forDicom2BidsMapping.VISCODE)),:)=[];
+ADNI_forDicom2BidsMapping(find (cellfun(@isempty,ADNI_forDicom2BidsMapping.SID)),:)=[];
+ADNI_forDicom2BidsMapping(find(cellfun(@isempty,cellstr(ADNI_forDicom2BidsMapping.SCANDATE))),:) =[];
+ADNI_forDicom2BidsMapping(find (cellfun(@isempty,ADNI_forDicom2BidsMapping.VISCODE)),:)=[];
+ADNI_forDicom2BidsMapping(find(cellfun(@isempty,ADNI_forDicom2BidsMapping.SEQUENCE)),:)=[];
 
-ADNI_ASL_forDicom2BidsMapping = unique (ADNI_ASL_forDicom2BidsMapping); % there were duplicates.
+ADNI_forDicom2BidsMapping = unique (ADNI_forDicom2BidsMapping); % there were duplicates.
 
-save ('bmp_ADNI_ASL_forDicom2BidsMapping.mat', 'ADNI_ASL_forDicom2BidsMapping');
+save ('bmp_ADNI_forDicom2BidsMapping.mat', 'ADNI_forDicom2BidsMapping');
+
