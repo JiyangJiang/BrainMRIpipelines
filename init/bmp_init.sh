@@ -121,4 +121,4 @@ echo -e "$(bmp_convention.sh --text_normal)[$(date)] : bmp_init.sh : Setting PAT
 
 
 echo -e "$(bmp_convention.sh --text_normal)[$(date)] : bmp_init.sh : Finished ($?)."
-echo -e "$(bmp_convention.sh --text_normal)[$(date)] : bmp_init.sh : If you haven't install required third party software, you can call bmp_install.sh to install.$(bmp_shellColour.sh --reset)"
+echo -e "$(bmp_convention.sh --text_normal)[$(date)] : bmp_init.sh : If you haven't installed required third party software, you can call bmp_install.sh to install.$(bmp_shellColour.sh --reset)"
