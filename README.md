@@ -5,7 +5,7 @@ BrainMRIpipelines contains pipelines neuroimaging data processing. It includes p
 
 ## Global environment setup
 
-BMP only works on Unix-based system (Linux, macOS, WSL on Windows). The following parameters need to be included in <code>~/.bashrc</code> (Linux) or <code>~/.bash_profile</code> (macOS):
+BMP only works on Unix-based system (Linux, macOS, WSL on Windows). The following parameters need to be included in <code>\~/.bashrc</code> (Linux) or <code>\~/.bash_profile</code> (macOS):
 
 
 <code>export BMP_PATH=/path/to/BrainMRIpipelines</code>

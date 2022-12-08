@@ -154,11 +154,12 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 					    	run_idx = 'run01';
 						end
 
-						fprintf ('%s :  --> ASL found in bmp_ADNI_forDicom2BidsMapping.mat for %s (SEQUENCE = ''%s''; SCANDATE = ''%s''; VISCODE = ''%s''; run_idx = ''%s'').\n', mfilename, ADNI_uniqueSID{i}, sid_data.SEQUENCE{j}, char(sid_data.SCANDATE(j)), sid_data.VISCODE{j}, run_idx);
+						fprintf ('%s :  --> ASL found in bmp_ADNI_forDicom2BidsMapping.mat for %s (SEQUENCE = ''%s''; SCANDATE = ''%s''; VISCODE = ''%s''; IMAGEUID = ''%s''; run_idx = ''%s'').\n', mfilename, ADNI_uniqueSID{i}, sid_data.SEQUENCE{j}, char(sid_data.SCANDATE(j)), sid_data.VISCODE{j}, sid_data.IMAGEUID{j}, run_idx);
 
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).DICOM.SeriesDescription 	= sid_data.SEQUENCE{j};
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).DICOM.PatientID         	= sid_data.SID{j};
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).DICOM.StudyDate  	    = erase(char(sid_data.SCANDATE(j)),'-');
+						DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).DICOM.IMAGEUID			= sid_data.IMAGEUID{j};
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).DICOM.subfoldername		= strrep(strrep(strrep(sid_data.SEQUENCE{j},' ','_'),'(','_'),')','_');
 
 						switch sid_data.SEQUENCE{j}
@@ -237,11 +238,12 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 							run_idx = 'run02';
 						end
 
-						fprintf ('%s :  --> T1w found in bmp_ADNI_forDicom2BidsMapping.mat for %s (SEQUENCE = ''%s''; SCANDATE = ''%s''; VISCODE = ''%s''; run_idx = ''%s'').\n', mfilename, ADNI_uniqueSID{i}, sid_data.SEQUENCE{j}, char(sid_data.SCANDATE(j)), sid_data.VISCODE{j}, run_idx);
+						fprintf ('%s :  --> T1w found in bmp_ADNI_forDicom2BidsMapping.mat for %s (SEQUENCE = ''%s''; SCANDATE = ''%s''; VISCODE = ''%s''; IMAGEUID = ''%s''; run_idx = ''%s'').\n', mfilename, ADNI_uniqueSID{i}, sid_data.SEQUENCE{j}, char(sid_data.SCANDATE(j)), sid_data.VISCODE{j}, sid_data.IMAGEUID{j}, run_idx);
 
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).DICOM.SeriesDescription 	= sid_data.SEQUENCE{j};
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).DICOM.PatientID         	= sid_data.SID{j};
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).DICOM.StudyDate  	    = erase(char(sid_data.SCANDATE(j)),'-');
+						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).DICOM.IMAGEUID			= sid_data.IMAGEUID{j};
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).DICOM.subfoldername		= strrep(strrep(strrep(sid_data.SEQUENCE{j},' ','_'),'(','_'),')','_');
 
 						T1w_acquisition_label = '';
@@ -288,11 +290,12 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 							run_idx = 'run02';
 						end
 
-						fprintf ('%s :  --> FLAIR found in bmp_ADNI_forDicom2BidsMapping.mat for %s (SEQUENCE = ''%s''; SCANDATE = ''%s''; VISCODE = ''%s''; run_idx = ''%s'').\n', mfilename, ADNI_uniqueSID{i}, sid_data.SEQUENCE{j}, char(sid_data.SCANDATE(j)), sid_data.VISCODE{j}, run_idx);
+						fprintf ('%s :  --> FLAIR found in bmp_ADNI_forDicom2BidsMapping.mat for %s (SEQUENCE = ''%s''; SCANDATE = ''%s''; VISCODE = ''%s''; IMAGEUID = ''%s''; run_idx = ''%s'').\n', mfilename, ADNI_uniqueSID{i}, sid_data.SEQUENCE{j}, char(sid_data.SCANDATE(j)), sid_data.VISCODE{j}, sid_data.IMAGEUID{j}, run_idx);
 
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).DICOM.SeriesDescription 	= sid_data.SEQUENCE{j};
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).DICOM.PatientID         	= sid_data.SID{j};
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).DICOM.StudyDate  	    	= erase(char(sid_data.SCANDATE(j)),'-');
+						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).DICOM.IMAGEUID				= sid_data.IMAGEUID{j};
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).DICOM.subfoldername		= strrep(strrep(strrep(sid_data.SEQUENCE{j},' ','_'),'(','_'),')','_');
 
 						FLAIR_acquisition_label = '';

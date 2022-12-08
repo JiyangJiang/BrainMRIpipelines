@@ -26,11 +26,21 @@ function DICOM2BIDS = bmp_DICOMtoBIDSmapper (varargin)
 %
 %
 %   Senario 2 : Use predefined DICOM-to-BIDS mappings for public datasets or CHeBA datasets. One
-%               input argument is needed in this senario:
+%               or two input arguments are needed in this senario:
 %
-%               varargin{1} = dataset name.
+%               varargin{1} = dataset name. Currently supported datasets include 'ADNI'.
 %
-%               Currently supported datasets include 'ADNI'.
+%               varargin{2} = /path/to/dataset/DICOM2BIDS/mat/file if not 
+%                             /path/to/BrainMRIpipeliens/BIDS/bmp_ADNI.mat
+%
+%
+%
+% OUTPUT
+% ================================================================================================
+%
+%   DICOM2BIDS - a MATLAB structure to specify DICOM-to-BIDS mappings. It can be directly input to
+%                bmp_GIDSgenerator.
+%
 %
 %
 % SUPPORTED MODALITIES IN SENARIO 1
@@ -168,7 +178,7 @@ function DICOM2BIDS = bmp_DICOMtoBIDSmapper (varargin)
 							};
 
 	
-	if nargin == 2
+	if nargin == 2 && iscell (varargin{1}) && iscell (varargin{2})
 
 		fnam_arr = varargin{1};
 		fval_arr = varargin{2};
@@ -339,13 +349,21 @@ function DICOM2BIDS = bmp_DICOMtoBIDSmapper (varargin)
 
 
 
-	elseif nargin == 1 && any(strcmp(supported_datasets, varargin{1}))
+	elseif nargin >= 1 && any(strcmp(supported_datasets, varargin{1}))
 
 			switch varargin{1}
 
 				case 'ADNI'
 
-					DICOM2BIDS = bmp_ADNI ('retrieve');
+					if nargin == 1
+
+						DICOM2BIDS = bmp_ADNI ('retrieve');
+
+					elseif nargin == 2 && endsWith(varargin{2},'.mat')
+
+						DICOM2BIDS = bmp_ADNI ('retrieve', varargin{2});
+
+					end
 
 			end
 

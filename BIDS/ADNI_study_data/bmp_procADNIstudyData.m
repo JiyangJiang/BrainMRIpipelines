@@ -65,6 +65,8 @@
 % LOAD ALL CSV FILES
 % ++++++++++++++++++
 
+BMP_PATH = getenv('BMP_PATH');
+cd (fullfile(BMP_PATH,'BIDS','ADNI_study_data'));
 
 % MRI list (MRILIST.csv)
 mri_list_opts = detectImportOptions ('CSV_files_from_ADNI_website/MRILIST.csv');
@@ -211,13 +213,15 @@ save ('bmp_ADNI_all_mergeASLqc.mat', 'ADNI_ASLqc');
 ADNI_forDicom2BidsMapping = table(ADNI_ASLqc.SID,...
 										ADNI_ASLqc.SCANDATE,...
 										ADNI_ASLqc.VISCODE,...
-										ADNI_ASLqc.SEQUENCE);
-ADNI_forDicom2BidsMapping.Properties.VariableNames = {'SID','SCANDATE','VISCODE','SEQUENCE'};
+										ADNI_ASLqc.SEQUENCE,...
+										ADNI_ASLqc.IMAGEUID);
+ADNI_forDicom2BidsMapping.Properties.VariableNames = {'SID','SCANDATE','VISCODE','SEQUENCE','IMAGEUID'};
 
 ADNI_forDicom2BidsMapping(find (cellfun(@isempty,ADNI_forDicom2BidsMapping.SID)),:)=[];
 ADNI_forDicom2BidsMapping(find(cellfun(@isempty,cellstr(ADNI_forDicom2BidsMapping.SCANDATE))),:) =[];
 ADNI_forDicom2BidsMapping(find (cellfun(@isempty,ADNI_forDicom2BidsMapping.VISCODE)),:)=[];
 ADNI_forDicom2BidsMapping(find(cellfun(@isempty,ADNI_forDicom2BidsMapping.SEQUENCE)),:)=[];
+ADNI_forDicom2BidsMapping(find(cellfun(@isempty,ADNI_forDicom2BidsMapping.IMAGEUID)),:)=[];
 
 ADNI_forDicom2BidsMapping = unique (ADNI_forDicom2BidsMapping); % there were duplicates.
 

@@ -52,6 +52,8 @@ DEPENDENCIES :
 
   - MATLAB
 
+  - dcm2niix
+
 
 EOF
 
