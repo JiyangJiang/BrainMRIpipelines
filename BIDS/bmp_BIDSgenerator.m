@@ -22,10 +22,22 @@
 % |                    |                     |  'FLAIR', 'asl'. Default  |
 % |                    |                     |  is to consider all.      |
 % ------------------------------------------------------------------------
+% |    'Sandbox'       |     true/false      |  To display in terminal   |
+% |                    |                     |  the intended structure   |
+% |                    |                     |  of BIDS files, for       |
+% |                    |                     |  validation.              |
+
 
 dataset = 'ADNI';
+
+% TP-W530
 DICOM_directory  = '/data1/work/adni_examples/dicom/test';
 BIDS_directory = '/data1/work/adni_examples/dicom/test/output';
+
+
+% MacBook
+DICOM_directory  = '/Users/z3402744/Work/ADNI_test';
+BIDS_directory   = '/Users/z3402744/Work/ADNI_test/BIDS';
 
 input_modalities = 	{
 						'T1w'
@@ -49,7 +61,10 @@ switch dataset
 		all_DICOM2BIDS_fields 	= fieldnames(DICOM2BIDS);
 		all_sessions 			= all_DICOM2BIDS_fields(find(~strcmp(all_DICOM2BIDS_fields,'subject')));
 
+		clear to_run_dcm2niix;
 		to_run_dcm2niix_idx = 1;
+
+		% to_run_dcm2niix(1).DICOMinputdir = 'test';
 
 
 		for subj_idx = 1 : size (DICOM2BIDS,2)
@@ -178,7 +193,7 @@ switch dataset
 
 										fprintf ('%s : DICOM subfoldername is found in DICOM2BIDS and not empty (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
 									
-										curr_DICOMsubfolder		= DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).DICOM.subfoldername
+										curr_DICOMsubfolder		= DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).DICOM.subfoldername;
 
 									else
 										
@@ -211,20 +226,21 @@ switch dataset
 												% exist  DICOM folder.
 												% +++++++++++++++++++++++++++++++++++
 
-												ADNI_customisedBISDfields = {	'subject'
-																				'session'
-																				'acquisition'
-																				'modality'
-																				};
+												% ADNI_customisedBISDfields = {	'subject'
+												% 								'session'
+												% 								'run'
+												% 								'acquisition'
+												% 								'modality'
+												% 								};
 
 												subj_avail_BIDSfields_for_curr_run = fieldnames (DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).BIDS);
 												subj_avail_BIDSfields_for_curr_run = subj_avail_BIDSfields_for_curr_run(find(~cellfun(@isempty,subj_avail_BIDSfields_for_curr_run)),1);
 
+												acq = '';
+
 												for BIDSfld_idx = 1 : size (subj_avail_BIDSfields_for_curr_run, 1)
 
 													curr_BIDSfield = subj_avail_BIDSfields_for_curr_run{BIDSfld_idx,1};
-
-													curr_BIDSniibasename = '';
 
 													switch curr_BIDSfield
 
@@ -249,11 +265,19 @@ switch dataset
 
 															end
 
+														case 'run'
+
+															if ~strcmp (curr_run, DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).BIDS.(curr_BIDSfield))
+
+																fprintf (2, '%s : run index in DICOM2BIDS BIDS run field (''%s'') does NOT match curr_run set previously (''%s'') (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).BIDS.(curr_BIDSfield), curr_run, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
+
+																continue;
+
+															end
+
 														case 'acquisition'
 
-															curr_BIDSniibasename = [curr_BIDSniibasename ...
-																					'_acq-' ...
-																					DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).BIDS.(curr_BIDSfield)];
+															acq = [acq '_acq-' DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).BIDS.(curr_BIDSfield)];
 
 														case 'modality'
 
@@ -269,15 +293,14 @@ switch dataset
 
 												end
 
-												curr_BIDSoutputdir 		= fullfile (BIDS_directory, ['sub-' curr_subjectLabel], ['ses-' curr_session], curr_datype)
-												curr_BIDSniibasename	= ['sub-' curr_subjectLabel '_ses-' curr_session curr_BIDSniibasename '_' curr_mod]
+												curr_BIDSoutputdir 		= fullfile (BIDS_directory, ['sub-' curr_subjectLabel], ['ses-' curr_session], curr_datype);
+
+												curr_BIDSniibasename	= ['sub-' curr_subjectLabel '_ses-' curr_session '_run-' curr_run_index acq '_' curr_mod];
 
 												to_run_dcm2niix(to_run_dcm2niix_idx).BIDSoutputdir = curr_BIDSoutputdir;
 												to_run_dcm2niix(to_run_dcm2niix_idx).BIDSniibasename = curr_BIDSniibasename;
 
 												to_run_dcm2niix_idx = to_run_dcm2niix_idx + 1;
-
-												break
 
 											else
 
@@ -314,38 +337,17 @@ switch dataset
 
 
 
+									if sandbox
+
+										run_dcm2niix (to_run_dcm2niix, 'sandbox');
+
+									else
+
+										run_dcm2niix (to_run_dcm2niix);
+
+									end
 
 									
-
-									% to_run_dcm2niix
-									
-
-									% customised dcm2niix options for ADNI
-									% curr_datetime = strrep(char(datetime),' ','_');
-									% dcm2niix_opts_ADNI = [' -6 -a y -b y -ba n -c BMP_' curr_datetime ' -d 3 -e n -f %i_%d_%t -g n -i y -l o -m 2 -o ' output_directory ' -p y -r n -s n -v 0 -w 2 -x n -z n --big-endian o --progress n '];
-									% dcm2niix_cmd_ADNI = ['dcm2niix' dcm2niix_opts_ADNI DICOM_seqSubFolder];
-
-									% [status, output] = system (dcm2niix_cmd_ADNI);
-
-									% if contains (output, 'warning', 'IgnoreCase', true)
-
-									% 	fprintf (2, '%s : Note dcm2niix had warning(s) when converting DICOM to NIFTI.\n', mfilename);
-									% 	fprintf (2, '%s : dcm2niix exit code %d.\n', mfilename, status);
-									% 	fprintf (2, '%s : dcm2niix output message : \n', mfilename);
-									% 	fprintf (2, '%s :\n', mfilename);
-									% 	fprintf (2, '++++++++++++++++++++++++++++++\n');
-									% 	fprintf (2, '%s', output);
-									% 	fprintf (2, '++++++++++++++++++++++++++++++\n');
-									% 	fprintf (2, '%s :\n', mfilename);
-									% 	fprintf (2, '%s : For verbose output, run : \n', mfilename);
-									% 	fprintf (2, '%s\n', ['dcm2niix' dcm2niix_opts_ADNI '-v 2 ' DICOM_seqSubFolder]);
-									% 	fprintf (2, '%s : This event has been logged in BMP.BIDSgenerator.warnings.\n', mfilename);
-
-									% 	DICOM2BIDS(i).se = dcm2niix_cmd_ADNI;
-									% 	DICOM2BIDS(i).BIDSgenerator.warnings(end)
-
-									% end
-
 								end
 
 							else
@@ -370,6 +372,50 @@ end
 
 
 
+function run_dcm2niix (to_run_dcm2niix, varargin)
+
+
+
+% to_run_dcm2niix
+
+% ans = 
+
+%   struct with fields:
+
+%       DICOMinputdir: '/Users/z3402744/Work/ADNI_test/018_S_4399/Sagittal_3D_Accelerated_MPRAGE/2021-07-30_11_29_32.0/I1475316'
+%       BIDSoutputdir: '/Users/z3402744/Work/ADNI_test/BIDS/sub-ADNI018S4399/ses-m114/anat'
+%     BIDSniibasename: 'sub-ADNI018S4399_ses-m114_run-01_acq-sag3dMprage_T1w'
+
+
+
+
+
+
+% customised dcm2niix options for ADNI
+% curr_datetime = strrep(char(datetime),' ','_');
+% dcm2niix_opts_ADNI = [' -6 -a y -b y -ba n -c BMP_' curr_datetime ' -d 3 -e n -f %i_%d_%t -g n -i y -l o -m 2 -o ' output_directory ' -p y -r n -s n -v 0 -w 2 -x n -z n --big-endian o --progress n '];
+% dcm2niix_cmd_ADNI = ['dcm2niix' dcm2niix_opts_ADNI DICOM_seqSubFolder];
+
+% [status, output] = system (dcm2niix_cmd_ADNI);
+
+% if contains (output, 'warning', 'IgnoreCase', true)
+
+% 	fprintf (2, '%s : Note dcm2niix had warning(s) when converting DICOM to NIFTI.\n', mfilename);
+% 	fprintf (2, '%s : dcm2niix exit code %d.\n', mfilename, status);
+% 	fprintf (2, '%s : dcm2niix output message : \n', mfilename);
+% 	fprintf (2, '%s :\n', mfilename);
+% 	fprintf (2, '++++++++++++++++++++++++++++++\n');
+% 	fprintf (2, '%s', output);
+% 	fprintf (2, '++++++++++++++++++++++++++++++\n');
+% 	fprintf (2, '%s :\n', mfilename);
+% 	fprintf (2, '%s : For verbose output, run : \n', mfilename);
+% 	fprintf (2, '%s\n', ['dcm2niix' dcm2niix_opts_ADNI '-v 2 ' DICOM_seqSubFolder]);
+% 	fprintf (2, '%s : This event has been logged in BMP.BIDSgenerator.warnings.\n', mfilename);
+
+% 	DICOM2BIDS(i).se = dcm2niix_cmd_ADNI;
+% 	DICOM2BIDS(i).BIDSgenerator.warnings(end)
+
+% end
 
 
 % FOR DATASET-LEVEL/SUBGROUP-LEVEL MAPPING, IGNORE 'session' AND/OR 'run' IF THERE IS

@@ -213,6 +213,7 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.subject     = DICOM2BIDS(i).subject;
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.session     = sid_data.VISCODE{j};
+						DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.run 		= run_idx;
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.modality    = 'asl';
 
 
@@ -263,6 +264,7 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).BIDS.subject     = DICOM2BIDS(i).subject;
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).BIDS.session     = sid_data.VISCODE{j};
+						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).BIDS.run 		= run_idx;
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).BIDS.acquisition = T1w_acquisition_label;
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).BIDS.modality    = 'T1w';
 
@@ -311,6 +313,7 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).BIDS.subject     = DICOM2BIDS(i).subject;
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).BIDS.session     = sid_data.VISCODE{j};
+						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).BIDS.run 		  = run_idx;
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).BIDS.acquisition = FLAIR_acquisition_label;
 						DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).BIDS.modality    = 'FLAIR';
 
