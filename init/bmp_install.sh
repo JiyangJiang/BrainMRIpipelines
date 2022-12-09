@@ -104,7 +104,7 @@ do
 		-s|--singularity)
 
 			singularity=1
-			mkdir -p $BMP_3RD_PATH/singularity_images
+			mkdir -p $BMP_3RD_PATH/singularity
 			shift
 			;;
 
@@ -150,11 +150,11 @@ if [ "$install_bidsvalidator" == 1 ]; then
 
 		echo "[$(date)] : $(basename $0) : Installing BIDS Validator (version = ${BIDS_Validator_version}) through singularity."
 
-		singularity build $BMP_3RD_PATH/singularity_images/bids-validator_${BIDS_Validator_version}.simg \
+		singularity build $BMP_3RD_PATH/singularity/bids-validator_${BIDS_Validator_version}.simg \
                     docker://bids/validator:$BIDS_Validator_version
 
         echo "[$(date)] : $(basename $0) : BIDS Validator (version = ${BIDS_Validator_version}) singularity image has been created."
-        echo "[$(date)] : $(basename $0) : -> $BMP_3RD_PATH/singularity_images/bids-validator_${BIDS_Validator_version}.simg."
+        echo "[$(date)] : $(basename $0) : -> $BMP_3RD_PATH/singularity/bids-validator_${BIDS_Validator_version}.simg."
 
     else
 
@@ -187,11 +187,11 @@ if [ "$install_mriqc" == 1 ]; then
 
 		echo "[$(date)] : $(basename $0) : Installing MRIQC (version = ${MRIQC_version}) through singularity."
 
-		singularity build $BMP_3RD_PATH/singularity_images/mriqc_${MRIQC_version}.simg \
+		singularity build $BMP_3RD_PATH/singularity/mriqc_${MRIQC_version}.simg \
 								docker://nipreps/mriqc:$MRIQC_version
 
 		echo "[$(date)] : $(basename $0) : MRIQC (version = $MRIQC_version) singularity image has been created."
-		echo "[$(date)] : $(basename $0) : -> $BMP_3RD_PATH/singularity_images/mriqc_${MRIQC_version}.simg"
+		echo "[$(date)] : $(basename $0) : -> $BMP_3RD_PATH/singularity/mriqc_${MRIQC_version}.simg"
 
 	else
 

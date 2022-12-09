@@ -34,6 +34,9 @@ function DICOM2BIDS = bmp_DICOMtoBIDSmapper (varargin)
 %                             /path/to/BrainMRIpipeliens/BIDS/bmp_ADNI.mat
 %
 %
+%   If not specifying any arguments, default is 'Senario 2' with 'ADNI' and 
+%   '/path/to/BrainMRIpipeliens/BIDS/bmp_ADNI.mat'
+%
 %
 % OUTPUT
 % ================================================================================================
@@ -91,6 +94,9 @@ function DICOM2BIDS = bmp_DICOMtoBIDSmapper (varargin)
 %   +                          Individual-level mapping                               +
 %   +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %   +                                                                                 +
+%   +   Dataset                                                                       +
+%   +      |                                                                          +
+%   +      |                                                                          +
 %   +  DICOM2BIDS ----- subject                                                       +
 %   +             \                                                                   +
 %   +              \                                                                  +
@@ -104,13 +110,13 @@ function DICOM2BIDS = bmp_DICOMtoBIDSmapper (varargin)
 %   + An example of individual-level DICOM-to-BIDS mapping:                           +
 %   +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %   +                                                                                 +
-%	+   DICOM2BIDS(1).subject = 'sub-128S0272';                                       +
+%	+   ADNI.DICOM2BIDS(1).subject = 'sub-128S0272';                                  +
 %   +                                                                                 +
-%	+   DICOM2BIDS(1).m12.anat.T1w.run01.DICOM.SeriesDescription = 'SAG MPRAGE';      +
-%	+   DICOM2BIDS(1).m12.anat.FLAIR.run01.DICOM.SeriesDescription = '3D FLAIR';      +
+%	+   ADNI.DICOM2BIDS(1).m12.anat.T1w.run01.DICOM.SeriesDescription = 'SAG MPRAGE'; +
+%	+   ADNI.DICOM2BIDS(1).m12.anat.FLAIR.run01.DICOM.SeriesDescription = '3D FLAIR'; +
 %   +                                                                                 +
-%	+   DICOM2BIDS(1).m12.anat.T1w.run01.BIDS.acquisition = 'sagMPRAGE';              +
-%	+   DICOM2BIDS(1).m12.anat.FLAIR.run01.BIDS.acquisition = 'sag3DFLAIR';           +
+%	+   ADNI.DICOM2BIDS(1).m12.anat.T1w.run01.BIDS.acquisition = 'sagMPRAGE';         +
+%	+   ADNI.DICOM2BIDS(1).m12.anat.FLAIR.run01.BIDS.acquisition = 'sag3DFLAIR';      +
 %   +                                                                                 +
 %   +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %
@@ -366,6 +372,10 @@ function DICOM2BIDS = bmp_DICOMtoBIDSmapper (varargin)
 					end
 
 			end
+
+	elseif nargin == 0
+
+		DICOM2BIDS = bmp_ADNI ('retrieve');
 
 	else
 

@@ -113,7 +113,7 @@ if [ "${use_docker}" == "1" ]; then
 
 elif [ "${use_singularity}" == "1" ]; then
 
-	if [ ! -f "$BMP_3RD_PATH/singularity_images/bids-validator_${BIDS_Validator_version}.simg" ]; then
+	if [ ! -f "$BMP_3RD_PATH/singularity/bids-validator_${BIDS_Validator_version}.simg" ]; then
 
 		bmp_install.sh --bids_validator ${BIDS_Validator_version} --singularity
 
@@ -121,7 +121,7 @@ elif [ "${use_singularity}" == "1" ]; then
 
 	singularity run --cleanenv \
 				    --bind ${BIDS_directory}:/data:ro \
-				    $BMP_3RD_PATH/singularity_images/bids-validator_${BIDS_Validator_version}.simg \
+				    $BMP_3RD_PATH/singularity/bids-validator_${BIDS_Validator_version}.simg \
 				    /data \
 				    $additionalOptoins \
 				    > $BIDS_directory/derivatives/bmp/bids-validator/bmp_bids-validator.log
