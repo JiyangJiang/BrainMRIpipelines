@@ -1,4 +1,4 @@
-function bmp_BIDSparser (BIDS_directory)
+% function bmp_BIDSparser (BIDS_directory, modality)
 %
 % DESCRIPTION
 % ======================================================
@@ -9,6 +9,8 @@ function bmp_BIDSparser (BIDS_directory)
 % HISTORY
 % ======================================================
 % 28 Nov 2022 - Written by Jiyang Jiang
+
+BIDS_directory = '/Users/z3402744/Work/ADNI_test/BIDS';
 
 BMP_PATH     = getenv ('BMP_PATH');
 BMP_3RD_PATH = getenv ('BMP_3RD_PATH');

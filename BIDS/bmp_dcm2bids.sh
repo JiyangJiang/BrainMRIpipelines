@@ -127,10 +127,10 @@ $(bmp_convention.sh --usage_section_title)OPTIONAL :$(bmp_shellColour.sh --reset
                                                         {-f|--first_run} is not set.
 
   -c, --dcm2bids_helper                                 Use dcm2bids_helper in the first run to
-                                                        help prepare configuration file. By default,
-                                                        bmp_prepConfig.m will be ran to list unique
-                                                        values in specified fields, which is much
-                                                        easier and works well in most datasets.
+                                                        help prepare configuration json file.
+                                                        bmp_DICOMenquirer.m can be ran to list unique
+                                                        values in specified fields, which is helpful
+                                                        to create configuration json.
 
   -h, --help                                            Display this message.
 
@@ -223,15 +223,15 @@ yes)
 		echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Running dcm2bids_helper to convert DICOM of the first subject (ID = $(echo $subjID_list | awk '{print $1}')) to NIFTI and json, so that configuration file can be prepared.$(bmp_shellColour.sh --reset)"
 
 		dcm2bids_helper --dicom_dir   $DICOM_directory/$(echo $subjID_list | awk '{print $1}') \
-						--output_dir  $BMP_TMP_PATH/bmp/dcm2bids/helper \
-						--force \
-						> /dev/null
+										--output_dir  $BMP_TMP_PATH/bmp/dcm2bids/helper \
+										--force \
+										> /dev/null
 
 		echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Investigate json files in $(bmp_convention.sh --text_path)$BMP_TMP_PATH/bmp/dcm2bids/helper$(bmp_convention.sh --text_normal) to create the configuration file.$(bmp_shellColour.sh --reset)"
 
 	else
 
-		## RUN BMP_PREPCONFIG.M
+		matlab -nodisplay -nodesktop -r ("bmp_DICOMenquirer ('$BIDS_directory');exit");
 
 	fi
 	;;
