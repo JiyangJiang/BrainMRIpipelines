@@ -404,17 +404,25 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 
 				if ~ isfolder (dcm2niix.BIDSoutputdir{i,1})
 
-					dcm2niix.BIDSmkdirStatus{i,1} = mkdir (dcm2niix.BIDSoutputdir{i,1});
+					status = mkdir (dcm2niix.BIDSoutputdir{i,1});
 
-					if ~ dcm2niix.BIDSmkdirStatus{i,1}
+					if ~ status
 
-						fprintf(2, '%s : [WARNING] : Creating BIDS directory ''%s'' failed. This may be because you don''t have the directory structure specified in bmp_ADNI_dcm2niixcmd.mat. You may need to run bmp_BIDSgenerator with proper BIDS_directory argument.\n', mfilename, dcm2niix.BIDSoutputdir{i,1});
+						dcm2niix.BIDSmkdirStatus{i,1} = 'failed creating BIDS folder';
 
-					else
+						fprintf(2, '%s : Creating BIDS directory ''%s'' failed. This may be because you don''t have the directory structure specified in bmp_ADNI_dcm2niixcmd.mat. You may need to run bmp_BIDSgenerator with proper BIDS_directory argument.\n', mfilename, dcm2niix.BIDSoutputdir{i,1});
 
 						continue
 
+					else
+
+						dcm2niix.BIDSmkdirStatus{i,1} = 'BIDS folder created successfully';
+
 					end
+
+				else
+
+					dcm2niix.BIDSmkdirStatus{i,1} = 'BIDS folder already exists';
 
 				end
 

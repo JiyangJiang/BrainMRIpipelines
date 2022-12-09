@@ -480,17 +480,27 @@ function dcm2niix = run_dcm2niix (to_run_dcm2niix, dataset, matOutDir, varargin)
 
 				if ~ isfolder (dcm2niix.BIDSoutputdir{i,1})
 
-					dcm2niix.BIDSmkdirStatus{i,1} = mkdir (dcm2niix.BIDSoutputdir{i,1});
+					status = mkdir (dcm2niix.BIDSoutputdir{i,1});
 
-					if dcm2niix.BIDSmkdirStatus{i,1}
+					if status
+
+						dcm2niix.BIDSmkdirStatus{i,1} = 'BIDS folder created successfully';
 
 						fprintf ('%s : BIDS output directory ''%s'' has been successfully created.\n', mfilename, dcm2niix.BIDSoutputdir{i,1});
 
 					else
 
+						dcm2niix.BIDSmkdirStatus{i,1} = 'failed creating BIDS folder';
+
+						fprintf(2, '%s : Creating BIDS directory ''%s'' failed.\n', mfilename, dcm2niix.BIDSoutputdir{i,1});
+
 						continue
 
 					end
+
+				else
+
+					dcm2niix.BIDSmkdirStatus{i,1} = 'BIDS folder already exists';
 
 				end
 
