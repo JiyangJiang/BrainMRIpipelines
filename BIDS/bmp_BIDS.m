@@ -1,4 +1,6 @@
-dset = 'ADNI';
+function bmp_BIDS (dataset);
+
+dset = 'ADNI'
 
 % TP-W530
 DICOM_directory  = '/sandbox/adni_examples/dicom';
@@ -9,7 +11,7 @@ BIDS_directory = '/sandbox/adni_examples/bids';
 DICOM_directory  = '/Users/z3402744/Work/ADNI_test';
 BIDS_directory   = '/Users/z3402744/Work/ADNI_test/BIDS';
 
-switch dset
+switch dataset
 
 	case 'ADNI'
 
@@ -19,6 +21,5 @@ switch dset
 
 		dicom2niix = bmp_ADNI ('dcm2niix');
 
-		system (['dcm2bids_scaffold --output_dir ' BIDS_directory]);  % dcm2bids to generate additional BIDS files.
-
+		
 end
