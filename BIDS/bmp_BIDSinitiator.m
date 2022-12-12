@@ -13,6 +13,8 @@ function bmp_BIDSinitiator (varargin)
 % bmp_BIDSinitiator ('/path/to/BIDS', 'other');
 %
 
+	BMP_PATH = getenv ('BMP_PATH');
+
 	supported_datasets = 	{
 							'ADNI'
 							};
@@ -155,6 +157,60 @@ function bmp_BIDSinitiator (varargin)
 
 			fid = fopen (readme_fnam, 'w');
 			fprintf (fid, '%s\n', readme);
+			fclose (fid);
+
+			bmp_print (bmp_convention_MATLAB ('t'), ' DONE!\n');
+
+
+
+			% participants.tsv
+
+			ppts_tsv_fnam = fullfile (BIDS_directory, 'participants.tsv');
+
+			bmp_print (bmp_convention_MATLAB ('s'), '%s : ', mfilename)
+			bmp_print (bmp_convention_MATLAB ('t'), 'Writing out ');
+			bmp_print (bmp_convention_MATLAB ('p'), '''%s''', ppts_tsv_fnam);
+			bmp_print (bmp_convention_MATLAB ('t'), ' ...');
+
+			ADNI_ppts_dat = load (fullfile (BMP_PATH, 'BIDS', 'ADNI_study_data', 'bmp_ADNI_BIDSpptsTSV.mat')).ADNI_ppt_tsv_deduplicate;
+
+			writetable (ADNI_ppts_dat, ppts_tsv_fnam, ...
+							'FileType', 			'text', ...
+							'WriteVariableNames', 	true, ...
+							'Delimiter',			'\t' ...
+						);
+
+			bmp_print (bmp_convention_MATLAB ('t'), ' DONE!\n');
+
+
+
+
+			% participants.json
+
+			ADNI_ppts_vars = 	struct ('baseline_age', 		struct ('Description', 	'Baseline age. This is evidenced by observing the AGE variable being consistent at different timepoints for the same participant.',...
+																		'Units',       	'Years'), ...
+										'gender',				struct ('Description', 	'Gender of participant.', ...
+																		'Levels',       struct ('Male', 	'Level for male participants', ...
+																								'Female',	'Level for female participants')), ...
+										'baseline_diagnosis',	struct ('Description', 	'Baseline diagnosis extracted from DX_bl variable in ADNI study data.', ...
+																		'Levels',		struct ('CN',		'Level for cognitively normal participants.', ...
+																								'MCI',		'Level for participants with Mild Cognitive Impairment (ADNI1/3).', ...
+																								'EMCI',		'Level for participants with Early Mild Cognitive Impairment (ADNI GO/2).', ...
+																								'LMCI',		'Level for participants with Late Mild Cognitive Impairment (ADNI GO/2).', ...
+																								'SMC',		'Level for participants with Significant Memory Concern (ADNI 2).', ...
+																								'AD',		'Level for participants with Alzheimer''s Disease.')));
+
+			ADNI_ppts_json = jsonencode(ADNI_ppts_vars,'PrettyPrint', true);
+
+			ppts_json_fnam = fullfile (BIDS_directory, 'participants.json');
+
+			bmp_print (bmp_convention_MATLAB ('s'), '%s : ', mfilename)
+			bmp_print (bmp_convention_MATLAB ('t'), 'Writing out ');
+			bmp_print (bmp_convention_MATLAB ('p'), '''%s''', ppts_json_fnam);
+			bmp_print (bmp_convention_MATLAB ('t'), ' ...');
+
+			fid = fopen (ppts_json_fnam, 'w');
+			fprintf (fid, '%s\n', ADNI_ppts_json);
 			fclose (fid);
 
 			bmp_print (bmp_convention_MATLAB ('t'), ' DONE!\n');
