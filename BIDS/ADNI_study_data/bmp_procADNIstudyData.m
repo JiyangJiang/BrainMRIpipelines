@@ -227,3 +227,39 @@ ADNI_forDicom2BidsMapping = unique (ADNI_forDicom2BidsMapping); % there were dup
 
 save ('bmp_ADNI_forDicom2BidsMapping.mat', 'ADNI_forDicom2BidsMapping');
 
+
+
+
+% for participants.tsv
+
+ADNI_all = load ('bmp_ADNI_all.mat').ADNI_all;
+ADNI_ppt_tsv = table (ADNI_all.SID, ADNI_all.AGE, ADNI_all.PTGENDER, ADNI_all.DX_bl);
+ADNI_ppt_tsv.Properties.VariableNames = {'participant_id';'baseline_age';'gender';'baseline_diagnosis'};
+
+ADNI_ppt_tsv (find (cellfun (@isempty, ADNI_ppt_tsv.participant_id    )),:) = [];
+ADNI_ppt_tsv (find (isnan (ADNI_ppt_tsv.baseline_age)),:)                   = [];
+ADNI_ppt_tsv (find (cellfun (@isempty, ADNI_ppt_tsv.gender            )),:) = [];
+ADNI_ppt_tsv (find (cellfun (@isempty, ADNI_ppt_tsv.baseline_diagnosis)),:) = [];
+
+ADNI_ppt_tsv_deduplicate = unique(ADNI_ppt_tsv);
+
+ADNI_ppt_tsv_deduplicate.participant_id = strcat('sub-ADNI', strrep(ADNI_ppt_tsv_deduplicate.participant_id,'_',''));
+
+save ('bmp_ADNI_BIDSpptsTSV.mat', 'ADNI_ppt_tsv_deduplicate');
+
+
+
+% for participants.json
+
+ADNI_ppts = struct ('baseline_age', 		struct ('Description', 	'Baseline age. This is evidenced by observing the AGE variable being consistent at different timepoints for the same participant.',...
+													'Units',       	'Years'), ...
+					'gender',				struct ('Description', 	'Gender of participant.', ...
+													'Levels',       struct ('Male', 	'Level for male participants', ...
+																			'Female',	'Level for female participants')), ...
+					'baseline_diagnosis',	struct ('Description', 	'Baseline diagnosis extracted from DX_bl variable in ADNI study data.', ...
+													'Levels',		struct ('CN',		'Level for cognitively normal participants.', ...
+																			'MCI',		'Level for participants with Mild Cognitive Impairment (ADNI1/3).', ...
+																			'EMCI',		'Level for participants with Early Mild Cognitive Impairment (ADNI GO/2).', ...
+																			'LMCI',		'Level for participants with Late Mild Cognitive Impairment (ADNI GO/2).', ...
+																			'SMC',		'Level for participants with Significant Memory Concern (ADNI 2).', ...
+																			'AD',		'Level for participants with Alzheimer''s Disease.')));
