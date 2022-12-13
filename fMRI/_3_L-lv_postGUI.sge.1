@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# DESCRIPTION
+# =========================================================================================
+#
+# This script is to exclude subjects with excessive motion - the 1st part of the two
+# post-GUI codes.
+#
+#
+# USAGE
+# =========================================================================================
+#
+# $1 = 'aroma' or 'fix'
+#
+# $2 = cohort folder (e.g. /Users/z3402744/Work/datasets/2_SCS_rs_fMRI)
+#
+# $3 = threshold (in units of mm and degrees) to remove excessive movement (e.g. 2)
+#
+
+
+cleanup_mode=aroma
+cohortFolder=/data/jiyang/grp_cmp_lt80_over95_nondemented_May30newPipeline_2mmiso
+threshold=3
+
+# cleanup_mode=$1
+# cohortFolder=$2
+# threshold=$3
+
+
+
+curr_dir=$(dirname $(which $0))
+
+${curr_dir}/L-lv_remove_excessive_motion.sh ${cleanup_mode} \
+											${cohortFolder} \
+											${threshold} \
+											par_cluster \
+											noQsub
+
+
+# submit scripts to SGE
+
+# 1) remove excessive motion
+rmExcessiveMotion_1_jid=$($FSLDIR/bin/fsl_sub -T 100 -q short.q -N rmExcessiveMotion_1 -l ${cohortFolder}/SGE_commands/oe -t ${cohortFolder}/SGE_commands/rmExcessiveMotion.fslsub.1)
+rmExcessiveMotion_2_jid=$($FSLDIR/bin/fsl_sub -T 100 -q short.q -N rmExcessiveMotion_2 -l ${cohortFolder}/SGE_commands/oe -j ${rmExcessiveMotion_1_jid} -t ${cohortFolder}/SGE_commands/rmExcessiveMotion.fslsub.2)
