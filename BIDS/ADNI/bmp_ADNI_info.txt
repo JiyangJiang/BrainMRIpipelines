@@ -1,0 +1,74 @@
+
+1) Compatibility of MRI sequences from different Waves.
+
+	REFERENCE : https://adni.loni.usc.edu/methods/mri-tool/mri-analysis/ ==> 'Series Type'
+
+	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	+     3D T1      +  Spatial resolution was improved slightly in ADNI 3 to 1mm cubed. We believe 
+	+                +  this should not have a dramatic effect on longitudinal within person analyses.
+	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	+                +  Changed from 2D to 3D in ADNI 3. This introduces a significant improvement in 
+	+     FLAIR      +  spatial resolution plus a change in the contrast model. It is doubtful that this 
+	+                +  data type will be consistent from ADNI 2 to ADNI 3 without significant data 
+	+                +  processing to account for the change in acquisition.
+	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	+                +  No change from ADNI 2 to ADNI 3 for GE or Philips scanners. A 3-echo train GRE 
+	+                +  sequence is acquired on Siemens scanners with phase and magnitude volumes saved 
+	+    T2* GRE     +  for each echo. This will allow creation of pseudo quantitative susceptibility 
+	+                +  maps. The magnitude 20ms volume (3rd echo), from these Siemens GRE acquisitions, 
+	+                +  is compatible with GRE scans acquired in ADNI GO/2.
+	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	+  High resolution coronal    +  little change, should be compatible from ADNI 2 to ADNI 3.
+	+  for hippocampal subfields  +
+	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	+     ASL        +  2D PASL was used in ADNI 2 and 3D (PASL or pCASL) are used wherever possible in 
+	+                +  ADNI 3. Thus this data t ype is unlikely to be compatible between ADNI 2 and ADNI 3.
+	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	+                +  ADNI 3 uses 2.0 mm isotropic voxels, but ADNI 2 used 2.7 mm, with b = 0 and 1000 
+	+     DTI        +  s/mm2 weighted volumes. ADNI3 Basic and Advanced both provide b = 0 and 1000 s/mm2
+	+                +  weighted volumes, but the b = 500 and 2000 s/mm2 volumes of Advanced would
+	+                +  have to be excluded before comparison with ADNI 2.
+	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	+     fMRI       +  The basic version of each of these should be fairly compatible, but the advanced 
+	+                +  ADNI 3 version will not be compatible with ADNI 2 data.
+	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+2) PET scan acquisition
+
+	REFERENCE : https://adni.loni.usc.edu/methods/pet-analysis-method/pet-analysis/
+
+	ADNI 1 PET protocol : 		a)	FDG-PET: 185 MBq (5 mCi), dynamic 3D scan of six 5-min frames 30-60 min post 
+									injection.
+
+								b)	PIB-PET: Performed on a small pilot sample: 555MBq (15 mCi), dynamic 3D scan 
+									of four 5 min frames from 50-70 min post injection.
+
+	ADNI 2/GO PET protocol :	a)	FDG-PET: 185 MBq (5 mCi), dynamic 3D scan of six 5-min frames 30-60 min post 
+									injection.
+
+								b)	Florbetapir: 370 MBq (10 mCi), dynamic 3D scan of four 5 min frames 50-70 
+									min post injection.
+
+	ADNI 3 PET protocol :		a)	Florbetapir (Amyvid): 370 MBq (10.0 mCi) ± 10%, 20 min (4X5min frames) 
+									acquisition at 50-70 min post-injection.
+
+								b)	Florbetaben (Neuraceq): 300 MBq (8.1 mCi) ± 10%, 20 min (4X5min frames) 
+									acquisition at 90-110 min post-injection.
+
+								c)	AV-1451: 370 MBq (10.0 mCi) ± 10%, 30 min (6X5min frames) acquisition at 
+									75-105 min post-injection.
+
+								d)	FDG: 185 MBq (5.0 mCi) ± 10%, 30 min (6X5min frames) acquisition at 30-60 
+									min post-injection.
+
+
+
+3) PET scan pre-processing
+
+	REFERENCE : https://adni.loni.usc.edu/methods/pet-analysis-method/pet-analysis/
+
+	The processing steps listed below are incremental. Scans from previous steps are further processed to provide 
+	increasingly uniform data sets. Scans acquired with dynamic and quantitative protocols have all four types of processed 
+	data. Scans acquired with the static protocol have only two types of processed data (see below).

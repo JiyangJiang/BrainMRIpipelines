@@ -66,7 +66,7 @@
 % ++++++++++++++++++
 
 BMP_PATH = getenv('BMP_PATH');
-cd (fullfile(BMP_PATH,'BIDS','ADNI_study_data'));
+cd (fullfile(BMP_PATH,'BIDS','ADNI'));
 
 % MRI list (MRILIST.csv)
 mri_list_opts = detectImportOptions ('CSV_files_from_ADNI_website/MRILIST.csv');
@@ -167,7 +167,7 @@ save ('bmp_ADNI_all.mat', 'ADNI_all');
 
 
 
-% ADNI ASL
+% ADNI ASL QC
 ADNI_ASLqc = outerjoin (ucsf_asl_fs_15,	ucsf_asl_fs_22,...
 						'Keys',			{'COLPROT','RID','VISCODE','VISCODE_v','SCANDATE','VERSION','LONIUID','IMAGEUID','RUNDATE','QC'},...
 						'MergeKeys',	true);
@@ -204,6 +204,8 @@ ADNI_ASLqc.Properties.VariableNames(find(strcmp(ADNI_ASLqc.Properties.VariableNa
 ADNI_ASLqc.VISCODE(find(cellfun(@isempty, ADNI_ASLqc.VISCODE))) = ADNI_ASLqc.VISCODE_ADNI_ASLqc(find(cellfun(@isempty, ADNI_ASLqc.VISCODE)));
 ADNI_ASLqc = removevars (ADNI_ASLqc, 'VISCODE_ADNI_ASLqc');
 
+ADNI_ASLqc.Properties.VariableNames(find(strcmp(ADNI_ASLqc.Properties.VariableNames,'QC'))) = {'QC_ASL'};
+ADNI_ASLqc.Properties.VariableNames(find(strcmp(ADNI_ASLqc.Properties.VariableNames,'QCDate'))) = {'QC_ASL_date'};
 
 save ('bmp_ADNI_all_mergeASLqc.mat', 'ADNI_ASLqc');
 
@@ -249,3 +251,7 @@ save ('bmp_ADNI_BIDSpptsTSV.mat', 'ADNI_ppt_tsv_deduplicate');
 
 
 
+% ADNI3 only - T1w, FLAIR, ASL, PET, DWI
+
+ADNIwithASLqc = load('ADNI/bmp_ADNI_all_mergeASLqc.mat').ADNI_ASLqc;
+ADNI3withASLqc = ADNIwithASLqc(find(contains(ADNIwithASLqc.VISIT,'ADNI3')),:);
