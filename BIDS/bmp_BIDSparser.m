@@ -10,7 +10,7 @@
 % ======================================================
 % 28 Nov 2022 - Written by Jiyang Jiang
 
-BIDS_directory = '/Users/z3402744/Work/ADNI_test/BIDS';
+BIDS_directory = '/sandbox/adni_examples/bids';
 
 BMP_PATH     = getenv ('BMP_PATH');
 BMP_3RD_PATH = getenv ('BMP_3RD_PATH');

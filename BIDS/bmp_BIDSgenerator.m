@@ -467,9 +467,9 @@ function dcm2niix = run_dcm2niix (to_run_dcm2niix, dataset, matOutDir, varargin)
 
 		if nargin == 4 && strcmp(varargin{1}, 'sandbox')
 
-			fprintf('%s : Saving dcm2niix commands to bmp_ADNI_dcm2niixcmd.mat.\n', mfilename);
+			fprintf('%s : Saving dcm2niix commands to bmp_ADNI_dcm2niix.mat.\n', mfilename);
 
-			save (fullfile (matOutDir, 'bmp_ADNI_dcm2niixcmd.mat'), 'dcm2niix');
+			save (fullfile (matOutDir, 'bmp_ADNI_dcm2niix.mat'), 'dcm2niix');
 
 
 		elseif nargin == 3
@@ -506,7 +506,7 @@ function dcm2niix = run_dcm2niix (to_run_dcm2niix, dataset, matOutDir, varargin)
 
 				fprintf ('%s : (%d / %d) : Running dcm2niix to convert ''%s'' to ''%s''.nii ...', mfilename, i, size (dcm2niix.DICOMinputdir,1), dcm2niix.DICOMinputdir{i,1}, fullfile(dcm2niix.BIDSoutputdir{i,1}, dcm2niix.BIDSniibasename{i,1}));
 
-				[dcm2niix.status{i,1}, dcm2niix.cmdout{i,1}] = system (dcm2niix.cmd{i,1});
+				[dcm2niix.cmdstatus{i,1}, dcm2niix.cmdout{i,1}] = system (dcm2niix.cmd{i,1});
 
 				if contains (dcm2niix.cmdout{i,1}, 'warning', 'IgnoreCase', true)
 
@@ -525,21 +525,11 @@ function dcm2niix = run_dcm2niix (to_run_dcm2niix, dataset, matOutDir, varargin)
 
 			fprintf('%s : Saving dcm2niix commands and command outputs to bmp_ADNI_dcm2niixout.mat.\n', mfilename);
 
-			save (fullfile (matOutDir, 'bmp_ADNI_dcm2niixcmdout.mat'), 'dcm2niix');
+			save (fullfile (matOutDir, 'bmp_ADNI_dcm2niix.mat'), 'dcm2niix');
 
 		end
 
 	end
 
 end
-
-% to_run_dcm2niix
-
-% ans = 
-
-%   struct with fields:
-
-%       DICOMinputdir: '/Users/z3402744/Work/ADNI_test/018_S_4399/Sagittal_3D_Accelerated_MPRAGE/2021-07-30_11_29_32.0/I1475316'
-%       BIDSoutputdir: '/Users/z3402744/Work/ADNI_test/BIDS/sub-ADNI018S4399/ses-m114/anat'
-%     BIDSniibasename: 'sub-ADNI018S4399_ses-m114_run-01_acq-sag3dMprage_T1w'
 

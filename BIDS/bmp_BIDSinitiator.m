@@ -95,6 +95,9 @@ function bmp_BIDSinitiator (varargin)
 
 
 
+
+
+
 	switch dataset
 
 		case 'ADNI'
@@ -172,7 +175,7 @@ function bmp_BIDSinitiator (varargin)
 			bmp_print (bmp_convention_MATLAB ('p'), '''%s''', ppts_tsv_fnam);
 			bmp_print (bmp_convention_MATLAB ('t'), ' ...');
 
-			ADNI_ppts_dat = load (fullfile (BMP_PATH, 'BIDS', 'ADNI_study_data', 'bmp_ADNI_BIDSpptsTSV.mat')).ADNI_ppt_tsv_deduplicate;
+			ADNI_ppts_dat = load (fullfile (BMP_PATH, 'BIDS', 'ADNI', 'bmp_ADNI_BIDSpptsTSV.mat')).ADNI_ppt_tsv_deduplicate;
 
 			writetable (ADNI_ppts_dat, ppts_tsv_fnam, ...
 							'FileType', 			'text', ...
@@ -214,6 +217,35 @@ function bmp_BIDSinitiator (varargin)
 			fclose (fid);
 
 			bmp_print (bmp_convention_MATLAB ('t'), ' DONE!\n');
+
+
+
+			% code, derivatives, sourcedata
+
+			necessaryBIDSdirs = {fullfile('code','BMP'); 'derivatives'; 'sourcedata'};
+
+			for i = 1 : size (necessaryBIDSdirs, 1)
+
+				if ~ isfolder (fullfile (BIDS_directory, necessaryBIDSdirs{i,1}))
+
+					bmp_print (bmp_convention_MATLAB ('s'), '%s : ', mfilename)
+					bmp_print (bmp_convention_MATLAB ('t'), 'Making ');
+					bmp_print (bmp_convention_MATLAB ('p'), '''%s''', fullfile (BIDS_directory, necessaryBIDSdirs{i,1}));
+					bmp_print (bmp_convention_MATLAB ('t'), ' directory ...');
+
+					[~] = mkdir (fullfile (BIDS_directory, necessaryBIDSdirs{i,1}));
+
+					bmp_print (bmp_convention_MATLAB ('t'), ' DONE!\n');
+
+				end
+
+			end
+
+
+		case 'other'
+
+
+			%% DEAL WITH OTHER DATASETS
 
 	end
 
