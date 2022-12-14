@@ -106,3 +106,20 @@
 			resolution of the lowest resolution scanners used in ADNI. Image sets from higher resolution scanners have been 
 			smoothed more than image sets from lower resolution scanners. The specific filter functions were determined from 
 			the Hoffman phantom PET scans that were acquired during the certification process.
+
+
+
+
+4) What is the difference between ‘screening’ and ‘baseline’?
+
+	REFERENCE : https://adni.loni.usc.edu/support/
+
+	FOR SCREENING/BASELINE SCANS: 
+
+		A chart detailing imaging visits is shown in the Image Data section. Further explanation could be — (ADNI 1):  Subjects who were randomized into the 3T scanner group had a 1.5T screening scan as part of the study inclusion/exclusion screening. Those subjects meeting inclusion criteria had a 3T scan at the Baseline visit.
+
+	FOR SCREENING/BASELINE DIAGNOSIS: 
+
+		The screening visit consists of a subset of the planned assessments (neuropsychological testing, imaging, etc.) sufficient to evaluate the inclusion/exclusion criteria for each potential participant. Once a participant passed screening, the baseline assessment was conducted in which additional neuropsychological testing, imaging, and fluid samples were taken. The diagnosis at the screening diagnosis was used to randomize individuals to an arm of the ADNI1 study (1.5T only, 1.5T + 3T, 1.5T + FDG-PET), but the diagnosis from the baseline visit is considered more accurate. For most individuals, the two diagnoses are the same, but the diagnosis did change for a handful of subjects.
+		
+	You can extract the baseline diagnosis from LONI Download Study Data >> Diagnosis >> Diagnosis Summary [ADNI1, GO, 2] (DXSUM_PDXCONV_ADNIALL.csv). ADNI1 baseline diagnosis can be obtained using the “DXCURREN” variable at VISCODE==”bl,” ADNIGO/2 baseline diagnoses can be obtained using the “DXCHANGE” variable, and ADNI3 baseline diagnosis can be obtained using the “DIAGNOSIS” variable.

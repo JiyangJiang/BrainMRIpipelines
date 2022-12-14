@@ -307,10 +307,11 @@ MRI_master = shuffleAfterJoin (dup_str_fields, dup_num_fields, dup_dat_fields, t
 
 
 % MRI MASTER borrows COLPROT, VISCODE from DEM MASTER
-MRI_temp = table (MRI_master.SID, MRI_master.SCANDATE);
-MRI_temp.Properties.VariableNames = {'SID';'SCANDATE'};
+MRI_temp = table (MRI_master.SID, MRI_master.SCANDATE, MRI_master.VISIT, MRI_master.MAGSTRENGTH);
+MRI_temp.Properties.VariableNames = {'SID';'SCANDATE';'VISIT';'MAGSTRENGTH'};
 MRI_temp(find(cellfun(@isempty,MRI_temp.SID)),:) = [];
 MRI_temp(find(strcmp(cellstr(MRI_temp.SCANDATE),'NaT')),:) = [];
+MRI_temp(find(cellfun(@isempty,MRI_temp.VISIT)),:) = [];
 MRI_temp=unique(MRI_temp);
 
 DEM_temp = table (DEM_master.SID, DEM_master.EXAMDATE, DEM_master.COLPROT, DEM_master.VISCODE);
@@ -319,9 +320,25 @@ DEM_temp(find(cellfun(@isempty,DEM_temp.SID)),:)=[];
 DEM_temp(find(strcmp(cellstr(DEM_temp.EXAMDATE),'NaT')),:) = [];
 DEM_temp(find(cellfun(@isempty,DEM_temp.COLPROT)),:)=[];
 DEM_temp(find(cellfun(@isempty,DEM_temp.VISCODE)),:)=[];
-%+++++++++++%
-%%% TO DO %%%
-%+++++++++++%
+
+temp = outerjoin(MRI_temp,DEM_temp,'Keys','SID','MergeKeys',true);
+temp.DATEDIFF = calmonths(between(temp.SCANDATE,temp.EXAMDATE)); % difference btw SCANDATE and EXAMDATE in months.
+temp = temp(find(temp.DATEDIFF<3),:);
+temp = temp(find(temp.DATEDIFF>-3),:);
+
+idx=find(strcmp(temp.VISCODE,'bl') & abs(temp.MAGSTRENGTH - 1.5)<0.1 & contains (temp.VISIT,'screening','IgnoreCase',true));
+for i = 1 : size (idx,1)
+	if size(temp(find(strcmp(temp.SID,temp.SID(idx(i)))&strcmp(temp.VISCODE,'bl')&(temp.MAGSTRENGTH==3)),:),1) == 1
+		temp.VISCODE(idx(i)) = {'sc'}; 	% VISCODE = 'bl' & MAGSTRENGTH ~ 1.5T & VISIT contains 'screening' 
+										% & there is is another 'bl' and MAGSTRENTCH==3 under the same SID
+										% => ADNI 1 screening (VISCODE = 'sc').
+	end
+end
+  
+
+%++++++++++++++++++++++++++++++++++++++%
+%%% TO DO - merge back to MRI_master %%%
+%++++++++++++++++++++++++++++++++++++++%
 
 
 % % for DICOM-to-BIDS mapping purpose
