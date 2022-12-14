@@ -59,7 +59,8 @@
 %
 
 
-
+clear all
+clc
 
 % ++++++++++++++++++
 % LOAD CSV FILES
@@ -191,7 +192,24 @@ mayo_imgqc_120815.Properties.VariableNames(find(strcmp(mayo_imgqc_120815.Propert
 mayo_imgqc_120815.series_selected(find(strcmp(mayo_imgqc_120815.series_selected,'1'))) = {'Recommended'};
 mayo_imgqc_120815.series_selected(find(strcmp(mayo_imgqc_120815.series_selected,'0'))) = {'Not recommended'};
 mayo_imgqc_120815.series_selected(find(strcmp(mayo_imgqc_120815.series_selected,''))) = {'Not evaluated'};
-mayo_imgqc_120815.Properties.VariableNames(find(strcmp(mayo_imgqc_120815.Properties.VariableNames,'series_selected'))) = {'QC_MAYO_RECOMMENDATION'};
+mayo_imgqc_120815.Properties.VariableNames(find(strcmp(mayo_imgqc_120815.Properties.VariableNames,'series_selected'))) = {'QC_MAYO_RECOMMENDATION'}; 	% Assuming 'series_selected' means
+																																						% 'recommended' for further analyses?
+
+
+
+% MRI QUALITY (MRIQUALITY.csv)   <-- only data for ADNI 1 available.
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%
+% !!! IDs in this file do not match any of other files.
+%
+mri_quality_opts = detectImportOptions ('CSV_files_from_ADNI_website/MRIQUALITY.csv');
+
+mri_quality_opts.ImportErrorRule = 'error';
+mri_quality_opts.ExtraColumnsRule = 'error';
+
+mri_quality = readtable ('CSV_files_from_ADNI_website/MRIQUALITY.csv', mri_quality_opts);
+%
+% NOT CONTINUE WITH THIS FILE AS THE ID DOES NOT MATCH ANY OTHER FILES.
 
 
 
@@ -205,8 +223,13 @@ adni_merge_opts.VariableTypes(find(strcmp(adni_merge_opts.VariableNames, 'IMAGEU
 adni_merge = readtable ('CSV_files_from_ADNI_website/ADNIMERGE_Jmod.csv', adni_merge_opts);
 
 adni_merge.Properties.VariableNames(find(strcmp(adni_merge.Properties.VariableNames,'PTID'))) = {'SID'};
-adni_merge.Properties.VariableNames(find(strcmp(adni_merge.Properties.VariableNames,'EXAMDATE'))) = {'SCANDATE'};
 adni_merge.Properties.VariableNames(find(strcmp(adni_merge.Properties.VariableNames,'IMAGEUID'))) = {'IMAGEUID_abnormal'};
+
+% EXAMDATE in ADNIMERGE is assessment data for demographics, rather than SCANDATE.
+
+
+
+
 
 
 
@@ -217,17 +240,21 @@ adni_merge.Properties.VariableNames(find(strcmp(adni_merge.Properties.VariableNa
 % ++++++++++++
 
 
-% all ADNI
+% MRI MASTER LIST
 % ----------------------------------------------------------------
-ADNI_all = outerjoin (mri_list,		adni_merge,...
-						'Keys',		{'SID','SCANDATE'},...
-						'MergeKeys',true);
-
-save ('bmp_ADNI_all.mat', 'ADNI_all');
+MRI_master = mri_list;
 
 
 
-% ADNI ASL QC
+
+% DEMOGRAPHICS MASTER LIST
+% ----------------------------------------------------------------
+DEM_master = adni_merge;
+
+
+
+
+% ASL QC
 % ----------------------------------------------------------------
 ASL_QC = outerjoin (ucsf_asl_fs_15,	ucsf_asl_fs_22,...
 						'Keys',			{'COLPROT','RID','VISCODE','VISCODE_v','SCANDATE','VERSION','LONIUID','IMAGEUID','RUNDATE','QC_ASL'},...
@@ -241,86 +268,128 @@ ASL_QC.Properties.VariableNames(find(strcmp(ASL_QC.Properties.VariableNames,'QCD
 
 
 
-% 
+
+% all QC
+% ----------------------------------------------------------------
+%
+% !!! SOME ENTRIES IN ASL QC CORRESPONDE MOCO FMRI IN MAYO QC FILE
+%
+all_QC = outerjoin (mayo_imgqc_120815, ASL_QC, ...
+					'Keys',		'IMAGEUID',...
+					'MergeKeys',true);
+
+dup_str_fields = {'LONIUID'};
+dup_num_fields = {'RID'};
+dup_dat_fields = {'SCANDATE'};
+tabname1 = 'mayo_imgqc_120815';
+tabname2 = 'ASL_QC';
+in_tab = all_QC;
+
+all_QC = shuffleAfterJoin (dup_str_fields, dup_num_fields, dup_dat_fields, tabname1, tabname2, in_tab);
+
+
+
+% include all QC in MRI MASTER list
+% ----------------------------------------------------------------
+MRI_master = outerjoin (MRI_master,			all_QC,...
+						'Keys',			'IMAGEUID',...
+						'MergeKeys',	true);
+
+dup_str_fields = {'SID';'STUDYID';'LONIUID';'SEQUENCE'};
+dup_num_fields = {'MAGSTRENGTH'};
+dup_dat_fields = {'SCANDATE'};
+tabname1 = 'MRI_master';
+tabname2 = 'all_QC';
+in_tab = MRI_master;
+
+MRI_master = shuffleAfterJoin (dup_str_fields, dup_num_fields, dup_dat_fields, tabname1, tabname2, in_tab);
+
+
+
+% MRI MASTER borrows COLPROT, VISCODE from DEM MASTER
+MRI_temp = table (MRI_master.SID, MRI_master.SCANDATE);
+MRI_temp.Properties.VariableNames = {'SID';'SCANDATE'};
+MRI_temp(find(cellfun(@isempty,MRI_temp.SID)),:) = [];
+MRI_temp(find(strcmp(cellstr(MRI_temp.SCANDATE),'NaT')),:) = [];
+MRI_temp=unique(MRI_temp);
+
+DEM_temp = table (DEM_master.SID, DEM_master.EXAMDATE, DEM_master.COLPROT, DEM_master.VISCODE);
+DEM_temp.Properties.VariableNames = {'SID';'EXAMDATE';'COLPROT';'VISCODE'};
+DEM_temp(find(cellfun(@isempty,DEM_temp.SID)),:)=[];
+DEM_temp(find(strcmp(cellstr(DEM_temp.EXAMDATE),'NaT')),:) = [];
+DEM_temp(find(cellfun(@isempty,DEM_temp.COLPROT)),:)=[];
+DEM_temp(find(cellfun(@isempty,DEM_temp.VISCODE)),:)=[];
+%+++++++++++%
+%%% TO DO %%%
+%+++++++++++%
+
+
+% % for DICOM-to-BIDS mapping purpose
+% ADNI_forDicom2BidsMapping = table(ADNI_ASLqc.SID,...
+% 										ADNI_ASLqc.SCANDATE,...
+% 										ADNI_ASLqc.VISCODE,...
+% 										ADNI_ASLqc.SEQUENCE,...
+% 										ADNI_ASLqc.IMAGEUID);
+% ADNI_forDicom2BidsMapping.Properties.VariableNames = {'SID','SCANDATE','VISCODE','SEQUENCE','IMAGEUID'};
+
+% ADNI_forDicom2BidsMapping(find (cellfun(@isempty,ADNI_forDicom2BidsMapping.SID)),:)=[];
+% ADNI_forDicom2BidsMapping(find(cellfun(@isempty,cellstr(ADNI_forDicom2BidsMapping.SCANDATE))),:) =[];
+% ADNI_forDicom2BidsMapping(find (cellfun(@isempty,ADNI_forDicom2BidsMapping.VISCODE)),:)=[];
+% ADNI_forDicom2BidsMapping(find(cellfun(@isempty,ADNI_forDicom2BidsMapping.SEQUENCE)),:)=[];
+% ADNI_forDicom2BidsMapping(find(cellfun(@isempty,ADNI_forDicom2BidsMapping.IMAGEUID)),:)=[];
+
+% ADNI_forDicom2BidsMapping = unique (ADNI_forDicom2BidsMapping); % there were duplicates.
+
+% save ('bmp_ADNI_forDicom2BidsMapping.mat', 'ADNI_forDicom2BidsMapping');
 
 
 
 
-ADNI_ASLqc = outerjoin (ADNI_ASLqc,			mri_list,...
-						'Keys',			{'LONIUID','IMAGEUID'},...
-						'MergeKeys',true);
+% % for participants.tsv
 
-ADNI_ASLqc.Properties.VariableNames(find(strcmp(ADNI_ASLqc.Properties.VariableNames,'SCANDATE_mri_list'))) = {'SCANDATE'};
-ADNI_ASLqc.('SCANDATE')(find(strcmp(cellstr(ADNI_ASLqc.('SCANDATE')),'NaT'))) = ADNI_ASLqc.('SCANDATE_ADNI_ASLqc')(find(strcmp(cellstr(ADNI_ASLqc.('SCANDATE')),'NaT')));
-ADNI_ASLqc = removevars (ADNI_ASLqc, 'SCANDATE_ADNI_ASLqc');
+% ADNI_all = load ('bmp_ADNI_all.mat').ADNI_all;
+% ADNI_ppt_tsv = table (ADNI_all.SID, ADNI_all.AGE, ADNI_all.PTGENDER, ADNI_all.DX_bl);
+% ADNI_ppt_tsv.Properties.VariableNames = {'participant_id';'baseline_age';'gender';'baseline_diagnosis'};
 
-ADNI_ASLqc.Properties.VariableNames(find(strcmp(ADNI_ASLqc.Properties.VariableNames,'SID_mri_list'))) = {'SID'};
-ADNI_ASLqc.('SID')(find(cellfun(@isempty,ADNI_ASLqc.('SID')))) = ADNI_ASLqc.('SID_ADNI_ASLqc')(find(cellfun(@isempty,ADNI_ASLqc.('SID'))));
-ADNI_ASLqc = removevars (ADNI_ASLqc, 'SID_ADNI_ASLqc');
+% ADNI_ppt_tsv (find (cellfun (@isempty, ADNI_ppt_tsv.participant_id    )),:) = [];
+% ADNI_ppt_tsv (find (isnan (ADNI_ppt_tsv.baseline_age)),:)                   = [];
+% ADNI_ppt_tsv (find (cellfun (@isempty, ADNI_ppt_tsv.gender            )),:) = [];
+% ADNI_ppt_tsv (find (cellfun (@isempty, ADNI_ppt_tsv.baseline_diagnosis)),:) = [];
 
-ADNI_ASLqc = outerjoin (ADNI_ASLqc,		adni_merge, ...
-						'Keys',		{'SID','SCANDATE'},...
-						'MergeKeys',true);
+% ADNI_ppt_tsv_deduplicate = unique(ADNI_ppt_tsv);
 
-ADNI_ASLqc.Properties.VariableNames(find(strcmp(ADNI_ASLqc.Properties.VariableNames,'COLPROT_adni_merge'))) = {'COLPROT'};
-ADNI_ASLqc.COLPROT(find(cellfun(@isempty, ADNI_ASLqc.COLPROT))) = ADNI_ASLqc.COLPROT_ADNI_ASLqc(find(cellfun(@isempty, ADNI_ASLqc.COLPROT)));
-ADNI_ASLqc = removevars (ADNI_ASLqc, 'COLPROT_ADNI_ASLqc');
+% ADNI_ppt_tsv_deduplicate.participant_id = strcat('sub-ADNI', strrep(ADNI_ppt_tsv_deduplicate.participant_id,'_',''));
 
-ADNI_ASLqc.Properties.VariableNames(find(strcmp(ADNI_ASLqc.Properties.VariableNames,'RID_adni_merge'))) = {'RID'};
-ADNI_ASLqc.RID(find(isnan(ADNI_ASLqc.RID))) = ADNI_ASLqc.RID_ADNI_ASLqc(find(isnan(ADNI_ASLqc.RID)));
-ADNI_ASLqc = removevars (ADNI_ASLqc, 'RID_ADNI_ASLqc');
-
-ADNI_ASLqc.Properties.VariableNames(find(strcmp(ADNI_ASLqc.Properties.VariableNames,'VISCODE_adni_merge'))) = {'VISCODE'};
-ADNI_ASLqc.VISCODE(find(cellfun(@isempty, ADNI_ASLqc.VISCODE))) = ADNI_ASLqc.VISCODE_ADNI_ASLqc(find(cellfun(@isempty, ADNI_ASLqc.VISCODE)));
-ADNI_ASLqc = removevars (ADNI_ASLqc, 'VISCODE_ADNI_ASLqc');
+% save ('bmp_ADNI_BIDSpptsTSV.mat', 'ADNI_ppt_tsv_deduplicate');
 
 
 
-save ('bmp_ADNI_all_mergeASLqc.mat', 'ADNI_ASLqc');
+% % ADNI3 only - T1w, FLAIR, ASL, PET, DWI
+
+% ADNIwithASLqc = load('ADNI/bmp_ADNI_all_mergeASLqc.mat').ADNI_ASLqc;
+% ADNI3withASLqc = ADNIwithASLqc(find(contains(ADNIwithASLqc.VISIT,'ADNI3')),:);
 
 
 
-% for DICOM-to-BIDS mapping purpose
-ADNI_forDicom2BidsMapping = table(ADNI_ASLqc.SID,...
-										ADNI_ASLqc.SCANDATE,...
-										ADNI_ASLqc.VISCODE,...
-										ADNI_ASLqc.SEQUENCE,...
-										ADNI_ASLqc.IMAGEUID);
-ADNI_forDicom2BidsMapping.Properties.VariableNames = {'SID','SCANDATE','VISCODE','SEQUENCE','IMAGEUID'};
+function out_tab = shuffleAfterJoin (dup_str_fields, dup_num_fields, dup_dat_fields, tabname1, tabname2, in_tab)
 
-ADNI_forDicom2BidsMapping(find (cellfun(@isempty,ADNI_forDicom2BidsMapping.SID)),:)=[];
-ADNI_forDicom2BidsMapping(find(cellfun(@isempty,cellstr(ADNI_forDicom2BidsMapping.SCANDATE))),:) =[];
-ADNI_forDicom2BidsMapping(find (cellfun(@isempty,ADNI_forDicom2BidsMapping.VISCODE)),:)=[];
-ADNI_forDicom2BidsMapping(find(cellfun(@isempty,ADNI_forDicom2BidsMapping.SEQUENCE)),:)=[];
-ADNI_forDicom2BidsMapping(find(cellfun(@isempty,ADNI_forDicom2BidsMapping.IMAGEUID)),:)=[];
+	for i = 1 : size (dup_dat_fields,1)
+		in_tab.Properties.VariableNames(find(strcmp(in_tab.Properties.VariableNames,[dup_dat_fields{i,1} '_' tabname1]))) = {dup_dat_fields{i,1}};
+		in_tab.(dup_dat_fields{i,1})(find(strcmp(cellstr(in_tab.(dup_dat_fields{i,1})),'NaT'))) = in_tab.([dup_dat_fields{i,1} '_' tabname2])(find(strcmp(cellstr(in_tab.(dup_dat_fields{i,1})),'NaT')));
+		in_tab = removevars (in_tab, [dup_dat_fields{i,1} '_' tabname2]);
+	end
 
-ADNI_forDicom2BidsMapping = unique (ADNI_forDicom2BidsMapping); % there were duplicates.
+	for i = 1 : size (dup_str_fields,1)
+		in_tab.Properties.VariableNames(find(strcmp(in_tab.Properties.VariableNames,[dup_str_fields{i,1} '_' tabname1]))) = {dup_str_fields{i,1}};
+		in_tab.(dup_str_fields{i,1})(find(cellfun(@isempty,in_tab.(dup_str_fields{i,1})))) = in_tab.([dup_str_fields{i,1} '_' tabname2])(find(cellfun(@isempty,in_tab.(dup_str_fields{i,1}))));
+		in_tab = removevars (in_tab, [dup_str_fields{i,1} '_' tabname2]);
+	end
 
-save ('bmp_ADNI_forDicom2BidsMapping.mat', 'ADNI_forDicom2BidsMapping');
+	for i = 1 : size (dup_num_fields,1)
+		in_tab.Properties.VariableNames(find(strcmp(in_tab.Properties.VariableNames,[dup_num_fields{i,1} '_' tabname1]))) = {dup_num_fields{i,1}};
+		in_tab.(dup_num_fields{i,1})(find(isnan(in_tab.(dup_num_fields{i,1})))) = in_tab.([dup_num_fields{i,1} '_' tabname2])(find(isnan(in_tab.(dup_num_fields{i,1}))));
+		in_tab = removevars (in_tab, [dup_num_fields{i,1} '_' tabname2]);
+	end
 
-
-
-
-% for participants.tsv
-
-ADNI_all = load ('bmp_ADNI_all.mat').ADNI_all;
-ADNI_ppt_tsv = table (ADNI_all.SID, ADNI_all.AGE, ADNI_all.PTGENDER, ADNI_all.DX_bl);
-ADNI_ppt_tsv.Properties.VariableNames = {'participant_id';'baseline_age';'gender';'baseline_diagnosis'};
-
-ADNI_ppt_tsv (find (cellfun (@isempty, ADNI_ppt_tsv.participant_id    )),:) = [];
-ADNI_ppt_tsv (find (isnan (ADNI_ppt_tsv.baseline_age)),:)                   = [];
-ADNI_ppt_tsv (find (cellfun (@isempty, ADNI_ppt_tsv.gender            )),:) = [];
-ADNI_ppt_tsv (find (cellfun (@isempty, ADNI_ppt_tsv.baseline_diagnosis)),:) = [];
-
-ADNI_ppt_tsv_deduplicate = unique(ADNI_ppt_tsv);
-
-ADNI_ppt_tsv_deduplicate.participant_id = strcat('sub-ADNI', strrep(ADNI_ppt_tsv_deduplicate.participant_id,'_',''));
-
-save ('bmp_ADNI_BIDSpptsTSV.mat', 'ADNI_ppt_tsv_deduplicate');
-
-
-
-% ADNI3 only - T1w, FLAIR, ASL, PET, DWI
-
-ADNIwithASLqc = load('ADNI/bmp_ADNI_all_mergeASLqc.mat').ADNI_ASLqc;
-ADNI3withASLqc = ADNIwithASLqc(find(contains(ADNIwithASLqc.VISIT,'ADNI3')),:);
+	out_tab = in_tab;
+end
