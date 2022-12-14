@@ -62,13 +62,15 @@
 
 
 % ++++++++++++++++++
-% LOAD ALL CSV FILES
+% LOAD CSV FILES
 % ++++++++++++++++++
 
 BMP_PATH = getenv('BMP_PATH');
 cd (fullfile(BMP_PATH,'BIDS','ADNI'));
 
+
 % MRI list (MRILIST.csv)
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 mri_list_opts = detectImportOptions ('CSV_files_from_ADNI_website/MRILIST.csv');
 
 mri_list_opts.ImportErrorRule = 'error';
@@ -84,7 +86,8 @@ mri_list.Properties.VariableNames(find(strcmp(mri_list.Properties.VariableNames,
 mri_list.Properties.VariableNames(find(strcmp(mri_list.Properties.VariableNames,'SERIESID'))) = {'LONIUID'};
 
 
-% UCSF ASL QC
+% UCSF ASL QC (UCSFASLQC.csv)
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ucsf_asl_qc_opts = detectImportOptions ('CSV_files_from_ADNI_website/UCSFASLQC_Jmod2.csv');
 
 ucsf_asl_qc_opts.VariableTypes{1,2} = 'char';
@@ -97,10 +100,11 @@ ucsf_asl_qc_opts.ExtraColumnsRule = 'error';
 ucsf_asl_qc = readtable ('CSV_files_from_ADNI_website/UCSFASLQC_Jmod2.csv', ucsf_asl_qc_opts);
 
 ucsf_asl_qc.Properties.VariableNames(find(strcmp(ucsf_asl_qc.Properties.VariableNames,'PTID'))) = {'SID'};
-ucsf_asl_qc.Properties.VariableNames(find(strcmp(ucsf_asl_qc.Properties.VariableNames,'QCRating'))) = {'QC'};
+ucsf_asl_qc.Properties.VariableNames(find(strcmp(ucsf_asl_qc.Properties.VariableNames,'QCRating'))) = {'QC_ASL'};
 
 
 % UCSF ASL FreeSurfer 11_02_15 V2 (UCSFASLFS_11_02_15_V2.csv)
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ucsf_asl_fs_15_opts = detectImportOptions ('CSV_files_from_ADNI_website/UCSFASLFS_11_02_15_V2.csv');
 
 ucsf_asl_fs_15_opts.ImportErrorRule = 'error';
@@ -115,10 +119,11 @@ ucsf_asl_fs_15 = ucsf_asl_fs_15(:,1:10);
 ucsf_asl_fs_15.Properties.VariableNames(find(strcmp(ucsf_asl_fs_15.Properties.VariableNames,'EXAMDATE'))) = {'SCANDATE'};
 ucsf_asl_fs_15.Properties.VariableNames(find(strcmp(ucsf_asl_fs_15.Properties.VariableNames,'VISCODE'))) = {'VISCODE_v'};
 ucsf_asl_fs_15.Properties.VariableNames(find(strcmp(ucsf_asl_fs_15.Properties.VariableNames,'VISCODE2'))) = {'VISCODE'};
-ucsf_asl_fs_15.Properties.VariableNames(find(strcmp(ucsf_asl_fs_15.Properties.VariableNames,'RAWQC'))) = {'QC'};
+ucsf_asl_fs_15.Properties.VariableNames(find(strcmp(ucsf_asl_fs_15.Properties.VariableNames,'RAWQC'))) = {'QC_ASL'};
 
 
 % UCSF ASL FreeSurfer CBF 08_17_22 (UCSFASLFSCBF_08_17_22.csv)
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ucsf_asl_fs_22_opts = detectImportOptions ('CSV_files_from_ADNI_website/UCSFASLFSCBF_08_17_22.csv');
 
 ucsf_asl_fs_22_opts.ImportErrorRule = 'error';
@@ -133,12 +138,65 @@ ucsf_asl_fs_22 = ucsf_asl_fs_22(:,1:11);
 ucsf_asl_fs_22.Properties.VariableNames(find(strcmp(ucsf_asl_fs_22.Properties.VariableNames,'VISCODE'))) = {'VISCODE_v'};
 ucsf_asl_fs_22.Properties.VariableNames(find(strcmp(ucsf_asl_fs_22.Properties.VariableNames,'VISCODE2'))) = {'VISCODE'};
 ucsf_asl_fs_22.Properties.VariableNames(find(strcmp(ucsf_asl_fs_22.Properties.VariableNames,'EXAMDATE'))) = {'SCANDATE'};
-ucsf_asl_fs_22.Properties.VariableNames(find(strcmp(ucsf_asl_fs_22.Properties.VariableNames,'CBFQC'))) = {'QC'};
-ucsf_asl_fs_22.('QC')(find(strcmp(ucsf_asl_fs_22.('QC'), 'FALSE'))) = {'Fail'};
-ucsf_asl_fs_22.('QC')(find(strcmp(ucsf_asl_fs_22.('QC'), 'TRUE'))) = {'Pass'};
+ucsf_asl_fs_22.Properties.VariableNames(find(strcmp(ucsf_asl_fs_22.Properties.VariableNames,'CBFQC'))) = {'QC_ASL'};
+ucsf_asl_fs_22.('QC_ASL')(find(strcmp(ucsf_asl_fs_22.('QC_ASL'), 'FALSE'))) = {'Fail'};
+ucsf_asl_fs_22.('QC_ASL')(find(strcmp(ucsf_asl_fs_22.('QC_ASL'), 'TRUE'))) = {'Pass'};
 
 
-% ADNI MERGE
+
+% MAYO IMAGE QC (MAYOADIRL_MRI_IMAGEQC_12_08_15.csv)
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+mayo_imgqc_120815_opts = detectImportOptions ('CSV_files_from_ADNI_website/MAYOADIRL_MRI_IMAGEQC_12_08_15.csv');
+
+mayo_imgqc_120815_opts.ImportErrorRule = 'error';
+mayo_imgqc_120815_opts.ExtraColumnsRule = 'error';
+
+mayo_imgqc_120815_opts.VariableTypes(find(strcmp(mayo_imgqc_120815_opts.VariableNames,'loni_study'))) = {'char'};
+mayo_imgqc_120815_opts.VariableTypes(find(strcmp(mayo_imgqc_120815_opts.VariableNames,'series_date'))) = {'char'};
+mayo_imgqc_120815_opts.VariableTypes(find(strcmp(mayo_imgqc_120815_opts.VariableNames,'series_time'))) = {'char'};
+mayo_imgqc_120815_opts.VariableTypes(find(strcmp(mayo_imgqc_120815_opts.VariableNames,'series_quality'))) = {'char'};
+mayo_imgqc_120815_opts.VariableTypes(find(strcmp(mayo_imgqc_120815_opts.VariableNames,'series_selected'))) = {'char'};
+
+mayo_imgqc_120815 = readtable ('CSV_files_from_ADNI_website/MAYOADIRL_MRI_IMAGEQC_12_08_15.csv', mayo_imgqc_120815_opts);
+
+mayo_imgqc_120815.Properties.VariableNames(find(strcmp(mayo_imgqc_120815.Properties.VariableNames,'loni_study'))) = {'STUDYID'};
+
+mayo_imgqc_120815.Properties.VariableNames(find(strcmp(mayo_imgqc_120815.Properties.VariableNames,'loni_series'))) = {'LONIUID'};
+mayo_imgqc_120815.LONIUID = erase(mayo_imgqc_120815.LONIUID,'S');
+
+mayo_imgqc_120815.Properties.VariableNames(find(strcmp(mayo_imgqc_120815.Properties.VariableNames,'loni_image'))) = {'IMAGEUID'};
+mayo_imgqc_120815.IMAGEUID = erase(mayo_imgqc_120815.IMAGEUID,'I');
+
+mayo_imgqc_120815.series_date = datetime(mayo_imgqc_120815.series_date,'InputFormat','yyyyMMdd','Format','yyyy-MM-dd');
+mayo_imgqc_120815.Properties.VariableNames(find(strcmp(mayo_imgqc_120815.Properties.VariableNames,'series_date'))) = {'SCANDATE'};
+
+mayo_imgqc_120815.series_time = datetime(mayo_imgqc_120815.series_time,'InputFormat','HHmmss.SSS','Format','HH:mm:ss.SSS');
+mayo_imgqc_120815.Properties.VariableNames(find(strcmp(mayo_imgqc_120815.Properties.VariableNames,'series_time'))) = {'SCANTIME'};
+
+mayo_imgqc_120815.series_quality(find(strcmp(mayo_imgqc_120815.series_quality,'1'))) = {'Excellent'};
+mayo_imgqc_120815.series_quality(find(strcmp(mayo_imgqc_120815.series_quality,'2'))) = {'Good'};
+mayo_imgqc_120815.series_quality(find(strcmp(mayo_imgqc_120815.series_quality,'3'))) = {'Fair'};
+mayo_imgqc_120815.series_quality(find(strcmp(mayo_imgqc_120815.series_quality,'4'))) = {'Unusable'};
+mayo_imgqc_120815.series_quality(find(strcmp(mayo_imgqc_120815.series_quality,'-1'))) = {'Not evaluated'}; 	% Note in MAYOADIRL_MRI_IMAGEQC_DICT_07_31_14.csv
+																											% it is specified that <blank> represent
+																											% 'Not evaluated'. However, there does not seem
+																											% to be any <blank>, but over 10k of '-1'. Therefore,
+																											% '-1' is interpreted as 'Not evaluated' for now.
+mayo_imgqc_120815.Properties.VariableNames(find(strcmp(mayo_imgqc_120815.Properties.VariableNames,'series_quality'))) = {'QC_MAYO'};
+
+mayo_imgqc_120815.Properties.VariableNames(find(strcmp(mayo_imgqc_120815.Properties.VariableNames,'series_description'))) = {'SEQUENCE'};
+
+mayo_imgqc_120815.Properties.VariableNames(find(strcmp(mayo_imgqc_120815.Properties.VariableNames,'field_strength'))) = {'MAGSTRENGTH'};
+
+mayo_imgqc_120815.series_selected(find(strcmp(mayo_imgqc_120815.series_selected,'1'))) = {'Recommended'};
+mayo_imgqc_120815.series_selected(find(strcmp(mayo_imgqc_120815.series_selected,'0'))) = {'Not recommended'};
+mayo_imgqc_120815.series_selected(find(strcmp(mayo_imgqc_120815.series_selected,''))) = {'Not evaluated'};
+mayo_imgqc_120815.Properties.VariableNames(find(strcmp(mayo_imgqc_120815.Properties.VariableNames,'series_selected'))) = {'QC_MAYO_RECOMMENDATION'};
+
+
+
+% ADNI MERGE (ADNIMERGE.csv)
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 adni_merge_opts = detectImportOptions ('CSV_files_from_ADNI_website/ADNIMERGE_Jmod.csv');
 
 adni_merge_opts.ExtraColumnsRule = 'error';
@@ -158,7 +216,9 @@ adni_merge.Properties.VariableNames(find(strcmp(adni_merge.Properties.VariableNa
 % MERGE TABLES
 % ++++++++++++
 
+
 % all ADNI
+% ----------------------------------------------------------------
 ADNI_all = outerjoin (mri_list,		adni_merge,...
 						'Keys',		{'SID','SCANDATE'},...
 						'MergeKeys',true);
@@ -168,13 +228,23 @@ save ('bmp_ADNI_all.mat', 'ADNI_all');
 
 
 % ADNI ASL QC
-ADNI_ASLqc = outerjoin (ucsf_asl_fs_15,	ucsf_asl_fs_22,...
-						'Keys',			{'COLPROT','RID','VISCODE','VISCODE_v','SCANDATE','VERSION','LONIUID','IMAGEUID','RUNDATE','QC'},...
+% ----------------------------------------------------------------
+ASL_QC = outerjoin (ucsf_asl_fs_15,	ucsf_asl_fs_22,...
+						'Keys',			{'COLPROT','RID','VISCODE','VISCODE_v','SCANDATE','VERSION','LONIUID','IMAGEUID','RUNDATE','QC_ASL'},...
 						'MergeKeys',	true);
 
-ADNI_ASLqc = outerjoin (ADNI_ASLqc,			ucsf_asl_qc,...
-						'Keys',			{'LONIUID','IMAGEUID','QC'},...
+ASL_QC = outerjoin (ASL_QC,			ucsf_asl_qc,...
+						'Keys',			{'LONIUID','IMAGEUID','QC_ASL'},...
 						'MergeKeys',	true);
+
+ASL_QC.Properties.VariableNames(find(strcmp(ASL_QC.Properties.VariableNames,'QCDate'))) = {'QC_ASL_date'};
+
+
+
+% 
+
+
+
 
 ADNI_ASLqc = outerjoin (ADNI_ASLqc,			mri_list,...
 						'Keys',			{'LONIUID','IMAGEUID'},...
@@ -204,8 +274,7 @@ ADNI_ASLqc.Properties.VariableNames(find(strcmp(ADNI_ASLqc.Properties.VariableNa
 ADNI_ASLqc.VISCODE(find(cellfun(@isempty, ADNI_ASLqc.VISCODE))) = ADNI_ASLqc.VISCODE_ADNI_ASLqc(find(cellfun(@isempty, ADNI_ASLqc.VISCODE)));
 ADNI_ASLqc = removevars (ADNI_ASLqc, 'VISCODE_ADNI_ASLqc');
 
-ADNI_ASLqc.Properties.VariableNames(find(strcmp(ADNI_ASLqc.Properties.VariableNames,'QC'))) = {'QC_ASL'};
-ADNI_ASLqc.Properties.VariableNames(find(strcmp(ADNI_ASLqc.Properties.VariableNames,'QCDate'))) = {'QC_ASL_date'};
+
 
 save ('bmp_ADNI_all_mergeASLqc.mat', 'ADNI_ASLqc');
 

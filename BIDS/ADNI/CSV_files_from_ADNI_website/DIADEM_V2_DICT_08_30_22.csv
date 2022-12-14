@@ -1,0 +1,8 @@
+"FLDNAME","TBLNAME","CRFNAME","TEXT","TYPE","LENGTH","CODE","UNITS","NOTES","update_stamp"
+"RID","-4","-4","Patient ID","-4","-4","-4","","","2022-08-30 19:06:24.0"
+"VISCODE","-4","-4","The VISCODE of patients","-4","-4","-4","","","2022-08-30 19:06:24.0"
+"VISCODE2","-4","-4","The VISCODE2 of patients","-4","-4","-4","","","2022-08-30 19:06:24.0"
+"EXAMDATE","-4","-4","Examination Date","-4","-4","-4","","MM/DD/YYYY format","2022-08-30 19:06:24.0"
+"ANALYSISDATE","-4","-4","Analysis Date","-4","-4","-4","","MM/DD/YYYY format","2022-08-30 19:06:24.0"
+"Global_Specimen_ID","-4","-4","Global Specimen ID","-4","-4","-4","","","2022-08-30 19:25:11.0"
+"AZ284","-4","-4","Test Results","-4","-4","-4","fmol/10L","","2022-08-30 19:06:24.0"

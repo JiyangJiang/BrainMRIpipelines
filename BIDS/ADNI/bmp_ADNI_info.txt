@@ -72,3 +72,37 @@
 	The processing steps listed below are incremental. Scans from previous steps are further processed to provide 
 	increasingly uniform data sets. Scans acquired with dynamic and quantitative protocols have all four types of processed 
 	data. Scans acquired with the static protocol have only two types of processed data (see below).
+
+	3.1) CO-REGISTERED DYNAMIC
+			
+			Two primary differences from the “original” raw PET image data: 1) separate frames have been co-registered to 
+			one another lessening the effects of patient motion, and 2) image files are in DICOM format. Only PET scans 
+			acquired under protocol 1 or 3 above will have a processed image set of this type.
+
+	3.2) CO-REGISTERED, AVERAGED
+
+			Averaging the 6 five-minute frames (or the last 6 frames for the quantitative studies) of the “Co-registered 
+			Dynamic” image set described above. This creates a single 30 min PET image set still in “native” space. 
+			As above, only PET scans acquired under protocol 1 or 3 above, will have an entry of this type.
+
+	3.3) CO-REG, AVG, STANDARDIZED IMAGE AND VOXEL SIZE
+
+			Co-registered averaged images were reoriented to a standard 160×160×96 voxel image grid, with 1.5 mm cubic voxels.
+			The image grid is oriented such that anterior-posterior axis of the subject is parallel to the AC-PC line. This
+			is referred to as 'AC-PC' space in LONI search program. This serves as the reference, and individual frames from
+			each PET scan (baseline, subsequent 6-/12-month follow-up, etc.) were co-registered to this baseline reference
+			image. Only one interpolation was implemented to register original raw image to standardised space, and thus
+			resolution degradation by interpolation was kept to a minimum and the same for all scans. An averaged image was
+			generated from AC-PC co-registered frames, and then intensity normalised using a subject-specific mask so that
+			the average of voxels within mask is exactly one. Both the spatial oriented (AC-PC) and the intensity normalised
+			images are intended as a starting point for subsequent analyses. With a standardised image matrix, PET data from
+			different scanner models can be compared more easily. No non-linear warping or even linear scaling of brain dimensions
+			were applied (only spatial re-orientation and intensity normalisation).
+
+	3.4) CO-REG, AVG, STD IMG AND VOX SIZ, UNIFORM RESOLUTION
+
+			Result of smoothing of above-mentioned images. Each image set was filtered with a scanner-specific filter function
+			(can be a non-isotropic filter) to produce images of a uniform isotropic resolution of 8 mm FWHM, the approximate
+			resolution of the lowest resolution scanners used in ADNI. Image sets from higher resolution scanners have been 
+			smoothed more than image sets from lower resolution scanners. The specific filter functions were determined from 
+			the Hoffman phantom PET scans that were acquired during the certification process.
