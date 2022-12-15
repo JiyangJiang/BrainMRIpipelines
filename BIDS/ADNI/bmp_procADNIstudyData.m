@@ -62,17 +62,22 @@
 clear all
 clc
 
+
+
+BMP_PATH = getenv('BMP_PATH');
+
+outmat = fullfile (BMP_PATH, 'BIDS', 'bmp_ADNI.mat');
+
+
+
+
 % ++++++++++++++++++
 % LOAD CSV FILES
 % ++++++++++++++++++
 
-BMP_PATH = getenv('BMP_PATH');
-cd (fullfile(BMP_PATH,'BIDS','ADNI'));
-
-
 % MRI list (MRILIST.csv)
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-mri_list_opts = detectImportOptions ('CSV_files_from_ADNI_website/MRILIST.csv');
+mri_list_opts = detectImportOptions (fullfile(BMP_PATH,'BIDS','ADNI','CSV_files_from_ADNI_website', 'MRILIST.csv'));
 
 mri_list_opts.ImportErrorRule = 'error';
 mri_list_opts.ExtraColumnsRule = 'error';
@@ -81,7 +86,7 @@ mri_list_opts.VariableTypes(find(strcmp(mri_list_opts.VariableNames,'STUDYID')))
 mri_list_opts.VariableTypes(find(strcmp(mri_list_opts.VariableNames,'SERIESID'))) = {'char'};
 mri_list_opts.VariableTypes(find(strcmp(mri_list_opts.VariableNames,'IMAGEUID'))) = {'char'};
 
-mri_list = readtable ('CSV_files_from_ADNI_website/MRILIST.csv', mri_list_opts);
+mri_list = readtable (fullfile(BMP_PATH,'BIDS','ADNI', 'CSV_files_from_ADNI_website', 'MRILIST.csv'), mri_list_opts);
 
 mri_list.Properties.VariableNames(find(strcmp(mri_list.Properties.VariableNames,'SUBJECT'))) = {'SID'};
 mri_list.Properties.VariableNames(find(strcmp(mri_list.Properties.VariableNames,'SERIESID'))) = {'LONIUID'};
@@ -89,7 +94,7 @@ mri_list.Properties.VariableNames(find(strcmp(mri_list.Properties.VariableNames,
 
 % UCSF ASL QC (UCSFASLQC.csv)
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ucsf_asl_qc_opts = detectImportOptions ('CSV_files_from_ADNI_website/UCSFASLQC_Jmod2.csv');
+ucsf_asl_qc_opts = detectImportOptions (fullfile(BMP_PATH,'BIDS','ADNI','CSV_files_from_ADNI_website', 'UCSFASLQC_Jmod2.csv'));
 
 ucsf_asl_qc_opts.VariableTypes{1,2} = 'char';
 ucsf_asl_qc_opts.VariableTypes{1,3} = 'char';
@@ -98,7 +103,7 @@ ucsf_asl_qc_opts.MissingRule = 'error';
 ucsf_asl_qc_opts.ImportErrorRule = 'error';
 ucsf_asl_qc_opts.ExtraColumnsRule = 'error';
 
-ucsf_asl_qc = readtable ('CSV_files_from_ADNI_website/UCSFASLQC_Jmod2.csv', ucsf_asl_qc_opts);
+ucsf_asl_qc = readtable (fullfile(BMP_PATH,'BIDS','ADNI','CSV_files_from_ADNI_website', 'UCSFASLQC_Jmod2.csv'), ucsf_asl_qc_opts);
 
 ucsf_asl_qc.Properties.VariableNames(find(strcmp(ucsf_asl_qc.Properties.VariableNames,'PTID'))) = {'SID'};
 ucsf_asl_qc.Properties.VariableNames(find(strcmp(ucsf_asl_qc.Properties.VariableNames,'QCRating'))) = {'QC_ASL'};
@@ -106,7 +111,7 @@ ucsf_asl_qc.Properties.VariableNames(find(strcmp(ucsf_asl_qc.Properties.Variable
 
 % UCSF ASL FreeSurfer 11_02_15 V2 (UCSFASLFS_11_02_15_V2.csv)
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ucsf_asl_fs_15_opts = detectImportOptions ('CSV_files_from_ADNI_website/UCSFASLFS_11_02_15_V2.csv');
+ucsf_asl_fs_15_opts = detectImportOptions (fullfile(BMP_PATH,'BIDS','ADNI','CSV_files_from_ADNI_website', 'UCSFASLFS_11_02_15_V2.csv'));
 
 ucsf_asl_fs_15_opts.ImportErrorRule = 'error';
 ucsf_asl_fs_15_opts.ExtraColumnsRule = 'error';
@@ -114,7 +119,7 @@ ucsf_asl_fs_15_opts.ExtraColumnsRule = 'error';
 ucsf_asl_fs_15_opts.VariableTypes(find(strcmp(ucsf_asl_fs_15_opts.VariableNames,'LONIUID'))) = {'char'};
 ucsf_asl_fs_15_opts.VariableTypes(find(strcmp(ucsf_asl_fs_15_opts.VariableNames,'IMAGEUID'))) = {'char'};
 
-ucsf_asl_fs_15 = readtable ('CSV_files_from_ADNI_website/UCSFASLFS_11_02_15_V2.csv', ucsf_asl_fs_15_opts);
+ucsf_asl_fs_15 = readtable (fullfile(BMP_PATH,'BIDS','ADNI','CSV_files_from_ADNI_website', 'UCSFASLFS_11_02_15_V2.csv'), ucsf_asl_fs_15_opts);
 
 ucsf_asl_fs_15 = ucsf_asl_fs_15(:,1:10);
 ucsf_asl_fs_15.Properties.VariableNames(find(strcmp(ucsf_asl_fs_15.Properties.VariableNames,'EXAMDATE'))) = {'SCANDATE'};
@@ -125,7 +130,7 @@ ucsf_asl_fs_15.Properties.VariableNames(find(strcmp(ucsf_asl_fs_15.Properties.Va
 
 % UCSF ASL FreeSurfer CBF 08_17_22 (UCSFASLFSCBF_08_17_22.csv)
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ucsf_asl_fs_22_opts = detectImportOptions ('CSV_files_from_ADNI_website/UCSFASLFSCBF_08_17_22.csv');
+ucsf_asl_fs_22_opts = detectImportOptions (fullfile(BMP_PATH,'BIDS','ADNI','CSV_files_from_ADNI_website', 'UCSFASLFSCBF_08_17_22.csv'));
 
 ucsf_asl_fs_22_opts.ImportErrorRule = 'error';
 ucsf_asl_fs_22_opts.ExtraColumnsRule = 'error';
@@ -133,7 +138,7 @@ ucsf_asl_fs_22_opts.ExtraColumnsRule = 'error';
 ucsf_asl_fs_22_opts.VariableTypes(find(strcmp(ucsf_asl_fs_22_opts.VariableNames,'LONIUID'))) = {'char'};
 ucsf_asl_fs_22_opts.VariableTypes(find(strcmp(ucsf_asl_fs_22_opts.VariableNames,'IMAGEUID'))) = {'char'};
 
-ucsf_asl_fs_22 = readtable ('CSV_files_from_ADNI_website/UCSFASLFSCBF_08_17_22.csv', ucsf_asl_fs_22_opts);
+ucsf_asl_fs_22 = readtable (fullfile(BMP_PATH,'BIDS','ADNI','CSV_files_from_ADNI_website', 'UCSFASLFSCBF_08_17_22.csv'), ucsf_asl_fs_22_opts);
 
 ucsf_asl_fs_22 = ucsf_asl_fs_22(:,1:11);
 ucsf_asl_fs_22.Properties.VariableNames(find(strcmp(ucsf_asl_fs_22.Properties.VariableNames,'VISCODE'))) = {'VISCODE_v'};
@@ -147,7 +152,7 @@ ucsf_asl_fs_22.('QC_ASL')(find(strcmp(ucsf_asl_fs_22.('QC_ASL'), 'TRUE'))) = {'P
 
 % MAYO IMAGE QC (MAYOADIRL_MRI_IMAGEQC_12_08_15.csv)
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-mayo_imgqc_120815_opts = detectImportOptions ('CSV_files_from_ADNI_website/MAYOADIRL_MRI_IMAGEQC_12_08_15.csv');
+mayo_imgqc_120815_opts = detectImportOptions (fullfile(BMP_PATH,'BIDS','ADNI','CSV_files_from_ADNI_website', 'MAYOADIRL_MRI_IMAGEQC_12_08_15.csv'));
 
 mayo_imgqc_120815_opts.ImportErrorRule = 'error';
 mayo_imgqc_120815_opts.ExtraColumnsRule = 'error';
@@ -158,7 +163,7 @@ mayo_imgqc_120815_opts.VariableTypes(find(strcmp(mayo_imgqc_120815_opts.Variable
 mayo_imgqc_120815_opts.VariableTypes(find(strcmp(mayo_imgqc_120815_opts.VariableNames,'series_quality'))) = {'char'};
 mayo_imgqc_120815_opts.VariableTypes(find(strcmp(mayo_imgqc_120815_opts.VariableNames,'series_selected'))) = {'char'};
 
-mayo_imgqc_120815 = readtable ('CSV_files_from_ADNI_website/MAYOADIRL_MRI_IMAGEQC_12_08_15.csv', mayo_imgqc_120815_opts);
+mayo_imgqc_120815 = readtable (fullfile(BMP_PATH,'BIDS','ADNI','CSV_files_from_ADNI_website', 'MAYOADIRL_MRI_IMAGEQC_12_08_15.csv'), mayo_imgqc_120815_opts);
 
 mayo_imgqc_120815.Properties.VariableNames(find(strcmp(mayo_imgqc_120815.Properties.VariableNames,'loni_study'))) = {'STUDYID'};
 
@@ -197,17 +202,35 @@ mayo_imgqc_120815.Properties.VariableNames(find(strcmp(mayo_imgqc_120815.Propert
 
 
 
+% MAYO ADNI 3 QC (MAYOADIRL_MRI_QUALITY_ADNI3.csv)
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+mayo_imgqc_adni3_opts = detectImportOptions (fullfile(BMP_PATH,'BIDS','ADNI','CSV_files_from_ADNI_website', 'MAYOADIRL_MRI_QUALITY_ADNI3.csv'));
+
+mayo_imgqc_adni3_opts.ImportErrorRule = 'error';
+mayo_imgqc_adni3_opts.ExtraColumnsRule = 'error';
+
+mayo_imgqc_adni3_opts.VariableTypes(find(strcmp(mayo_imgqc_adni3_opts.VariableNames,'LONI_STUDY'))) = {'char'};
+mayo_imgqc_adni3_opts.VariableTypes(find(strcmp(mayo_imgqc_adni3_opts.VariableNames,'LONI_SERIES'))) = {'char'};
+mayo_imgqc_adni3_opts.VariableTypes(find(strcmp(mayo_imgqc_adni3_opts.VariableNames,'LONI_IMAGE'))) = {'char'};
+
+mayo_imgqc_adni3 = readtable (fullfile(BMP_PATH,'BIDS','ADNI','CSV_files_from_ADNI_website', 'MAYOADIRL_MRI_QUALITY_ADNI3.csv'), mayo_imgqc_adni3_opts);
+%
+% THIS FILE DOES NOT GIVE SID FOR THE MISSING ONES IN MRI_MASTER. THEREFORE, NOT COMBINED WITH MRI_MASTER.
+
+
+
+
 % MRI QUALITY (MRIQUALITY.csv)   <-- only data for ADNI 1 available.
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %
 % !!! IDs in this file do not match any of other files.
 %
-mri_quality_opts = detectImportOptions ('CSV_files_from_ADNI_website/MRIQUALITY.csv');
+mri_quality_opts = detectImportOptions (fullfile(BMP_PATH,'BIDS','ADNI','CSV_files_from_ADNI_website', 'MRIQUALITY.csv'));
 
 mri_quality_opts.ImportErrorRule = 'error';
 mri_quality_opts.ExtraColumnsRule = 'error';
 
-mri_quality = readtable ('CSV_files_from_ADNI_website/MRIQUALITY.csv', mri_quality_opts);
+mri_quality = readtable (fullfile(BMP_PATH,'BIDS','ADNI','CSV_files_from_ADNI_website', 'MRIQUALITY.csv'), mri_quality_opts);
 %
 % NOT CONTINUE WITH THIS FILE AS THE ID DOES NOT MATCH ANY OTHER FILES.
 
@@ -215,12 +238,12 @@ mri_quality = readtable ('CSV_files_from_ADNI_website/MRIQUALITY.csv', mri_quali
 
 % ADNI MERGE (ADNIMERGE.csv)
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-adni_merge_opts = detectImportOptions ('CSV_files_from_ADNI_website/ADNIMERGE_Jmod.csv');
+adni_merge_opts = detectImportOptions (fullfile(BMP_PATH,'BIDS','ADNI','CSV_files_from_ADNI_website', 'ADNIMERGE_Jmod.csv'));
 
 adni_merge_opts.ExtraColumnsRule = 'error';
 adni_merge_opts.VariableTypes(find(strcmp(adni_merge_opts.VariableNames, 'IMAGEUID'))) = {'char'};
 
-adni_merge = readtable ('CSV_files_from_ADNI_website/ADNIMERGE_Jmod.csv', adni_merge_opts);
+adni_merge = readtable (fullfile(BMP_PATH,'BIDS','ADNI','CSV_files_from_ADNI_website', 'ADNIMERGE_Jmod.csv'), adni_merge_opts);
 
 adni_merge.Properties.VariableNames(find(strcmp(adni_merge.Properties.VariableNames,'PTID'))) = {'SID'};
 adni_merge.Properties.VariableNames(find(strcmp(adni_merge.Properties.VariableNames,'IMAGEUID'))) = {'IMAGEUID_abnormal'};
@@ -272,7 +295,8 @@ ASL_QC.Properties.VariableNames(find(strcmp(ASL_QC.Properties.VariableNames,'QCD
 % all QC
 % ----------------------------------------------------------------
 %
-% !!! SOME ENTRIES IN ASL QC CORRESPONDE MOCO FMRI IN MAYO QC FILE
+% !!! SOME ENTRIES IN ASL QC CORRESPOND TO MOCO FMRI IN MAYO QC FILE
+%     AND MRI LIST. THEY ARE KEPT AS THEY WERE FOR NOW.
 %
 all_QC = outerjoin (mayo_imgqc_120815, ASL_QC, ...
 					'Keys',		'IMAGEUID',...
@@ -304,6 +328,9 @@ in_tab = MRI_master;
 
 MRI_master = shuffleAfterJoin (dup_str_fields, dup_num_fields, dup_dat_fields, tabname1, tabname2, in_tab);
 
+% Note that some entries from ASL_QC cannot find SID in MRI_master (i.e., mri_list). Hopefully,
+% they can be picked up in the 'checkback' mode in bmp_ADNI.m.
+
 
 
 % MRI MASTER borrows COLPROT, VISCODE from DEM MASTER
@@ -334,57 +361,54 @@ for i = 1 : size (idx,1)
 										% => ADNI 1 screening (VISCODE = 'sc').
 	end
 end
-  
+temp = table (temp.SID, temp.SCANDATE, temp.VISIT, temp.MAGSTRENGTH, temp.COLPROT, temp.VISCODE);
+temp.Properties.VariableNames = {'SID';'SCANDATE';'VISIT';'MAGSTRENGTH';'COLPROT';'VISCODE'};
 
-%++++++++++++++++++++++++++++++++++++++%
-%%% TO DO - merge back to MRI_master %%%
-%++++++++++++++++++++++++++++++++++++++%
+MRI_master = outerjoin (MRI_master, temp, 'Keys', {'SID';'SCANDATE';'VISIT';'MAGSTRENGTH'}, 'MergeKeys', true);
 
+dup_str_fields = {'COLPROT';'VISCODE'};
+dup_dat_fields = cell(0,1);
+dup_num_fields = cell(0,1);
+tabname1 = 'temp';
+tabname2 = 'MRI_master';
+in_tab = MRI_master;
 
-% % for DICOM-to-BIDS mapping purpose
-% ADNI_forDicom2BidsMapping = table(ADNI_ASLqc.SID,...
-% 										ADNI_ASLqc.SCANDATE,...
-% 										ADNI_ASLqc.VISCODE,...
-% 										ADNI_ASLqc.SEQUENCE,...
-% 										ADNI_ASLqc.IMAGEUID);
-% ADNI_forDicom2BidsMapping.Properties.VariableNames = {'SID','SCANDATE','VISCODE','SEQUENCE','IMAGEUID'};
-
-% ADNI_forDicom2BidsMapping(find (cellfun(@isempty,ADNI_forDicom2BidsMapping.SID)),:)=[];
-% ADNI_forDicom2BidsMapping(find(cellfun(@isempty,cellstr(ADNI_forDicom2BidsMapping.SCANDATE))),:) =[];
-% ADNI_forDicom2BidsMapping(find (cellfun(@isempty,ADNI_forDicom2BidsMapping.VISCODE)),:)=[];
-% ADNI_forDicom2BidsMapping(find(cellfun(@isempty,ADNI_forDicom2BidsMapping.SEQUENCE)),:)=[];
-% ADNI_forDicom2BidsMapping(find(cellfun(@isempty,ADNI_forDicom2BidsMapping.IMAGEUID)),:)=[];
-
-% ADNI_forDicom2BidsMapping = unique (ADNI_forDicom2BidsMapping); % there were duplicates.
-
-% save ('bmp_ADNI_forDicom2BidsMapping.mat', 'ADNI_forDicom2BidsMapping');
+MRI_master = shuffleAfterJoin (dup_str_fields, dup_num_fields, dup_dat_fields, tabname1, tabname2, in_tab);
 
 
 
+% DICOM-to-BIDS mapping
+% ----------------------------------------------------------------
+forDICOM2BIDS = table(MRI_master.SID, MRI_master.SCANDATE,...
+						MRI_master.VISCODE, MRI_master.SEQUENCE,...
+						MRI_master.IMAGEUID);
+forDICOM2BIDS.Properties.VariableNames = {'SID','SCANDATE','VISCODE','SEQUENCE','IMAGEUID'};
 
-% % for participants.tsv
-
-% ADNI_all = load ('bmp_ADNI_all.mat').ADNI_all;
-% ADNI_ppt_tsv = table (ADNI_all.SID, ADNI_all.AGE, ADNI_all.PTGENDER, ADNI_all.DX_bl);
-% ADNI_ppt_tsv.Properties.VariableNames = {'participant_id';'baseline_age';'gender';'baseline_diagnosis'};
-
-% ADNI_ppt_tsv (find (cellfun (@isempty, ADNI_ppt_tsv.participant_id    )),:) = [];
-% ADNI_ppt_tsv (find (isnan (ADNI_ppt_tsv.baseline_age)),:)                   = [];
-% ADNI_ppt_tsv (find (cellfun (@isempty, ADNI_ppt_tsv.gender            )),:) = [];
-% ADNI_ppt_tsv (find (cellfun (@isempty, ADNI_ppt_tsv.baseline_diagnosis)),:) = [];
-
-% ADNI_ppt_tsv_deduplicate = unique(ADNI_ppt_tsv);
-
-% ADNI_ppt_tsv_deduplicate.participant_id = strcat('sub-ADNI', strrep(ADNI_ppt_tsv_deduplicate.participant_id,'_',''));
-
-% save ('bmp_ADNI_BIDSpptsTSV.mat', 'ADNI_ppt_tsv_deduplicate');
+forDICOM2BIDS(find (cellfun(@isempty,forDICOM2BIDS.SID)),:)=[];
+forDICOM2BIDS(find(cellfun(@isempty,cellstr(forDICOM2BIDS.SCANDATE))),:) =[];
+forDICOM2BIDS(find (cellfun(@isempty,forDICOM2BIDS.VISCODE)),:)=[];
+forDICOM2BIDS(find(cellfun(@isempty,forDICOM2BIDS.SEQUENCE)),:)=[];
+forDICOM2BIDS(find(cellfun(@isempty,forDICOM2BIDS.IMAGEUID)),:)=[];
 
 
 
-% % ADNI3 only - T1w, FLAIR, ASL, PET, DWI
 
-% ADNIwithASLqc = load('ADNI/bmp_ADNI_all_mergeASLqc.mat').ADNI_ASLqc;
-% ADNI3withASLqc = ADNIwithASLqc(find(contains(ADNIwithASLqc.VISIT,'ADNI3')),:);
+% for participants.tsv
+% ----------------------------------------------------------------
+forBIDSpptsTsv = table (DEM_master.SID, DEM_master.AGE, DEM_master.PTGENDER, DEM_master.DX_bl);
+forBIDSpptsTsv.Properties.VariableNames = {'participant_id';'baseline_age';'gender';'baseline_diagnosis'};
+
+forBIDSpptsTsv (find (cellfun (@isempty, forBIDSpptsTsv.participant_id    )),:) = [];
+forBIDSpptsTsv (find (isnan 			  (forBIDSpptsTsv.baseline_age)),:)     = [];
+forBIDSpptsTsv (find (cellfun (@isempty, forBIDSpptsTsv.gender            )),:) = [];
+forBIDSpptsTsv (find (cellfun (@isempty, forBIDSpptsTsv.baseline_diagnosis)),:) = [];
+
+forBIDSpptsTsv.participant_id = strcat('sub-ADNI', strrep(forBIDSpptsTsv.participant_id,'_',''));
+
+
+
+save (outmat, 'DEM_master', 'MRI_master', 'forDICOM2BIDS', 'forBIDSpptsTsv');
+
 
 
 

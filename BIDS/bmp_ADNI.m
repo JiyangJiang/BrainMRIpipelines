@@ -34,6 +34,14 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 %
 %   bmp_ADNI can be ran in the following modes:
 %
+%
+%     'initiate' mode
+%     +++++++++++++++++++++++++++++++++
+%
+%       Call bmp_procADNIstudyData.m to process ADNI study data, and generate
+%       /path/to/BrainMRIpipelines/ADNI/bmp_ADNI.mat. The MAT file saves
+%       MRI_master, DEM_master, forDICOM2BIDS, and forBIDSpptsTsv.
+%
 %     'create' or 'create_mapping' mode 
 %     +++++++++++++++++++++++++++++++++
 %       
@@ -69,6 +77,12 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 %
 %        varargin{1} = DICOM directory
 %        varargin{2} = BIDS directory
+%
+%
+%     'prepare'
+%
+%
+%     'checkback'
 %
 %
 %
@@ -127,258 +141,312 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 
 	switch operation_mode
 
+
+		case 'initiate'
+
+			bmp_procADNIstudyData;
+
+
 		case {'create'; 'create_mapping'}
 
 			if nargin == 2 && endsWith(varargin{1},'.mat')
 				output = varargin{1};
 			else
-				output = fullfile (BMP_PATH, 'BIDS', 'bmp_ADNI_DICOM2BIDS.mat');
+				output = fullfile (BMP_PATH, 'BIDS', 'bmp_ADNI.mat');
 			end
 
 			fprintf ('%s : Running in ''create'' mode. Will save DICOM2BIDS mapping to %s.\n',mfilename,output);
 
-			fprintf ('%s : Loading bmp_ADNI_forDicom2BidsMapping.mat ... ', mfilename);
+			fprintf ('%s : Loading bmp_ADNI.mat ... ', mfilename);
 
-			ADNI_mat = load (fullfile (BMP_PATH, 'BIDS', 'ADNI', 'bmp_ADNI_forDicom2BidsMapping.mat'));
+			ADNI_mat = load (fullfile (BMP_PATH, 'BIDS', 'bmp_ADNI.mat'));
 
 			fprintf ('DONE!\n', mfilename);
 
-			ADNI_table = ADNI_mat.ADNI_forDicom2BidsMapping;
-			ADNI_uniqueSID = unique(ADNI_table.SID);
-
+			forDICOM2BIDS = ADNI_mat.forDICOM2BIDS;
+			
 			fprintf ('%s : Start to create DICOM2BIDS mapping.\n', mfilename);
 
-			
+
+			SUBJECT = strcat('ADNI',erase(forDICOM2BIDS.SID,'_'));
+			SESSION = forDICOM2BIDS.VISCODE;
+			DATATYPE = cell (size (forDICOM2BIDS,1),1);
+			DATATYPE(:,1) = {'UNKNOWN'};
+			MODALITY = cell (size (forDICOM2BIDS,1),1);
+			MODALITY(:,1) = {'UNKNOWN'};
+			RUN = ones (size (forDICOM2BIDS,1),1);
+			ACQUISITION = cell (size (forDICOM2BIDS,1),1);
+			ACQUISITION(:,1) = {'UNKNOWN'};
+			SEQUENCE = forDICOM2BIDS.SEQUENCE;
+			PATIENTID = forDICOM2BIDS.SID;
+			STUDYDATE = strrep(cellstr(forDICOM2BIDS.SCANDATE),'-','');
+			IMAGEUID = forDICOM2BIDS.IMAGEUID;
+			DICOMSUBDIR = strrep(strrep(strrep(forDICOM2BIDS.SEQUENCE,' ','_'),'(','_'),')','_');
+
+			MODALITY(find(contains(SEQUENCE,possibleT1keywords,		'IgnoreCase',true)),1) = {'T1w'};
+			MODALITY(find(contains(SEQUENCE,possibleFLAIRkeywords,	'IgnoreCase',true)),1) = {'FLAIR'};
+			MODALITY(find(contains(SEQUENCE,possibleASLkeywords,	'IgnoreCase',true)),1) = {'asl'};
+
+			DATATYPE(find(strcmp(MODALITY,'T1w')),1) 	= {'anat'};
+			DATATYPE(find(strcmp(MODALITY,'FLAIR')),1) 	= {'anat'};
+			DATATYPE(find(strcmp(MODALITY,'asl')),1) 	= {'perf'};
+
+			RUN(find(contains(SEQUENCE,{'repeat', 'repe', 'rpt','rep', 'repea'},'IgnoreCase',true)),1) = 2;
+
+			for i = 1 : 9 												% support up to 9 runs
+				forDICOM2BIDS_temp = table(	forDICOM2BIDS.SID,...
+											forDICOM2BIDS.SCANDATE,...
+											forDICOM2BIDS.VISCODE,...
+											forDICOM2BIDS.SEQUENCE,...
+											RUN);
+				forDICOM2BIDS_temp.Properties.VariableNames = {'SID';'SCANDATE';'VISCODE';'SEQUENCE';'RUN'};
+				[~, uniqIdx] = unique(forDICOM2BIDS_temp);
+				RUN(setdiff(1:size(forDICOM2BIDS_temp,1), uniqIdx),1) = i+1;
+			end
 
 
-			for i = 1 : size (ADNI_uniqueSID,1)
-
-				fprintf ('%s : Processing subject ID (SID) %s (index = %d/%d).\n', mfilename, ADNI_uniqueSID{i}, i, size(ADNI_uniqueSID,1));
-
-				ADNI.DICOM2BIDS(i).subject = ['ADNI' erase(ADNI_uniqueSID{i},'_')];
-
-				sid_data = ADNI_table(find(strcmp(ADNI_table.SID, ADNI_uniqueSID{i})),:);
-
-				fprintf ('%s :  --> Subject %s has %d entrie(s) in bmp_ADNI_forDicom2BidsMapping.mat.\n', mfilename, ADNI_uniqueSID{i}, size(sid_data,1));
-
-				for j = 1 : size (sid_data, 1)
-
-
-
-					% +++++++++++++++++++++++++
-					%            ASL
-					% +++++++++++++++++++++++++
-
-					if contains (sid_data.SEQUENCE{j}, possibleASLkeywords, 'IgnoreCase', true)
-
-						if any (strcmp (fieldnames (ADNI.DICOM2BIDS(i)), sid_data.VISCODE{j})) && ...
-								~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j})) && ...
-						   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j})), 'perf')) && ...
-						   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf) && ...
-						   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf), 'asl')) && ...
-						   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl) && ...
-						   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl), 'run01')) && ...
-						   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.run01) && ...
-						   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.run01), 'DICOM')) && ...
-						   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.run01.DICOM) && ...
-						   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.run01.DICOM), 'SeriesDescription')) && ...
-						   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.run01.DICOM.SeriesDescription)
-						   	run_idx = 'run02';
-					    else
-					    	run_idx = 'run01';
-						end
-
-						fprintf ('%s :  --> ASL found in bmp_ADNI_forDicom2BidsMapping.mat for %s (SEQUENCE = ''%s''; SCANDATE = ''%s''; VISCODE = ''%s''; IMAGEUID = ''%s''; run_idx = ''%s'').\n', mfilename, ADNI_uniqueSID{i}, sid_data.SEQUENCE{j}, char(sid_data.SCANDATE(j)), sid_data.VISCODE{j}, sid_data.IMAGEUID{j}, run_idx);
-
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).DICOM.SeriesDescription 	= sid_data.SEQUENCE{j};
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).DICOM.PatientID         	= sid_data.SID{j};
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).DICOM.StudyDate  	 		= erase(char(sid_data.SCANDATE(j)),'-');
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).DICOM.IMAGEUID				= sid_data.IMAGEUID{j};
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).DICOM.subfoldername			= strrep(strrep(strrep(sid_data.SEQUENCE{j},' ','_'),'(','_'),')','_');
-
-						switch sid_data.SEQUENCE{j}
-
-							case 'Axial 3D PASL (Eyes Open)'
-								ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial3dPasl';
-							case 'Axial 3D PASL (Eyes Open)    straight no angle'
-								ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial3dPasl';
-							case 'Axial 3D PASL (Eyes Open) REPEAT'
-								ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial3dPasl'; 	% this happened once for 036_S_6316
-																																% on 2019-08-13. However, we cannot
-																																% find another ASL on the same day
-																																% therefore, we are not assigning
-																																% 'run' entity although it said
-																																% 'REPEAT'.
-
-							case 'Ax 3D pCASL (Eyes Open)'
-								ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial3dPcasl';
-							case 'Axial 3D pCASL'
-								ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial3dPcasl';
-							case 'Axial 3D pCASL (Eyes Open)'
-								ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial3dPcasl';
-							case 'Axial_3D_pCASL_Eyes_Open'
-								ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial3dPcasl';
-							case 'WIP SOURCE - Axial 3D pCASL (Eyes Open)'
-								ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial3dPcasl';
-
-							case 'Axial 2D PASL'
-								ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial2dPasl';
-							case 'Axial 2D PASL (EYES OPEN)'
-								ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial2dPasl';
-							case 'Axial 2D PASL 0 angle L'
-								ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial2dPasl';
-							case 'Axial 2D PASL straight no ASL'
-								ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial2dPasl';
-						    case 'SOURCE - Axial 2D PASL'
-						    	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial2dPasl';
-							case 'WIP SOURCE - Axial 2D PASL'
-								ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial2dPasl';
-
-							case 'tgse_pcasl_PLD2000'
-								ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'pcaslPLD2000'
-
-							case 'Cerebral Blood Flow'
-								ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'cbf';
-
-							case 'Perfusion_Weighted'
-								ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'perfusionWeighted';
-
-						end
-
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.subject     = ADNI.DICOM2BIDS(i).subject;
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.session     = sid_data.VISCODE{j};
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.run 		 = run_idx;
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.modality    = 'asl';
+			%ACQUISITION
 
 
 
-					% ++++++++++++++++++++++++++	
-					%            T1
-					% ++++++++++++++++++++++++++
-
-					elseif contains (sid_data.SEQUENCE{j}, possibleT1keywords, 'IgnoreCase', true)
-
-						if any (strcmp (fieldnames (ADNI.DICOM2BIDS(i)), sid_data.VISCODE{j})) && ...
-								~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j})) && ...
-						   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j})), 'anat')) && ...
-						   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat) && ...
-						   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat), 'T1w')) && ...
-						   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w) && ...
-						   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w), 'run01')) && ...
-						   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.run01) && ...
-						   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.run01), 'DICOM')) && ...
-						   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.run01.DICOM) && ...
-						   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.run01.DICOM), 'SeriesDescription')) && ...
-						   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.run01.DICOM.SeriesDescription)
-						   	run_idx = 'run02';
-					    else
-					    	run_idx = 'run01';
-						end
-
-						if contains (sid_data.SEQUENCE{j}, {'repeat', 'repe', 'rpt','rep', 'repea'}, 'IgnoreCase', true)		% if has keywords ~ 'repeat', force run_idx = '02'.
-							run_idx = 'run02';
-						end
-
-						fprintf ('%s :  --> T1w found in bmp_ADNI_forDicom2BidsMapping.mat for %s (SEQUENCE = ''%s''; SCANDATE = ''%s''; VISCODE = ''%s''; IMAGEUID = ''%s''; run_idx = ''%s'').\n', mfilename, ADNI_uniqueSID{i}, sid_data.SEQUENCE{j}, char(sid_data.SCANDATE(j)), sid_data.VISCODE{j}, sid_data.IMAGEUID{j}, run_idx);
-
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).DICOM.SeriesDescription 	= sid_data.SEQUENCE{j};
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).DICOM.PatientID         	= sid_data.SID{j};
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).DICOM.StudyDate  	   		= erase(char(sid_data.SCANDATE(j)),'-');
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).DICOM.IMAGEUID				= sid_data.IMAGEUID{j};
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).DICOM.subfoldername			= strrep(strrep(strrep(sid_data.SEQUENCE{j},' ','_'),'(','_'),')','_');
-
-						T1w_acquisition_label = '';
-						if contains (sid_data.SEQUENCE{j}, {'SAG';'SAGITTAL'}, 'IgnoreCase', true)
-							T1w_acquisition_label = [T1w_acquisition_label 'sag'];
-						end
-						if contains (sid_data.SEQUENCE{j}, '3D', 'IgnoreCase', true)
-							T1w_acquisition_label = [T1w_acquisition_label '3d'];
-						end
-						if contains (sid_data.SEQUENCE{j}, 		{'MPRAGE', 'MP-RAGE', 'MP RAGE'}, 	'IgnoreCase', true) && (~ strcmp (sid_data.SEQUENCE{j}, 'IR-FSPGR (replaces MP-Rage)'))
-							T1w_acquisition_label = [T1w_acquisition_label 'Mprage'];
-						elseif contains (sid_data.SEQUENCE{j}, 	'IR-SPGR', 							'IgnoreCase', true)
-							T1w_acquisition_label = [T1w_acquisition_label 'Irspgr'];
-						elseif contains (sid_data.SEQUENCE{j}, 	'IR-FSPGR', 						'IgnoreCase', true)
-							T1w_acquisition_label = [T1w_acquisition_label 'Irfspgr'];
-						end
-
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).BIDS.subject     = ADNI.DICOM2BIDS(i).subject;
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).BIDS.session     = sid_data.VISCODE{j};
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).BIDS.run 		 = run_idx;
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).BIDS.acquisition = T1w_acquisition_label;
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).BIDS.modality    = 'T1w';
+			DICOM2BIDS = table (SUBJECT,SESSION,DATATYPE,MODALITY,RUN,ACQUISITION,SEQUENCE,PATIENTID,STUDYDATE,IMAGEUID,DICOMSUBDIR);
 
 
 
-					% ++++++++++++++++++++++++++
-					%           FLAIR
-					% ++++++++++++++++++++++++++
 
-					elseif contains (sid_data.SEQUENCE{j}, possibleFLAIRkeywords, 'IgnoreCase', true) && ...
-							~ strcmp (sid_data.SEQUENCE{j}, 'Axial T2 Star-Repeated with exact copy of FLAIR')
 
-						if any (strcmp (fieldnames (ADNI.DICOM2BIDS(i)), sid_data.VISCODE{j})) && ...
-								~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j})) && ...
-						   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j})), 'anat')) && ...
-						   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat) && ...
-						   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat), 'FLAIR')) && ...
-						   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR) && ...
-						   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR), 'run01')) && ...
-						   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.run01) && ...
-						   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.run01), 'DICOM')) && ...
-						   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.run01.DICOM) && ...
-						   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.run01.DICOM), 'SeriesDescription')) && ...
-						   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.run01.DICOM.SeriesDescription)
-						   	run_idx = 'run02';
-					    else
-					    	run_idx = 'run01';
-						end
 
-						if contains (sid_data.SEQUENCE{j}, {'repeat'; 'rpt'}, 'IgnoreCase', true)
-							run_idx = 'run02';
-						end
 
-						fprintf ('%s :  --> FLAIR found in bmp_ADNI_forDicom2BidsMapping.mat for %s (SEQUENCE = ''%s''; SCANDATE = ''%s''; VISCODE = ''%s''; IMAGEUID = ''%s''; run_idx = ''%s'').\n', mfilename, ADNI_uniqueSID{i}, sid_data.SEQUENCE{j}, char(sid_data.SCANDATE(j)), sid_data.VISCODE{j}, sid_data.IMAGEUID{j}, run_idx);
 
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).DICOM.SeriesDescription 	= sid_data.SEQUENCE{j};
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).DICOM.PatientID         	= sid_data.SID{j};
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).DICOM.StudyDate  	    	= erase(char(sid_data.SCANDATE(j)),'-');
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).DICOM.IMAGEUID			= sid_data.IMAGEUID{j};
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).DICOM.subfoldername		= strrep(strrep(strrep(sid_data.SEQUENCE{j},' ','_'),'(','_'),')','_');
 
-						FLAIR_acquisition_label = '';
 
-						if contains (sid_data.SEQUENCE{j}, {'AX';'AXIAL'}, 'IgnoreCase', true)
-							FLAIR_acquisition_label = [FLAIR_acquisition_label 'ax'];
-						elseif contains (sid_data.SEQUENCE{j}, 'Sagittal', 'IgnoreCase', true)
-							FLAIR_acquisition_label = [FLAIR_acquisition_label 'sag'];
-						end
-						if contains (sid_data.SEQUENCE{j}, '3D', 'IgnoreCase', true)
-							FLAIR_acquisition_label = [FLAIR_acquisition_label '3d'];
-						end
 
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).BIDS.subject     = ADNI.DICOM2BIDS(i).subject;
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).BIDS.session     = sid_data.VISCODE{j};
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).BIDS.run 		   = run_idx;
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).BIDS.acquisition = FLAIR_acquisition_label;
-						ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).BIDS.modality    = 'FLAIR';
+			for i = 1 : size (forDICOM2BIDS,1)
 
-					end
+				fprintf ('%s : Processing entry %d / %d in forDICOM2BIDS.\n', mfilename, i, size(forDICOM2BIDS,1));
 
-				end
+				% +++++++++++++++++++++++++
+				%            ASL
+				% +++++++++++++++++++++++++
+
+				if contains (forDICOM2BIDS.SEQUENCE{i}, possibleASLkeywords, 'IgnoreCase', true)
+
+					forDICOM2BIDS (find (strcmp (forDICOM2BIDS.SID, forDICOM2BIDS.SID{i})
+
+					RUN (find 
+
+					% 	if any (strcmp (fieldnames (ADNI.DICOM2BIDS(i)), sid_data.VISCODE{j})) && ...
+					% 			~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j})) && ...
+					% 	   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j})), 'perf')) && ...
+					% 	   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf) && ...
+					% 	   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf), 'asl')) && ...
+					% 	   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl) && ...
+					% 	   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl), 'run01')) && ...
+					% 	   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.run01) && ...
+					% 	   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.run01), 'DICOM')) && ...
+					% 	   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.run01.DICOM) && ...
+					% 	   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.run01.DICOM), 'SeriesDescription')) && ...
+					% 	   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.run01.DICOM.SeriesDescription)
+					% 	   	run_idx = 'run02';
+					%     else
+					%     	run_idx = 'run01';
+					% 	end
+
+					% 	fprintf ('%s :  --> ASL found in bmp_ADNI_forDicom2BidsMapping.mat for %s (SEQUENCE = ''%s''; SCANDATE = ''%s''; VISCODE = ''%s''; IMAGEUID = ''%s''; run_idx = ''%s'').\n', mfilename, uniqueSID{i}, sid_data.SEQUENCE{j}, char(sid_data.SCANDATE(j)), sid_data.VISCODE{j}, sid_data.IMAGEUID{j}, run_idx);
+
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).DICOM.SeriesDescription 	= sid_data.SEQUENCE{j};
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).DICOM.PatientID         	= sid_data.SID{j};
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).DICOM.StudyDate  	 		= erase(char(sid_data.SCANDATE(j)),'-');
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).DICOM.IMAGEUID				= sid_data.IMAGEUID{j};
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).DICOM.subfoldername			= strrep(strrep(strrep(sid_data.SEQUENCE{j},' ','_'),'(','_'),')','_');
+
+					% 	switch sid_data.SEQUENCE{j}
+
+					% 		case 'Axial 3D PASL (Eyes Open)'
+					% 			ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial3dPasl';
+					% 		case 'Axial 3D PASL (Eyes Open)    straight no angle'
+					% 			ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial3dPasl';
+					% 		case 'Axial 3D PASL (Eyes Open) REPEAT'
+					% 			ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial3dPasl'; 	% this happened once for 036_S_6316
+					% 																											% on 2019-08-13. However, we cannot
+					% 																											% find another ASL on the same day
+					% 																											% therefore, we are not assigning
+					% 																											% 'run' entity although it said
+					% 																											% 'REPEAT'.
+
+					% 		case 'Ax 3D pCASL (Eyes Open)'
+					% 			ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial3dPcasl';
+					% 		case 'Axial 3D pCASL'
+					% 			ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial3dPcasl';
+					% 		case 'Axial 3D pCASL (Eyes Open)'
+					% 			ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial3dPcasl';
+					% 		case 'Axial_3D_pCASL_Eyes_Open'
+					% 			ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial3dPcasl';
+					% 		case 'WIP SOURCE - Axial 3D pCASL (Eyes Open)'
+					% 			ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial3dPcasl';
+
+					% 		case 'Axial 2D PASL'
+					% 			ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial2dPasl';
+					% 		case 'Axial 2D PASL (EYES OPEN)'
+					% 			ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial2dPasl';
+					% 		case 'Axial 2D PASL 0 angle L'
+					% 			ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial2dPasl';
+					% 		case 'Axial 2D PASL straight no ASL'
+					% 			ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial2dPasl';
+					% 	    case 'SOURCE - Axial 2D PASL'
+					% 	    	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial2dPasl';
+					% 		case 'WIP SOURCE - Axial 2D PASL'
+					% 			ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'axial2dPasl';
+
+					% 		case 'tgse_pcasl_PLD2000'
+					% 			ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'pcaslPLD2000'
+
+					% 		case 'Cerebral Blood Flow'
+					% 			ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'cbf';
+
+					% 		case 'Perfusion_Weighted'
+					% 			ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.acquisition = 'perfusionWeighted';
+
+
+					% 		%% NOTE THAT SOME 'SEQUENCE' OF 'MOCOSERIES' CORRESPOND TO ASL ACCORDING TO ASL QC FILES.
+					% 		%% This has not been implemented.
+
+					% 	end
+
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.subject     = ADNI.DICOM2BIDS(i).subject;
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.session     = sid_data.VISCODE{j};
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.run 		 = run_idx;
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).perf.asl.(run_idx).BIDS.modality    = 'asl';
+
+
+
+					% % ++++++++++++++++++++++++++	
+					% %            T1
+					% % ++++++++++++++++++++++++++
+
+					% elseif contains (sid_data.SEQUENCE{j}, possibleT1keywords, 'IgnoreCase', true)
+
+					% 	if any (strcmp (fieldnames (ADNI.DICOM2BIDS(i)), sid_data.VISCODE{j})) && ...
+					% 			~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j})) && ...
+					% 	   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j})), 'anat')) && ...
+					% 	   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat) && ...
+					% 	   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat), 'T1w')) && ...
+					% 	   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w) && ...
+					% 	   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w), 'run01')) && ...
+					% 	   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.run01) && ...
+					% 	   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.run01), 'DICOM')) && ...
+					% 	   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.run01.DICOM) && ...
+					% 	   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.run01.DICOM), 'SeriesDescription')) && ...
+					% 	   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.run01.DICOM.SeriesDescription)
+					% 	   	run_idx = 'run02';
+					%     else
+					%     	run_idx = 'run01';
+					% 	end
+
+					% 	if contains (sid_data.SEQUENCE{j}, {'repeat', 'repe', 'rpt','rep', 'repea'}, 'IgnoreCase', true)		% if has keywords ~ 'repeat', force run_idx = '02'.
+					% 		run_idx = 'run02';
+					% 	end
+
+					% 	fprintf ('%s :  --> T1w found in bmp_ADNI_forDicom2BidsMapping.mat for %s (SEQUENCE = ''%s''; SCANDATE = ''%s''; VISCODE = ''%s''; IMAGEUID = ''%s''; run_idx = ''%s'').\n', mfilename, uniqueSID{i}, sid_data.SEQUENCE{j}, char(sid_data.SCANDATE(j)), sid_data.VISCODE{j}, sid_data.IMAGEUID{j}, run_idx);
+
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).DICOM.SeriesDescription 	= sid_data.SEQUENCE{j};
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).DICOM.PatientID         	= sid_data.SID{j};
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).DICOM.StudyDate  	   		= erase(char(sid_data.SCANDATE(j)),'-');
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).DICOM.IMAGEUID				= sid_data.IMAGEUID{j};
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).DICOM.subfoldername			= strrep(strrep(strrep(sid_data.SEQUENCE{j},' ','_'),'(','_'),')','_');
+
+					% 	T1w_acquisition_label = '';
+					% 	if contains (sid_data.SEQUENCE{j}, {'SAG';'SAGITTAL'}, 'IgnoreCase', true)
+					% 		T1w_acquisition_label = [T1w_acquisition_label 'sag'];
+					% 	end
+					% 	if contains (sid_data.SEQUENCE{j}, '3D', 'IgnoreCase', true)
+					% 		T1w_acquisition_label = [T1w_acquisition_label '3d'];
+					% 	end
+					% 	if contains (sid_data.SEQUENCE{j}, 		{'MPRAGE', 'MP-RAGE', 'MP RAGE'}, 	'IgnoreCase', true) && (~ strcmp (sid_data.SEQUENCE{j}, 'IR-FSPGR (replaces MP-Rage)'))
+					% 		T1w_acquisition_label = [T1w_acquisition_label 'Mprage'];
+					% 	elseif contains (sid_data.SEQUENCE{j}, 	'IR-SPGR', 							'IgnoreCase', true)
+					% 		T1w_acquisition_label = [T1w_acquisition_label 'Irspgr'];
+					% 	elseif contains (sid_data.SEQUENCE{j}, 	'IR-FSPGR', 						'IgnoreCase', true)
+					% 		T1w_acquisition_label = [T1w_acquisition_label 'Irfspgr'];
+					% 	end
+
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).BIDS.subject     = ADNI.DICOM2BIDS(i).subject;
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).BIDS.session     = sid_data.VISCODE{j};
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).BIDS.run 		 = run_idx;
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).BIDS.acquisition = T1w_acquisition_label;
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.T1w.(run_idx).BIDS.modality    = 'T1w';
+
+
+
+					% % ++++++++++++++++++++++++++
+					% %           FLAIR
+					% % ++++++++++++++++++++++++++
+
+					% elseif contains (sid_data.SEQUENCE{j}, possibleFLAIRkeywords, 'IgnoreCase', true) && ...
+					% 		~ strcmp (sid_data.SEQUENCE{j}, 'Axial T2 Star-Repeated with exact copy of FLAIR')
+
+					% 	if any (strcmp (fieldnames (ADNI.DICOM2BIDS(i)), sid_data.VISCODE{j})) && ...
+					% 			~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j})) && ...
+					% 	   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j})), 'anat')) && ...
+					% 	   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat) && ...
+					% 	   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat), 'FLAIR')) && ...
+					% 	   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR) && ...
+					% 	   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR), 'run01')) && ...
+					% 	   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.run01) && ...
+					% 	   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.run01), 'DICOM')) && ...
+					% 	   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.run01.DICOM) && ...
+					% 	   any (strcmp (fieldnames (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.run01.DICOM), 'SeriesDescription')) && ...
+					% 	   		~ isempty (ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.run01.DICOM.SeriesDescription)
+					% 	   	run_idx = 'run02';
+					%     else
+					%     	run_idx = 'run01';
+					% 	end
+
+					% 	if contains (sid_data.SEQUENCE{j}, {'repeat'; 'rpt'}, 'IgnoreCase', true)
+					% 		run_idx = 'run02';
+					% 	end
+
+					% 	fprintf ('%s :  --> FLAIR found in bmp_ADNI_forDicom2BidsMapping.mat for %s (SEQUENCE = ''%s''; SCANDATE = ''%s''; VISCODE = ''%s''; IMAGEUID = ''%s''; run_idx = ''%s'').\n', mfilename, uniqueSID{i}, sid_data.SEQUENCE{j}, char(sid_data.SCANDATE(j)), sid_data.VISCODE{j}, sid_data.IMAGEUID{j}, run_idx);
+
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).DICOM.SeriesDescription 	= sid_data.SEQUENCE{j};
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).DICOM.PatientID         	= sid_data.SID{j};
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).DICOM.StudyDate  	    	= erase(char(sid_data.SCANDATE(j)),'-');
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).DICOM.IMAGEUID			= sid_data.IMAGEUID{j};
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).DICOM.subfoldername		= strrep(strrep(strrep(sid_data.SEQUENCE{j},' ','_'),'(','_'),')','_');
+
+					% 	FLAIR_acquisition_label = '';
+
+					% 	if contains (sid_data.SEQUENCE{j}, {'AX';'AXIAL'}, 'IgnoreCase', true)
+					% 		FLAIR_acquisition_label = [FLAIR_acquisition_label 'ax'];
+					% 	elseif contains (sid_data.SEQUENCE{j}, 'Sagittal', 'IgnoreCase', true)
+					% 		FLAIR_acquisition_label = [FLAIR_acquisition_label 'sag'];
+					% 	end
+					% 	if contains (sid_data.SEQUENCE{j}, '3D', 'IgnoreCase', true)
+					% 		FLAIR_acquisition_label = [FLAIR_acquisition_label '3d'];
+					% 	end
+
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).BIDS.subject     = ADNI.DICOM2BIDS(i).subject;
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).BIDS.session     = sid_data.VISCODE{j};
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).BIDS.run 		   = run_idx;
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).BIDS.acquisition = FLAIR_acquisition_label;
+					% 	ADNI.DICOM2BIDS(i).(sid_data.VISCODE{j}).anat.FLAIR.(run_idx).BIDS.modality    = 'FLAIR';
+
+				% 	end
+
+				% end
 
 			end
 
 
-			fprintf ('%s : ADNI DICOM2BIDS mapping has been created.\n', mfilename);
+			% fprintf ('%s : ADNI DICOM2BIDS mapping has been created.\n', mfilename);
 
-			fprintf ('%s : Saving ADNI DICOM2BIDS to %s ... ', mfilename, output);
+			% fprintf ('%s : Saving ADNI DICOM2BIDS to %s ... ', mfilename, output);
 
-			save (output, 'ADNI');
+			% save (output, 'ADNI');
 
-			fprintf ('DONE!\n');
+			% fprintf ('DONE!\n');
 
-			varargout{1} = ADNI;
+			% varargout{1} = ADNI;
 
 
 		case {'retrieve'; 'retrieve_mapping'}
@@ -476,6 +544,11 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 			ADNI = bmp_ADNI ('retrieve');
 
 			[~] = bmp_BIDSgenerator ('ADNI', ADNI, varargin{1}, varargin{2}, 'MatOutDir', fullfile (varargin{2}, 'code', 'BMP'));
+
+
+		case {'checkback'} 	% using info from MRI scans (e.g., ???_S_???? IDs) and comparing with info
+							% in MRI_master table in bmp_ADNI.mat, in order to try to savage some of
+							% the scans.
 
 	end
 
