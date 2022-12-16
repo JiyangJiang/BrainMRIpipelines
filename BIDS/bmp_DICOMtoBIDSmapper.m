@@ -1,5 +1,11 @@
 function DICOM2BIDS = bmp_DICOMtoBIDSmapper (varargin)
 %
+%
+%  +++++++++++++++++++++++++++++++++++++++++++++++++
+%  HEADER NEEDS TO BE UPDATED (TABLE-BASED MAPPINGS)
+%  +++++++++++++++++++++++++++++++++++++++++++++++++
+%
+%
 % DESCRIPTION
 % =================================================================================================
 %
@@ -26,16 +32,12 @@ function DICOM2BIDS = bmp_DICOMtoBIDSmapper (varargin)
 %
 %
 %   Senario 2 : Use predefined DICOM-to-BIDS mappings for public datasets or CHeBA datasets. One
-%               or two input arguments are needed in this senario:
+%               input argument is needed in this senario:
 %
 %               varargin{1} = dataset name. Currently supported datasets include 'ADNI'.
 %
-%               varargin{2} = /path/to/dataset/DICOM2BIDS/mat/file if not 
-%                             /path/to/BrainMRIpipeliens/BIDS/bmp_ADNI.mat
 %
-%
-%   If not specifying any arguments, default is 'Senario 2' with 'ADNI' and 
-%   '/path/to/BrainMRIpipeliens/BIDS/bmp_ADNI.mat'
+%   If not specifying any arguments, default is 'Senario 2' with 'ADNI'.
 %
 %
 % OUTPUT
@@ -319,58 +321,57 @@ function DICOM2BIDS = bmp_DICOMtoBIDSmapper (varargin)
 
 
 
+
+		%% TO BE SWITCHED TO TABLE-BASED DICOM2BIDS
+		%% SHOULD LOOK AT ACTUAL DICOM DATA TO CONSTRUCT INDIVIDUAL-LEVEL MAPPINGS.
+		%% ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		%% BELOW COMMENTED CODE NEED TO BE REMOVED.
+
 		% suggest DICOM2BIDS for bmp_BIDSgenerator
-		fprintf ('%s : Making suggestions for DICOM-to-BIDS mapping for bmp_BIDSgenerator.\n', mfilename);
-		fprintf ('%s : These suggestions may only work for dataset-level mapping.\n', mfilename);
+		% fprintf ('%s : Making suggestions for DICOM-to-BIDS mapping for bmp_BIDSgenerator.\n', mfilename);
+		% fprintf ('%s : These suggestions may only work for dataset-level mapping.\n', mfilename);
 
 
-		clear DICOM2BIDS;
+		% clear DICOM2BIDS;
 
-		if isfield (criteria.T1w, 'fieldname') && isfield (criteria.T1w, 'fieldvalue')
+		% if isfield (criteria.T1w, 'fieldname') && isfield (criteria.T1w, 'fieldvalue')
 
-			DICOM2BIDS.ses.anat.T1w.run.DICOM.(criteria.T1w(1).fieldname) = criteria.T1w(1).fieldvalue;
+		% 	DICOM2BIDS.ses.anat.T1w.run.DICOM.(criteria.T1w(1).fieldname) = criteria.T1w(1).fieldvalue;
 
-			% Only consider prioritised criterion now. To implement multiple criteria in the future.
-			% Note there's no DICOM2BIDS.anat.T1w.BIDS field here, as nothing to specify
+		% 	% Only consider prioritised criterion now. To implement multiple criteria in the future.
+		% 	% Note there's no DICOM2BIDS.anat.T1w.BIDS field here, as nothing to specify
 
-		end
+		% end
 
-		if isfield (criteria.FLAIR, 'fieldname') && isfield (criteria.FLAIR, 'fieldvalue')
+		% if isfield (criteria.FLAIR, 'fieldname') && isfield (criteria.FLAIR, 'fieldvalue')
 
-			DICOM2BIDS.ses.anat.FLAIR.run.DICOM.(criteria.FLAIR(1).fieldname) = criteria.FLAIR(1).fieldvalue;
+		% 	DICOM2BIDS.ses.anat.FLAIR.run.DICOM.(criteria.FLAIR(1).fieldname) = criteria.FLAIR(1).fieldvalue;
 
-		end
+		% end
 
-		if isfield (criteria.dwi, 'fieldname') && isfield (criteria.dwi, 'fieldvalue')
+		% if isfield (criteria.dwi, 'fieldname') && isfield (criteria.dwi, 'fieldvalue')
 
-			DICOM2BIDS.ses.dwi.dwi.run.DICOM.(criteria.dwi(1).fieldname) = criteria.dwi(1).fieldvalue;
+		% 	DICOM2BIDS.ses.dwi.dwi.run.DICOM.(criteria.dwi(1).fieldname) = criteria.dwi(1).fieldvalue;
 
-		end
+		% end
 
-		if isfield (criteria.asl, 'fieldname') && isfield (criteria.asl, 'fieldvalue')
+		% if isfield (criteria.asl, 'fieldname') && isfield (criteria.asl, 'fieldvalue')
 
-			DICOM2BIDS.ses.perf.asl.run.DICOM(1).(criteria.asl(1).fieldname) = criteria.asl(1).fieldvalue;
+		% 	DICOM2BIDS.ses.perf.asl.run.DICOM(1).(criteria.asl(1).fieldname) = criteria.asl(1).fieldvalue;
 
-		end
+		% end
 
 
 
-	elseif nargin >= 1 && any(strcmp(supported_datasets, varargin{1}))
+	elseif nargin == 1 && any(strcmp(supported_datasets, varargin{1}))
 
 			switch varargin{1}
 
 				case 'ADNI'
 
-					if nargin == 1
+					DICOM2BIDS = bmp_ADNI ('retrieve');
 
-						DICOM2BIDS = bmp_ADNI ('retrieve');
-
-					elseif nargin == 2 && endsWith(varargin{2},'.mat')
-
-						DICOM2BIDS = bmp_ADNI ('retrieve', varargin{2});
-
-					end
-
+					
 			end
 
 	elseif nargin == 0
