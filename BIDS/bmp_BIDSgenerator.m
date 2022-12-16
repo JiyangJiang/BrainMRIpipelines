@@ -111,6 +111,41 @@ function dcm2niix = bmp_BIDSgenerator (dataset, DICOM2BIDS, DICOM_directory, BID
 			DICOM2BIDS(find(strcmp(DICOM2BIDS.DATATYPE,'UNKNOWN')),:) = [];
 			DICOM2BIDS(find(strcmp(DICOM2BIDS.MODALITY,'UNKNOWN')),:) = [];
 
+			STUDYDATE_yyyy = cellfun(@(x) x(1:4), DICOM2BIDS.STUDYDATE, 'UniformOutput', false);
+			STUDYDATE_mm   = cellfun(@(x) x(5:6), DICOM2BIDS.STUDYDATE, 'UniformOutput', false);
+			STUDYDATE_dd   = cellfun(@(x) x(7:8), DICOM2BIDS.STUDYDATE, 'UniformOutput', false);
+			STUDYDATE_dash = strcat (STUDYDATE_yyyy, '-', STUDYDATE_mm, '-', STUDYDATE_dd);
+
+
+			datetime_dirout = cellfun(@dir, fullfile (	DICOM_directory, ...
+														DICOM2BIDS.PATIENTID, ...
+														DICOM2BIDS.DICOMSUBDIR, ...
+														strcat (STUDYDATE_dash,'*')), 'UniformOutput', false);
+			imageuid_dirout = cellfun(@dir, fullfile (	DICOM_directory, ...
+														DICOM2BIDS.PATIENTID, ...
+														DICOM2BIDS.DICOMSUBDIR, ...
+														strcat (STUDYDATE_dash,'*'), ...
+														strcat ('I',DICOM2BIDS.IMAGEUID)), 'UniformOutput', false);
+			idx_nonempty   = find(~cellfun(@isempty, imageuid_dirout));
+
+			datetime_foldername = cellfun(@(x) x.name, datetime_dirout(idx_nonempty), 'UniformOutput', false);
+
+			DICOMINPUTDIR = cell(size(idx_nonempty,1),1);
+			DICOMINPUTDIR(:,1) = {'UNKNOWN'};
+			DICOMINPUTDIR = fullfile (	DICOM_directory, ...
+										DICOM2BIDS.PATIENTID(idx_nonempty), ...
+										DICOM2BIDS.DICOMSUBDIR(idx_nonempty), ...
+										datetime_foldername, ...
+										strcat ('I',DICOM2BIDS.IMAGEUID(idx_nonempty)));
+
+
+			 
+
+			BIDSOUTPUTDIR
+			BIDSNIINAME
+
+			% 941_S_7106/Accelerated_Sagittal_MPRAGE/2022-09-09_09_55_29.0/I1619403
+
 
 			% all_DICOM2BIDS_fields 	= fieldnames(DICOM2BIDS);
 			% all_sessions 			= all_DICOM2BIDS_fields(find(~strcmp(all_DICOM2BIDS_fields,'subject')));

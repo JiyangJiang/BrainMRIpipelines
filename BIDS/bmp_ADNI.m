@@ -196,6 +196,7 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 			% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			MODALITY(find(contains(SEQUENCE,possibleT1keywords,		'IgnoreCase',true)),1) = {'T1w'};
 			MODALITY(find(contains(SEQUENCE,possibleFLAIRkeywords,	'IgnoreCase',true)),1) = {'FLAIR'};
+			MODALITY(find(strcmp(SEQUENCE,'Axial T2 Star-Repeated with exact copy of FLAIR')),1) = {'UNKNOWN'};
 			MODALITY(find(contains(SEQUENCE,possibleASLkeywords,	'IgnoreCase',true)),1) = {'asl'};
 
 			% Datatype
@@ -246,17 +247,36 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 																																			% mapping based on existing
 																																			% DICOM.
 
-			ACQUISITION(find(contains(SEQUENCE, {'MPRAGE';'MP RAGE';'MP-RAGE'}, 'IgnoreCase', true)),1) = {'mprage'};
-			ACQUISITION(find(contains(SEQUENCE, 'IR-SPGR',						'IgnoreCase', true)),1) = {'irspgr'};
-			ACQUISITION(find(contains(SEQUENCE, 'IR-FSPGR',						'IgnoreCase', true)),1) = {'irfspgr'}; 	% keywords in SEQUENCE, such as '3D' and 'SAGITTAL'
-																														% are not included in ACQUISITION for now.
+			ACQUISITION(find(contains(SEQUENCE, {	'MPRAGE'
+													'MP RAGE'
+													'MP-RAGE'}, 					'IgnoreCase', true)),1) = {'mprage'};
 
-			ACQUISITION(find(contains(SEQUENCE, {'AX';'AXIAL'},					'IgnoreCase', true))) = {'ax'};
-			ACQUISITION(find(contains(SEQUENCE, {'Sagittal'; 'SAG'},			'IgnoreCase', true))) = {'sag'}; % keywords '3D' in SEQUENCE not included in ACQUISITION for now.
+			ACQUISITION(find(contains(SEQUENCE, 	'IR-SPGR',						'IgnoreCase', true)),1) = {'irspgr'};
+
+			ACQUISITION(find(contains(SEQUENCE, 	'IR-FSPGR',						'IgnoreCase', true)),1) = {'irfspgr'}; 	% keywords in SEQUENCE, such as '3D' and 'SAGITTAL'
+																															% are not included in ACQUISITION for now.
+
+			ACQUISITION(find(contains(SEQUENCE, {	'AX FLAIR'
+													'AX T2 FLAIR'
+													'AXIAL FLAIR'
+													'AX_T2_FLAIR'
+													'Axial T2 FLAIR'
+													'Axial T2-FLAIR'
+													'FLAIR AX'
+													'FLAIR AXIAL'},					'IgnoreCase', true)),1) = {'ax'};
+			
+			ACQUISITION(find(contains(SEQUENCE, 	'Axial 3D FLAIR', 				'IgnoreCase', true)),1) = {'ax3d'};
+
+			ACQUISITION(find(contains(SEQUENCE,	{	'Sagittal 3D FLAIR'
+													'Sagittal_3D_FLAIR'
+													'Sagittal 3D 0 angle FLAIR'}, 	'IgnoreCase', true)),1) = {'sag3d'};
+
+			ACQUISITION(find(contains(SEQUENCE,		'Sagittal 3D FLAIR_MPR',		'IgnoreCase', true)),1) = {'sag3dmpr'};
+
+			ACQUISITION(find(contains(SEQUENCE,		't2_flair SAG',					'IgnoreCase', true)),1) = {'sag'};
 
 
 			DICOM2BIDS = table (SUBJECT,SESSION,DATATYPE,MODALITY,RUN,ACQUISITION,SEQUENCE,PATIENTID,STUDYDATE,IMAGEUID,DICOMSUBDIR);
-
 
 
 			fprintf ('%s : ADNI DICOM2BIDS mapping has been created.\n', mfilename);
