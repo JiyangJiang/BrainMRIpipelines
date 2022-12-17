@@ -139,9 +139,9 @@ function dcm2niix = bmp_BIDSgenerator (dataset, DICOM2BIDS, DICOM_directory, BID
 										strcat ('I',DICOM2BIDS.IMAGEUID(idx_nonempty)));
 
 
-			 
+			BIDSOUTPUTDIR = cell(size(idx_nonempty,1),1);
+			BIDSOUTPUTDIR(:,1) = {'UNKNOWN'};
 
-			BIDSOUTPUTDIR
 			BIDSNIINAME
 
 			% 941_S_7106/Accelerated_Sagittal_MPRAGE/2022-09-09_09_55_29.0/I1619403
