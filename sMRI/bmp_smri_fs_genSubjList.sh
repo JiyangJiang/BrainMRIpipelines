@@ -4,31 +4,35 @@ usage(){
 
 cat << EOF
 
-$(basename $0) : generate a list of subjects in SUBJECTS_DIR.
+$(basename $0) : Generate a list of subjects in SUBJECTS_DIR.
 
 
 USAGE : 
 
-	$(basename $0) [OPTIONS]
+  $(basename $0) [{-s|--subjects_dir <subjects_dir>] \
+                 [{-o|--output_dir} <output_dir] \
+                 [{-l|--longitudilal}]
 
 
 COMPULSORY :
 
-	None
+  None
 
 
 OPTIONAL :
 
-    -s, --subjects_dir 		<subjects_dir>			Directory where all subjects are stored (defaults is SUBJECTS_DIR).
+    -s, --subjects_dir      <subjects_dir>          Directory where all subjects are stored (defaults is SUBJECTS_DIR).
 
     -o, --output_dir        <output_dir>            Path to output directory (default is subjects_dir).
 
     -l, --longitudinal                              Treat as longitudinal datasets (default is cross-sectional).
 
-    -h, --help										Display this message.
+    -h, --help                                      Display this message.
 
 
-OUTPUT : Path to the generated subjects list.
+OUTPUT : 
+
+  Path to the generated subjects list.
 
 EOF
 }

@@ -4,12 +4,15 @@ usage(){
 
 cat << EOF
 
-$(basename $0) : run freesurfer recon-all.
+$(basename $0) : Run FreeSurfer recon-all.
 
 
 USAGE : 
 
-  $(basename $0) [OPTIONS]
+  $(basename $0) {-t|--t1_nifti_dir} <t1_nifti_dir> \
+                 {-g|--gadi}
+
+                 ==>> NOT FINISHED YED <<==
 
 
 COMPULSORY :

@@ -18,6 +18,32 @@
 #             existing brain image.
 # ==================================================================================
 
+usage (){
+
+cat << EOF
+
+DESCRIPTION :
+
+  Extract brain from head image.
+
+USAGE :
+
+COMPULSORY :
+
+
+OPTIONAL :
+
+  -c, --cohort_folder    </path/to/cohort/folder>    Path to cohort folder that contains 
+                                                     all the study folders. Each study folder 
+                                                     has the folder name of subject ID, and 
+                                                     contains a T1 and a fMRI scan for the
+                                                     subject ID. Default is pwd.
+
+
+
+EOF
+}
+
 Xbrain(){
 
 	local CNS_path=$1

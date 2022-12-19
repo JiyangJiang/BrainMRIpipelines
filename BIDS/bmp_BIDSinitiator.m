@@ -1,16 +1,31 @@
 function bmp_BIDSinitiator (varargin)
-
-% INPUT ARGUMENTS
 %
-% bmp_BIDSinitiator ();
+% DESCRIPTION :
+% ========================================================================
 %
-% bmp_BIDSinitiator ('/path/to/BIDS');
+%   This script creates a few folders and files in BIDS directory. These
+%   folders and files are necessary according to BIDS standard.
 %
-% bmp_BIDSinitiator ('ADNI');
 %
-% bmp_BIDSinitiator ('/path/to/BIDS', 'ADNI');
+% EXAMPLES :
+% ========================================================================
 %
-% bmp_BIDSinitiator ('/path/to/BIDS', 'other');
+%   bmp_BIDSinitiator ();
+%
+%   bmp_BIDSinitiator ('/path/to/BIDS/folder');
+%
+%   bmp_BIDSinitiator ('ADNI');
+%
+%   bmp_BIDSinitiator ('/path/to/BIDS/folder', 'ADNI');
+%
+%   bmp_BIDSinitiator ('/path/to/BIDS/folder', 'other');
+%
+%
+% HISTORY :
+% ========================================================================
+%
+%   - 19 December 2022 : First version.
+%
 %
 
 	BMP_PATH = getenv ('BMP_PATH');
@@ -36,18 +51,18 @@ function bmp_BIDSinitiator (varargin)
 
 			dataset = varargin{1};
 
-			bmp_print (bmp_convention_MATLAB ('s'), 	'%s : ', mfilename);
-			bmp_print (bmp_convention_MATLAB ('k'), 	'''%s''', varargin{1});
-			bmp_print (bmp_convention_MATLAB ('t'), 	' dataset ');
-			bmp_print (bmp_convention_MATLAB ('p'),		' ''%s''', BIDS_directory);
-			bmp_print (bmp_convention_MATLAB ('t'), 	'.\n');
+			bmp_print (bmp_convention ('s'), 	'%s : ', mfilename);
+			bmp_print (bmp_convention ('k'), 	'''%s''', varargin{1});
+			bmp_print (bmp_convention ('t'), 	' dataset ');
+			bmp_print (bmp_convention ('p'),		' ''%s''', BIDS_directory);
+			bmp_print (bmp_convention ('t'), 	'.\n');
 
 		else
 
-			bmp_print (bmp_convention_MATLAB ('s'), '%s : ', mfilename)
-			bmp_print (bmp_convention_MATLAB ('e'), 'BIDS directory ');
-			bmp_print (bmp_convention_MATLAB ('p'), '''%s''', BIDS_directory);
-			bmp_print (bmp_convention_MATLAB ('e'), ' does not exist or is not a directory.\n');
+			bmp_print (bmp_convention ('s'), '%s : ', mfilename)
+			bmp_print (bmp_convention ('e'), 'BIDS directory ');
+			bmp_print (bmp_convention ('p'), '''%s''', BIDS_directory);
+			bmp_print (bmp_convention ('e'), ' does not exist or is not a directory.\n');
 
 		end
 
@@ -65,29 +80,29 @@ function bmp_BIDSinitiator (varargin)
 
 			dataset = varargin{2};
 
-			bmp_print (bmp_convention_MATLAB ('s'), '%s : ', mfilename);
-			bmp_print (bmp_convention_MATLAB ('k'), '''%s''', varargin{2});
-			bmp_print (bmp_convention_MATLAB ('t'), ' dataset ');
-			bmp_print (bmp_convention_MATLAB ('p'), '''%s''', BIDS_directory);
-			bmp_print (bmp_convention_MATLAB ('t'), '.\n');
+			bmp_print (bmp_convention ('s'), '%s : ', mfilename);
+			bmp_print (bmp_convention ('k'), '''%s''', varargin{2});
+			bmp_print (bmp_convention ('t'), ' dataset ');
+			bmp_print (bmp_convention ('p'), '''%s''', BIDS_directory);
+			bmp_print (bmp_convention ('t'), '.\n');
 
 		else
 
-			bmp_print (bmp_convention_MATLAB ('s'), '%s : ', mfilename);
-			bmp_print (bmp_convention_MATLAB ('e'), 'BIDS directory ');
-			bmp_print (bmp_convention_MATLAB ('p'), '''%s''', BIDS_directory);
-			bmp_print (bmp_convention_MATLAB ('e'), ' does not exist or is not a directory.\n');
+			bmp_print (bmp_convention ('s'), '%s : ', mfilename);
+			bmp_print (bmp_convention ('e'), 'BIDS directory ');
+			bmp_print (bmp_convention ('p'), '''%s''', BIDS_directory);
+			bmp_print (bmp_convention ('e'), ' does not exist or is not a directory.\n');
 
 		end
 
 	else
 
-		bmp_print (bmp_convention_MATLAB ('s'), '%s : ', mfilename);
-		bmp_print (bmp_convention_MATLAB ('e'), 'Incorrect number of input arguments : \n');
+		bmp_print (bmp_convention ('s'), '%s : ', mfilename);
+		bmp_print (bmp_convention ('e'), 'Incorrect number of input arguments : \n');
 
 		for i = 1 : nargin
 
-			bmp_print (bmp_convention_MATLAB ('UnterminatedStrings'), '     - %s\n', varargin{i});
+			bmp_print (bmp_convention ('UnterminatedStrings'), '     - %s\n', varargin{i});
 
 		end
 
@@ -115,16 +130,16 @@ function bmp_BIDSinitiator (varargin)
 
 			dset_desc_fnam = fullfile (BIDS_directory, 'dataset_description.json');
 
-			bmp_print (bmp_convention_MATLAB ('s'), '%s : ', mfilename)
-			bmp_print (bmp_convention_MATLAB ('t'), 'Writing out ');
-			bmp_print (bmp_convention_MATLAB ('p'), '''%s''', dset_desc_fnam);
-			bmp_print (bmp_convention_MATLAB ('t'), ' ...');
+			bmp_print (bmp_convention ('s'), '%s : ', mfilename)
+			bmp_print (bmp_convention ('t'), 'Writing out ');
+			bmp_print (bmp_convention ('p'), '''%s''', dset_desc_fnam);
+			bmp_print (bmp_convention ('t'), ' ...');
 
 			fid = fopen (dset_desc_fnam, 'w');
 			fprintf (fid, '%s\n', dset_desc_json);
 			fclose (fid);
 
-			bmp_print (bmp_convention_MATLAB ('t'), ' DONE!\n');
+			bmp_print (bmp_convention ('t'), ' DONE!\n');
 
 
 			% CHANGES
@@ -134,16 +149,16 @@ function bmp_BIDSinitiator (varargin)
 
 			changes_fnam = fullfile (BIDS_directory, 'CHANGES');
 
-			bmp_print (bmp_convention_MATLAB ('s'), '%s : ', mfilename)
-			bmp_print (bmp_convention_MATLAB ('t'), 'Writing out ');
-			bmp_print (bmp_convention_MATLAB ('p'), '''%s''', changes_fnam);
-			bmp_print (bmp_convention_MATLAB ('t'), ' ...');
+			bmp_print (bmp_convention ('s'), '%s : ', mfilename)
+			bmp_print (bmp_convention ('t'), 'Writing out ');
+			bmp_print (bmp_convention ('p'), '''%s''', changes_fnam);
+			bmp_print (bmp_convention ('t'), ' ...');
 
 			fid = fopen (changes_fnam, 'w');
 			fprintf (fid, '%s\n', changes);
 			fclose (fid);
 
-			bmp_print (bmp_convention_MATLAB ('t'), ' DONE!\n');
+			bmp_print (bmp_convention ('t'), ' DONE!\n');
 
 			
 
@@ -153,16 +168,16 @@ function bmp_BIDSinitiator (varargin)
 
 			readme_fnam = fullfile (BIDS_directory, 'README');
 
-			bmp_print (bmp_convention_MATLAB ('s'), '%s : ', mfilename)
-			bmp_print (bmp_convention_MATLAB ('t'), 'Writing out ');
-			bmp_print (bmp_convention_MATLAB ('p'), '''%s''', readme_fnam);
-			bmp_print (bmp_convention_MATLAB ('t'), ' ...');
+			bmp_print (bmp_convention ('s'), '%s : ', mfilename)
+			bmp_print (bmp_convention ('t'), 'Writing out ');
+			bmp_print (bmp_convention ('p'), '''%s''', readme_fnam);
+			bmp_print (bmp_convention ('t'), ' ...');
 
 			fid = fopen (readme_fnam, 'w');
 			fprintf (fid, '%s\n', readme);
 			fclose (fid);
 
-			bmp_print (bmp_convention_MATLAB ('t'), ' DONE!\n');
+			bmp_print (bmp_convention ('t'), ' DONE!\n');
 
 
 
@@ -170,10 +185,10 @@ function bmp_BIDSinitiator (varargin)
 
 			ppts_tsv_fnam = fullfile (BIDS_directory, 'participants.tsv');
 
-			bmp_print (bmp_convention_MATLAB ('s'), '%s : ', mfilename)
-			bmp_print (bmp_convention_MATLAB ('t'), 'Writing out ');
-			bmp_print (bmp_convention_MATLAB ('p'), '''%s''', ppts_tsv_fnam);
-			bmp_print (bmp_convention_MATLAB ('t'), ' ...');
+			bmp_print (bmp_convention ('s'), '%s : ', mfilename)
+			bmp_print (bmp_convention ('t'), 'Writing out ');
+			bmp_print (bmp_convention ('p'), '''%s''', ppts_tsv_fnam);
+			bmp_print (bmp_convention ('t'), ' ...');
 
 			ADNI_ppts_dat = load (fullfile (BMP_PATH, 'BIDS', 'bmp_ADNI.mat')).forBIDSpptsTsv;
 
@@ -183,7 +198,7 @@ function bmp_BIDSinitiator (varargin)
 							'Delimiter',			'\t' ...
 						);
 
-			bmp_print (bmp_convention_MATLAB ('t'), ' DONE!\n');
+			bmp_print (bmp_convention ('t'), ' DONE!\n');
 
 
 
@@ -207,16 +222,16 @@ function bmp_BIDSinitiator (varargin)
 
 			ppts_json_fnam = fullfile (BIDS_directory, 'participants.json');
 
-			bmp_print (bmp_convention_MATLAB ('s'), '%s : ', mfilename)
-			bmp_print (bmp_convention_MATLAB ('t'), 'Writing out ');
-			bmp_print (bmp_convention_MATLAB ('p'), '''%s''', ppts_json_fnam);
-			bmp_print (bmp_convention_MATLAB ('t'), ' ...');
+			bmp_print (bmp_convention ('s'), '%s : ', mfilename)
+			bmp_print (bmp_convention ('t'), 'Writing out ');
+			bmp_print (bmp_convention ('p'), '''%s''', ppts_json_fnam);
+			bmp_print (bmp_convention ('t'), ' ...');
 
 			fid = fopen (ppts_json_fnam, 'w');
 			fprintf (fid, '%s\n', ADNI_ppts_json);
 			fclose (fid);
 
-			bmp_print (bmp_convention_MATLAB ('t'), ' DONE!\n');
+			bmp_print (bmp_convention ('t'), ' DONE!\n');
 
 
 
@@ -228,14 +243,14 @@ function bmp_BIDSinitiator (varargin)
 
 				if ~ isfolder (fullfile (BIDS_directory, necessaryBIDSdirs{i,1}))
 
-					bmp_print (bmp_convention_MATLAB ('s'), '%s : ', mfilename)
-					bmp_print (bmp_convention_MATLAB ('t'), 'Making ');
-					bmp_print (bmp_convention_MATLAB ('p'), '''%s''', fullfile (BIDS_directory, necessaryBIDSdirs{i,1}));
-					bmp_print (bmp_convention_MATLAB ('t'), ' directory ...');
+					bmp_print (bmp_convention ('s'), '%s : ', mfilename)
+					bmp_print (bmp_convention ('t'), 'Making ');
+					bmp_print (bmp_convention ('p'), '''%s''', fullfile (BIDS_directory, necessaryBIDSdirs{i,1}));
+					bmp_print (bmp_convention ('t'), ' directory ...');
 
 					[~] = mkdir (fullfile (BIDS_directory, necessaryBIDSdirs{i,1}));
 
-					bmp_print (bmp_convention_MATLAB ('t'), ' DONE!\n');
+					bmp_print (bmp_convention ('t'), ' DONE!\n');
 
 				end
 

@@ -36,7 +36,7 @@ OPTIONAL :
   -s, --singularity                                   Convert docker to singularity.
                                                       Singularity images can then be
                                                       used on HPC.
-conda install -c conda-forge octave
+
   -h, --help                                          Display this message.
 
 

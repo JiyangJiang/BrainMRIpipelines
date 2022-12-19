@@ -1,0 +1,1 @@
+function bmp_BIDSpatcher (BIDS_directory)
