@@ -392,7 +392,7 @@ function varargout = bmp_ADNI_studyData
 	forBIDSpptsTsv.Properties.VariableNames = {'participant_id';'baseline_age';'gender';'baseline_diagnosis'};
 
 	forBIDSpptsTsv (find (cellfun (@isempty, forBIDSpptsTsv.participant_id    )),:) = [];
-	forBIDSpptsTsv (find (isnan 			  (forBIDSpptsTsv.baseline_age)),:)     = [];
+	forBIDSpptsTsv (find (isnan 			(forBIDSpptsTsv.baseline_age)),:)       = [];
 	forBIDSpptsTsv (find (cellfun (@isempty, forBIDSpptsTsv.gender            )),:) = [];
 	forBIDSpptsTsv (find (cellfun (@isempty, forBIDSpptsTsv.baseline_diagnosis)),:) = [];
 

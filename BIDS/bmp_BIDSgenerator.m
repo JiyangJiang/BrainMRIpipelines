@@ -1,4 +1,4 @@
-function dcm2niix = bmp_BIDSgenerator (dataset, DICOM2BIDS, DICOM_directory, BIDS_directory, varargin)
+function DCM2NIIX = bmp_BIDSgenerator (dataset, DICOM2BIDS, DICOM_directory, BIDS_directory, varargin)
 %
 % DESCRIPTION
 % ======================================================================================
@@ -100,6 +100,8 @@ function dcm2niix = bmp_BIDSgenerator (dataset, DICOM2BIDS, DICOM_directory, BID
 
 		case 'ADNI'
 
+			fprintf ('%s : Creating DICOM2BIDS for ADNI dataset ... ', mfilename);
+
 			supported_modalities = {
 									'T1w'
 									'FLAIR'
@@ -126,336 +128,152 @@ function dcm2niix = bmp_BIDSgenerator (dataset, DICOM2BIDS, DICOM_directory, BID
 														DICOM2BIDS.DICOMSUBDIR, ...
 														strcat (STUDYDATE_dash,'*'), ...
 														strcat ('I',DICOM2BIDS.IMAGEUID)), 'UniformOutput', false);
-			idx_nonempty   = find(~cellfun(@isempty, imageuid_dirout));
+			idx_existActualDICOM   = find(~cellfun(@isempty, imageuid_dirout));
 
-			datetime_foldername = cellfun(@(x) x.name, datetime_dirout(idx_nonempty), 'UniformOutput', false);
+			datetime_foldername = cellfun(@(x) x.name, datetime_dirout(idx_existActualDICOM), 'UniformOutput', false);
 
-			DICOMINPUTDIR = cell(size(idx_nonempty,1),1);
-			DICOMINPUTDIR(:,1) = {'UNKNOWN'};
-			DICOMINPUTDIR = fullfile (	DICOM_directory, ...
-										DICOM2BIDS.PATIENTID(idx_nonempty), ...
-										DICOM2BIDS.DICOMSUBDIR(idx_nonempty), ...
+			DICOM_INPUT_DIR = cell(size(idx_existActualDICOM,1),1); % only those exist real DICOM directory
+			DICOM_INPUT_DIR(:,1) = {'UNKNOWN'};
+			DICOM_INPUT_DIR = fullfile (DICOM_directory, ...
+										DICOM2BIDS.PATIENTID(idx_existActualDICOM), ...
+										DICOM2BIDS.DICOMSUBDIR(idx_existActualDICOM), ...
 										datetime_foldername, ...
-										strcat ('I',DICOM2BIDS.IMAGEUID(idx_nonempty)));
-
-
-			BIDSOUTPUTDIR = cell(size(idx_nonempty,1),1);
-			BIDSOUTPUTDIR(:,1) = {'UNKNOWN'};
-
-			BIDSNIINAME
-
-			% 941_S_7106/Accelerated_Sagittal_MPRAGE/2022-09-09_09_55_29.0/I1619403
-
-
-			% all_DICOM2BIDS_fields 	= fieldnames(DICOM2BIDS);
-			% all_sessions 			= all_DICOM2BIDS_fields(find(~strcmp(all_DICOM2BIDS_fields,'subject')));
-
-			% clear to_run_dcm2niix;
-			% to_run_dcm2niix_idx = 1;
-
-			% for subj_idx = 1 : size (DICOM2BIDS,2)
-
-			% 	for ses_idx = 1 : size (all_sessions)
-
-			% 		if ~ isempty (DICOM2BIDS(subj_idx).(all_sessions{ses_idx}))
-
-			% 			curr_session 		= all_sessions{ses_idx};
-			% 			curr_subjectLabel 	= DICOM2BIDS(subj_idx).subject;
-
-			% 			fprintf ('%s : subject label = %s\n', mfilename, curr_subjectLabel);
-			% 			fprintf ('%s : session label = %s\n', mfilename, curr_session);
-
-			% 			subj_avail_datype = fieldnames (DICOM2BIDS(subj_idx).(curr_session));
-
-			% 			for datype_idx = 1 : size (subj_avail_datype, 1)
-
-			% 				curr_datype = subj_avail_datype{datype_idx,1};
-
-			% 				fprintf ('%s : datatype = %s, session label = %s, subject label = %s\n', mfilename, curr_datype, curr_session, curr_subjectLabel);
-
-			% 				subj_avail_mod_for_curr_datype = fieldnames (DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype));
-
-			% 				for mod_idx = 1 : size (subj_avail_mod_for_curr_datype, 1)
-
-			% 					curr_mod = subj_avail_mod_for_curr_datype{mod_idx,1};
-
-			% 					fprintf ('%s : modality = %s, datatype = %s, session label = %s, subject label = %s\n', mfilename, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-
-			% 					if ismember (curr_mod, modalities_to_consider)
-
-			% 						subj_avail_run_for_curr_mod = fieldnames (DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod));
-
-			% 						for run_idx = 1 : size (subj_avail_run_for_curr_mod)
-
-			% 							curr_run 		= subj_avail_run_for_curr_mod{run_idx,1}; % 'run01', 'run02'
-			% 							curr_run_index 	= erase (curr_run, 'run');
-
-			% 							fprintf ('%s : run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s\n', mfilename, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-										
-										
-
-			% 							% +++++++++++++++++++++++++++++++++
-			% 							%          DICOM criteria
-			% 							% +++++++++++++++++++++++++++++++++
-
-			% 							subj_avail_DICOMfields_for_curr_run = fieldnames (DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).DICOM);
-										
-			% 							% DICOM - SeriesDescription
-
-			% 							if any(strcmp(subj_avail_DICOMfields_for_curr_run,'SeriesDescription')) && ...
-			% 								~ isempty (DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).DICOM.SeriesDescription)
-
-			% 								fprintf ('%s : DICOM SeriesDescription is found in DICOM2BIDS and not empty (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-
-			% 								curr_DICOMseriesDesc 	= DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).DICOM.SeriesDescription;
-
-			% 							else
-
-			% 								fprintf (2, '%s : DICOM SeriesDescription is NOT found in DICOM2BIDS and/or is empty (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-
-			% 								continue;
-
-			% 							end
-
-
-			% 							% DICOM - PatientID
-
-			% 							if any(strcmp(subj_avail_DICOMfields_for_curr_run,'PatientID')) && ...
-			% 								~ isempty (DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).DICOM.PatientID)
-
-			% 								fprintf ('%s : DICOM PatientID is found in DICOM2BIDS and not empty (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-										
-			% 								curr_DICOMpatID			= DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).DICOM.PatientID;
-
-			% 							else
-
-			% 								fprintf (2, '%s : DICOM PatientID is NOT found in DICOM2BIDS and/or is empty (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-
-			% 								continue;
-
-			% 							end
-
-
-			% 							% DICOM - StudyDate
-
-			% 							if any(strcmp(subj_avail_DICOMfields_for_curr_run,'StudyDate')) && ...
-			% 								~ isempty (DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).DICOM.StudyDate)
-
-			% 								fprintf ('%s : DICOM StudyDate is found in DICOM2BIDS and not empty (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-										
-			% 								curr_DICOMstudyDate		= DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).DICOM.StudyDate;
-
-			% 							else
-
-			% 								fprintf (2, '%s : DICOM StudyDate is NOT found in DICOM2BIDS and/or is empty (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-
-			% 								continue;
-
-			% 							end
-
-
-			% 							% DICOM - IMAGEUID
-
-			% 							if any(strcmp(subj_avail_DICOMfields_for_curr_run,'IMAGEUID')) && ...
-			% 								~ isempty (DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).DICOM.IMAGEUID)
-
-			% 								fprintf ('%s : DICOM IMAGEUID is found in DICOM2BIDS and not empty (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-										
-			% 								curr_DICOMimageuid		= DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).DICOM.IMAGEUID;
-
-			% 							else
-
-			% 								fprintf (2, '%s : DICOM IMAGEUID is NOT found in DICOM2BIDS and/or is empty (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-
-			% 								continue;
-
-			% 							end
-
-
-			% 							% DICOM - subfoldername
-
-			% 							if any(strcmp(subj_avail_DICOMfields_for_curr_run,'subfoldername')) && ...
-			% 								~ isempty (DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).DICOM.subfoldername)
-
-			% 								fprintf ('%s : DICOM subfoldername is found in DICOM2BIDS and not empty (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-										
-			% 								curr_DICOMsubfolder		= DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).DICOM.subfoldername;
-
-			% 							else
-											
-			% 								fprintf (2, '%s : DICOM subfoldername is NOT found in DICOM2BIDS and/or is empty (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-
-			% 								continue;
-
-			% 							end
-
-
-			% 							dicom_seq_dir = dir ( fullfile (	DICOM_directory, curr_DICOMpatID, curr_DICOMsubfolder, ...
-			% 													[curr_DICOMstudyDate(1:4) '-' curr_DICOMstudyDate(5:6) '-' curr_DICOMstudyDate(7:8) '*']));
-
-			% 							if size (dicom_seq_dir,1) == 1
-
-			% 								dicom_uid_dir = dir ( fullfile (dicom_seq_dir(1).folder, dicom_seq_dir(1).name));
-
-			% 								if size (dicom_uid_dir,1) == 3     % 2 additional directories - '.' and '..'
-
-			% 									if strcmp (dicom_uid_dir(3).name, ['I' curr_DICOMimageuid])
-
-			% 										curr_DICOMinputdir = fullfile (dicom_uid_dir(3).folder, dicom_uid_dir(3).name);
-
-			% 										to_run_dcm2niix.DICOMinputdir{to_run_dcm2niix_idx,1} = curr_DICOMinputdir;
-
-			% 										% +++++++++++++++++++++++++++++++++++
-			% 										%           BIDS entities
-			% 										% +++++++++++++++++++++++++++++++++++
-			% 										% Only set BIDS entities for those
-			% 										% exist  DICOM folder.
-			% 										% +++++++++++++++++++++++++++++++++++
-
-			% 										% ADNI_customisedBISDfields = {	'subject'
-			% 										% 								'session'
-			% 										% 								'run'
-			% 										% 								'acquisition'
-			% 										% 								'modality'
-			% 										% 								};
-
-			% 										subj_avail_BIDSfields_for_curr_run = fieldnames (DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).BIDS);
-			% 										subj_avail_BIDSfields_for_curr_run = subj_avail_BIDSfields_for_curr_run(find(~cellfun(@isempty,subj_avail_BIDSfields_for_curr_run)),1);
-
-			% 										acq = '';
-
-			% 										for BIDSfld_idx = 1 : size (subj_avail_BIDSfields_for_curr_run, 1)
-
-			% 											curr_BIDSfield = subj_avail_BIDSfields_for_curr_run{BIDSfld_idx,1};
-
-			% 											switch curr_BIDSfield
-
-			% 												case 'subject'
-
-			% 													% just checking. curr_subjectLabel should be set before, from DICOM2BIDS.subject.
-			% 													if ~strcmp (curr_subjectLabel, DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).BIDS.(curr_BIDSfield))
-
-			% 														fprintf (2, '%s : subject label in DICOM2BIDS BIDS subject field (''%s'') does NOT match DICOM2BIDS.subject (''%s'') (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).BIDS.(curr_BIDSfield), curr_subjectLabel, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-
-			% 														continue;
-
-			% 													end
-
-			% 												case 'session'
-
-			% 													if ~strcmp (curr_session, DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).BIDS.(curr_BIDSfield))
-
-			% 														fprintf (2, '%s : session label in DICOM2BIDS BIDS session field (''%s'') does NOT match curr_session set previously (''%s'') (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).BIDS.(curr_BIDSfield), curr_session, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-
-			% 														continue;
-
-			% 													end
-
-			% 												case 'run'
-
-			% 													if ~strcmp (curr_run, DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).BIDS.(curr_BIDSfield))
-
-			% 														fprintf (2, '%s : run index in DICOM2BIDS BIDS run field (''%s'') does NOT match curr_run set previously (''%s'') (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).BIDS.(curr_BIDSfield), curr_run, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-
-			% 														continue;
-
-			% 													end
-
-			% 												case 'acquisition'
-
-			% 													acq = [acq '_acq-' DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).BIDS.(curr_BIDSfield)];
-
-			% 												case 'modality'
-
-			% 													if ~strcmp (curr_mod, DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).BIDS.(curr_BIDSfield))
-
-			% 														fprintf (2, '%s : modality in DICOM2BIDS BIDS modality field (''%s'') does NOT match curr_mod set previously (''%s'') (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, DICOM2BIDS(subj_idx).(all_sessions{ses_idx}).(curr_datype).(curr_mod).(curr_run).BIDS.(curr_BIDSfield), curr_mod, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-
-			% 														continue;
-
-			% 													end
-
-			% 											end
-
-			% 										end
-
-			% 										curr_BIDSoutputdir 		= fullfile (BIDS_directory, ['sub-' curr_subjectLabel], ['ses-' curr_session], curr_datype);
-
-			% 										curr_BIDSniibasename	= ['sub-' curr_subjectLabel '_ses-' curr_session '_run-' curr_run_index acq '_' curr_mod];
-
-			% 										to_run_dcm2niix.BIDSoutputdir{to_run_dcm2niix_idx,1} = curr_BIDSoutputdir;
-			% 										to_run_dcm2niix.BIDSniibasename{to_run_dcm2niix_idx,1} = curr_BIDSniibasename;
-
-			% 										to_run_dcm2niix_idx = to_run_dcm2niix_idx + 1;
-
-			% 									else
-
-			% 										fprintf (2, '%s : IMAGEUID not matching - ''%s'' (actual DICOM dir) vs. ''%s'' (DICOM2BIDS) (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, dicom_uid_dir(3).name, ['I' curr_DICOMimageuid], curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-
-			% 										continue;
-
-			% 									end
-
-			% 								elseif size (dicom_uid_dir,1) > 3
-
-			% 									fprintf (2, '%s : More than one IMAGEUID folder in DICOM datetime folder (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-
-			% 									continue;
-
-			% 								elseif size (dicom_uid_dir,1) == 0
-
-			% 									fprintf (2, '%s : DICOM datetime folder %s does NOT have IMAGEUID folder (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, fullfile (dicom_seq_dir(1).folder, dicom_seq_dir(1).name), curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-
-			% 									continue;
-
-			% 								end
-
-			% 							elseif size (dicom_seq_dir,1) == 0
-
-			% 								fprintf (2, '%s : [WARNING] : DICOM folder %s does NOT exist. The DICOM2BIDS mapping was created from ADNI study data. Therefore, it is possible the actually downloaded DICOM data do not contain this DICOM folder (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, fullfile (DICOM_directory, curr_DICOMpatID, curr_DICOMsubfolder, [curr_DICOMstudyDate(1:4) '-' curr_DICOMstudyDate(5:6) '-' curr_DICOMstudyDate(7:8) '*']), curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-
-			% 							elseif size (dicom_seq_dir,1) > 1
-											
-			% 								fprintf (2, '%s : Incorrect number of DICOM sequence folders. Should be only one (run = %s, modality = %s, datatype = %s, session label = %s, subject label = %s).\n', mfilename, curr_run_index, curr_mod, curr_datype, curr_session, curr_subjectLabel);
-
-			% 							end
-									
-			% 						end
-
-			% 					else
-
-			% 						fprintf ('%s : Modality ''%s'' is not to be considered.\n', mfilename, curr_mod);
-
-			% 					end
-
-			% 				end
-
-			% 			end
-
-			% 		end
-
-			% 	end
-
-			% end
-
-			if 1 == exist ('to_run_dcm2niix', 'var')
-
-				if sandbox
-
-					dcm2niix = run_dcm2niix (to_run_dcm2niix, 'ADNI', matOutDir, 'sandbox');
-
-				else
-
-					dcm2niix = run_dcm2niix (to_run_dcm2niix, 'ADNI', matOutDir);
-
-				end
+										strcat ('I',DICOM2BIDS.IMAGEUID(idx_existActualDICOM)));
+
+
+			BIDS_OUTPUT_DIR = cell(size(idx_existActualDICOM,1),1);
+			BIDS_OUTPUT_DIR(:,1) = {'UNKNOWN'};
+			BIDS_OUTPUT_DIR = fullfile (BIDS_directory, ...
+										strcat('sub-', DICOM2BIDS.SUBJECT(idx_existActualDICOM)), ...
+										strcat('ses-', DICOM2BIDS.SESSION(idx_existActualDICOM)), ...
+										DICOM2BIDS.DATATYPE(idx_existActualDICOM));
+
+			BIDS_NII_NAME = cell(size(idx_existActualDICOM,1),1);
+			BIDS_NII_NAME(:,1) = {'UNKNOWN'};
+			BIDS_NII_NAME = strcat(	'sub-', 	DICOM2BIDS.SUBJECT(idx_existActualDICOM), ...
+									'_ses-', 	DICOM2BIDS.SESSION(idx_existActualDICOM), ...
+									'_run-0', 	num2str(DICOM2BIDS.RUN(idx_existActualDICOM)), ...
+									'_acq-', 	DICOM2BIDS.ACQUISITION(idx_existActualDICOM), ...
+									'_',		DICOM2BIDS.MODALITY(idx_existActualDICOM));
+			BIDS_NII_NAME(find(contains(BIDS_NII_NAME,'acq-UNKNOWN')),1) = erase (BIDS_NII_NAME(find(contains(BIDS_NII_NAME,'acq-UNKNOWN')),1), '_acq-UNKNOWN');
+			
+
+			TO_CONVERT = cell(size(idx_existActualDICOM,1),1);
+			TO_CONVERT(:,1) = {'No'};
+			TO_CONVERT(ismember(DICOM2BIDS.MODALITY(idx_existActualDICOM),modalities_to_consider)) = {'Yes'};
+
+
+			curr_datetime = strrep(char(datetime),' ','_');
+			CMD = strcat ('dcm2niix   -6', ...
+									' -a y', ...
+									' -b y', ...
+									' -ba n', ...
+									' -c BMP_', curr_datetime, ...
+									' -d 1', ...
+									' -e n', ...
+									' -f', {' '}, BIDS_NII_NAME, ...
+									' -g n', ...
+									' -i y', ...
+									' -l o', ...
+									' -o', {' '}, BIDS_OUTPUT_DIR, ...
+									' -p y', ...
+									' -r n', ...
+									' -s n', ...
+									' -v 0', ...
+									' -w 2', ...
+									' -x n', ...
+									' -z n', ...
+									' --big-endian o', ...
+									' --progress n', ...
+									{' '}, DICOM_INPUT_DIR);
+
+			fprintf ('DONE!\n');
+
+
+			if sandbox
+
+				DCM2NIIX = table (CMD, TO_CONVERT, DICOM_INPUT_DIR, BIDS_OUTPUT_DIR, BIDS_NII_NAME);
 
 			else
 
-				fprintf (2, '%s : [WARNING] : Variable ''to_run_dcm2niix'' does NOT exist. This may be because the current DICOM directory does not have any files matching criteria defined in DICOM2BIDS loaded from bmp_ADNI.mat.\n', mfilename);
+				fprintf (2, '%s : [WARNING] : Runing dcm2niix to convert DICOM to BIDS NIFTI. Suggest testing with ''sandbox'' mode first if you haven''t done so.\n', mfilename);
+
+				CMD_OUT = cell(size(CMD));
+				CMD_OUT(:,1) = {'UNKNOWN'};
+				CMD_STATUS = cell(size(CMD));
+				CMD_STATUS(:,1) = {'UNKNOWN'};
+				CMD_WARNINGS = cell(size(CMD));
+				CMD_WARNINGS(:,1) = {'NONE'};
+
+				for i = 1 : size (CMD,1)
+
+					if ~ isfolder (BIDS_OUTPUT_DIR{i,1})
+
+						status = mkdir (BIDS_OUTPUT_DIR{i,1});
+
+						if status
+
+							BIDS_OUTPUT_DIR_MKDIR_STATUS{i,1} = 'Success';
+
+							fprintf ('%s : BIDS output directory ''%s'' has been successfully created.\n', mfilename, BIDS_OUTPUT_DIR{i,1});
+
+						else
+
+							BIDS_OUTPUT_DIR_MKDIR_STATUS{i,1} = 'Fail';
+
+							fprintf(2, '%s : Creating BIDS directory ''%s'' failed.\n', mfilename, BIDS_OUTPUT_DIR{i,1});
+
+							continue
+
+						end
+
+					else
+
+						BIDS_OUTPUT_DIR_MKDIR_STATUS{i,1} = 'Exist';
+
+					end
+
+					if strcmp (TO_CONVERT{i,1}, 'Yes')
+
+						[~, curr_imageuidfoldername] = fileparts (DICOM_INPUT_DIR{i,1});
+
+						fprintf ('%s : (%d / %d) : Running dcm2niix to convert ''%s'' to ''%s'' ...', ...
+								mfilename, i, size (CMD,1), curr_imageuidfoldername, BIDS_NII_NAME{i,1};
+
+						[CMD_STATUS{i,1}, CMD_OUT{i,1}] = system (CMD{i,1});
+
+						if contains (CMD_OUT{i,1}, 'warning', 'IgnoreCase', true)
+
+							CMD_WARNINGS{i,1} = CMD_OUT{i,1};
+
+						end
+
+						fprintf (' DONE!\n');
+
+					end
+
+				end
+
+				DCM2NIIX = table (CMD, TO_CONVERT, CMD_STATUS, CMD_OUT, CMD_WARNINGS, DICOM_INPUT_DIR, BIDS_OUTPUT_DIR, BIDS_NII_NAME);
 
 			end
 
+			fprintf ('%s : Saving dcm2niix commands and command outputs to bmp_ADNI.mat ... ', mfilename);
+			
+			if isfile (fullfile (matOutDir, 'bmp_ADNI.mat'))
+				
+				save (fullfile (matOutDir, 'bmp_ADNI.mat'), 'DCM2NIIX', '-append');
+
+			else
+
+				save (fullfile (matOutDir, 'bmp_ADNI.mat'), 'DCM2NIIX');
+
+			end
+
+			fprintf ('DONE!\n');
+
+
+			
 
 		case 'other'
 
@@ -471,93 +289,6 @@ function dcm2niix = bmp_BIDSgenerator (dataset, DICOM2BIDS, DICOM_directory, BID
 			% FOR DATASET-/SUBGROUP-LEVEL MAPPINGS, USE SUB-FOLDER NAMES IN DICOM DIRECTORY
 			% AS SUBJECT LABEL.
 			% ####################################################################################
-
-	end
-
-end
-
-
-
-function dcm2niix = run_dcm2niix (to_run_dcm2niix, dataset, matOutDir, varargin)
-
-	dcm2niix = to_run_dcm2niix;
-
-	if strcmp (dataset, 'ADNI')
-
-		for i = 1 : size (dcm2niix.DICOMinputdir,1)
-
-			curr_datetime = strrep(char(datetime),' ','_');
-
-			dcm2niix_opts_ADNI = [' -6 -a y -b y -ba n -c BMP_' curr_datetime ' -d 1 -e n -f ' dcm2niix.BIDSniibasename{i,1} ' -g n -i y -l o -o ' dcm2niix.BIDSoutputdir{i,1} ' -p y -r n -s n -v 0 -w 2 -x n -z n --big-endian o --progress n '];
-
-			dcm2niix.cmd{i,1} = ['dcm2niix' dcm2niix_opts_ADNI dcm2niix.DICOMinputdir{i,1}];
-
-		end
-
-
-		if nargin == 4 && strcmp(varargin{1}, 'sandbox')
-
-			fprintf('%s : Saving dcm2niix commands to bmp_ADNI_dcm2niix.mat.\n', mfilename);
-
-			save (fullfile (matOutDir, 'bmp_ADNI_dcm2niix.mat'), 'dcm2niix');
-
-
-		elseif nargin == 3
-
-			fprintf (2, '%s : [WARNING] : Runing dcm2niix to convert DICOM to BIDS NIFTI. Suggest testing with ''sandbox'' mode first if you haven''t done so.\n', mfilename);
-
-			for i = 1 : size (dcm2niix.cmd,1)
-
-				if ~ isfolder (dcm2niix.BIDSoutputdir{i,1})
-
-					status = mkdir (dcm2niix.BIDSoutputdir{i,1});
-
-					if status
-
-						dcm2niix.BIDSmkdirStatus{i,1} = 'BIDS folder created successfully';
-
-						fprintf ('%s : BIDS output directory ''%s'' has been successfully created.\n', mfilename, dcm2niix.BIDSoutputdir{i,1});
-
-					else
-
-						dcm2niix.BIDSmkdirStatus{i,1} = 'failed creating BIDS folder';
-
-						fprintf(2, '%s : Creating BIDS directory ''%s'' failed.\n', mfilename, dcm2niix.BIDSoutputdir{i,1});
-
-						continue
-
-					end
-
-				else
-
-					dcm2niix.BIDSmkdirStatus{i,1} = 'BIDS folder already exists';
-
-				end
-
-				fprintf ('%s : (%d / %d) : Running dcm2niix to convert ''%s'' to ''%s''.nii ...', mfilename, i, size (dcm2niix.DICOMinputdir,1), dcm2niix.DICOMinputdir{i,1}, fullfile(dcm2niix.BIDSoutputdir{i,1}, dcm2niix.BIDSniibasename{i,1}));
-
-				[dcm2niix.cmdstatus{i,1}, dcm2niix.cmdout{i,1}] = system (dcm2niix.cmd{i,1});
-
-				if contains (dcm2niix.cmdout{i,1}, 'warning', 'IgnoreCase', true)
-
-					dcm2niix.warnings{i,1} = true;
-
-				else
-
-					dcm2niix.warnings{i,1} = false;
-
-				end
-
-				fprintf (' DONE!\n');
-
-			end
-
-
-			fprintf('%s : Saving dcm2niix commands and command outputs to bmp_ADNI_dcm2niixout.mat.\n', mfilename);
-
-			save (fullfile (matOutDir, 'bmp_ADNI_dcm2niix.mat'), 'dcm2niix');
-
-		end
 
 	end
 

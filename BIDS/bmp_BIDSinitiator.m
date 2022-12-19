@@ -175,7 +175,7 @@ function bmp_BIDSinitiator (varargin)
 			bmp_print (bmp_convention_MATLAB ('p'), '''%s''', ppts_tsv_fnam);
 			bmp_print (bmp_convention_MATLAB ('t'), ' ...');
 
-			ADNI_ppts_dat = load (fullfile (BMP_PATH, 'BIDS', 'ADNI', 'bmp_ADNI_BIDSpptsTSV.mat')).ADNI_ppt_tsv_deduplicate;
+			ADNI_ppts_dat = load (fullfile (BMP_PATH, 'BIDS', 'bmp_ADNI.mat')).forBIDSpptsTsv;
 
 			writetable (ADNI_ppts_dat, ppts_tsv_fnam, ...
 							'FileType', 			'text', ...
