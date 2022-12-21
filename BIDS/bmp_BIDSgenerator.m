@@ -70,7 +70,7 @@ function DCM2NIIX = bmp_BIDSgenerator (dataset, DICOM2BIDS, DICOM_directory, BID
 
 	p = inputParser;
 
-	addRequired (p, 'Dataset',			@(x) ismember(x, {'ADNI';'other'}))
+	addRequired (p, 'Dataset',			@(x) ismember(x, {'ADNI';'clinica-ADNI';'other'}))
 	addRequired (p, 'DICOM2BIDS',		@(x) istable(x))
 	addRequired (p, 'DICOM_directory',	@isfolder);
 	addRequired (p, 'BIDS_directory',	@isfolder);
@@ -246,7 +246,7 @@ function DCM2NIIX = bmp_BIDSgenerator (dataset, DICOM2BIDS, DICOM_directory, BID
 						[~, curr_imageuidfoldername] = fileparts (DICOM_INPUT_DIR{i,1});
 
 						fprintf ('%s : (%d / %d) : Running dcm2niix to convert ''%s'' to ''%s'' ...', ...
-								mfilename, i, size (CMD,1), curr_imageuidfoldername, BIDS_NII_NAME{i,1};
+								mfilename, i, size (CMD,1), curr_imageuidfoldername, BIDS_NII_NAME{i,1});
 
 						[CMD_STATUS{i,1}, CMD_OUT{i,1}] = system (CMD{i,1});
 
@@ -263,55 +263,6 @@ function DCM2NIIX = bmp_BIDSgenerator (dataset, DICOM2BIDS, DICOM_directory, BID
 				end
 
 				DCM2NIIX = table (CMD, TO_CONVERT, CMD_STATUS, CMD_OUT, CMD_WARNINGS, DICOM_INPUT_DIR, BIDS_OUTPUT_DIR, BIDS_NII_NAME);
-
-
-				% Clinica ADNI
-
-				clinica_conv_info_dir = dir (fullfile (BIDS_directory, 'conversion_info'));
-				clinica_conv_info_dir_path = fullfile (clinica_conv_info_dir(end).folder, clinica_conv_info_dir(end).name);
-				clinica_conv_info_tsv_dir = dir (fullfile (clinica_conv_info_dir_path, '*.tsv'));
-
-				comm_vars = {	
-								'Subject_ID'
-								'VISCODE'
-								'Visit'
-								'Sequence'
-								'Scan_Date'
-								'Study_ID'
-								'Series_ID'
-								'Image_ID'
-								'Is_Dicom'
-								'Path'
-							};
-
-				uncomm_vars = 	{
-								'Phase'				% PET only, but not MRI
-								'Field_Strength' 	% MRI only, but not PET
-								'Tracer'			% amyloid_pet_paths.tsv only
-								'Original'			% all except DWI, FLAIR, fMRI.
-								};
-
-				clinica = cell (0, (size(comm_vars,1)+size(uncomm_vars,1)));
-
-				for i = 1 : size (clinica_conv_info_tsv_dir,1)
-
-					curr_tab_opts = detectImportOptions (fullfile (clinica_conv_info_tsv_dir(i).folder, clinica_conv_info_tsv_dir(i).name), ...
-															'FileType',				'delimitedtext', ...
-															'ReadVariableNames',	true, ...
-															'MissingRule',			'error', ...
-															'ImportErrorRule',		'error', ...
-															'Delimiter',			'\t', ...
-															'ExtraColumnsRule',		'error');
-					curr_tab = readtable (fullfile (clinica_conv_info_tsv_dir(i).folder, clinica_conv_info_tsv_dir(i).name),curr_tab_opts);
-
-					for j = 1 : size (comm_vars,1)
-
-						clinica = [clinica; curr_tab.(comm_vars{j})];
-
-					end
-
-				end
-
 
 			end
 

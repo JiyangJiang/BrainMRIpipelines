@@ -28,10 +28,10 @@ function bmpver = BMP_version (module, varargin)
 
 				case 'BMP'
 
-					cprintf (bmp_convention_MATLAB ('s'), '%s : ', mfilename);
-					cprintf (bmp_convention_MATLAB ('t'), 'Version of ');
-					cprintf (bmp_convention_MATLAB ('k'), '''BMP'' ');
-					cprintf (bmp_convention_MATLAB ('t'), ' is enquired.\n');
+					cprintf (bmp_convention ('s'), '%s : ', mfilename);
+					cprintf (bmp_convention ('t'), 'Version of ');
+					cprintf (bmp_convention ('k'), '''BMP'' ');
+					cprintf (bmp_convention ('t'), ' is enquired.\n');
 
 					bmpver.BMP = BMP_ver{1,1};
 
@@ -43,10 +43,10 @@ function bmpver = BMP_version (module, varargin)
 
 				case 'ADNI'
 
-					cprintf (bmp_convention_MATLAB ('s'), '%s : ', mfilename);
-					cprintf (bmp_convention_MATLAB ('t'), 'Version of presets for ');
-					cprintf (bmp_convention_MATLAB ('k'), '''ADNI'' ');
-					cprintf (bmp_convention_MATLAB ('t'), ' is enquired.\n');
+					cprintf (bmp_convention ('s'), '%s : ', mfilename);
+					cprintf (bmp_convention ('t'), 'Version of presets for ');
+					cprintf (bmp_convention ('k'), '''ADNI'' ');
+					cprintf (bmp_convention ('t'), ' is enquired.\n');
 
 					bmpver.ADNI = ADNI_ver{1,1};
 
@@ -58,10 +58,10 @@ function bmpver = BMP_version (module, varargin)
 
 				case 'BIDS'
 
-					cprintf (bmp_convention_MATLAB ('s'), '%s : ', mfilename);
-					cprintf (bmp_convention_MATLAB ('t'), 'Version of module ');
-					cprintf (bmp_convention_MATLAB ('k'), '''BIDS'' ');
-					cprintf (bmp_convention_MATLAB ('t'), ' is enquired.\n');
+					cprintf (bmp_convention ('s'), '%s : ', mfilename);
+					cprintf (bmp_convention ('t'), 'Version of module ');
+					cprintf (bmp_convention ('k'), '''BIDS'' ');
+					cprintf (bmp_convention ('t'), ' is enquired.\n');
 
 					bmpver.BIDS = BIDS_ver{1,1};
 
@@ -77,10 +77,10 @@ function bmpver = BMP_version (module, varargin)
 
 	else
 
-		cprintf (bmp_convention_MATLAB ('s'), '%s : ', mfilename);
-		cprintf (bmp_convention_MATLAB ('e'), 'Input argument ');
-		cprintf (bmp_convention_MATLAB ('k'), '''module''');
-		cprintf (bmp_convention_MATLAB ('e'), ' is not a cell array.\n');
+		cprintf (bmp_convention ('s'), '%s : ', mfilename);
+		cprintf (bmp_convention ('e'), 'Input argument ');
+		cprintf (bmp_convention ('k'), '''module''');
+		cprintf (bmp_convention ('e'), ' is not a cell array.\n');
 
 	end
 

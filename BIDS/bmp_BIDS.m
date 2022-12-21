@@ -74,8 +74,6 @@ switch dataset
 
 			case 'prepare'
 
-				bmp_BIDSinitiator (BIDS_directory, 'ADNI');
-
 				DCM2NIIX = bmp_ADNI ('prepare', DICOM_directory, BIDS_directory);
 
 			case 'run'

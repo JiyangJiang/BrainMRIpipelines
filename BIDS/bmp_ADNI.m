@@ -107,6 +107,10 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 %        --== TO BE DEVELOPED ==--
 %
 %
+%     'clinica' mode
+%     ++++++++++++++++++++++++++++++++++++
+%
+%
 %
 % SUPPORTED MODALITIES
 % ====================================================================================
@@ -180,6 +184,8 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 			[varargout{1}, varargout{2}, varargout{3}, varargout{4}] = bmp_ADNI_studyData;
 
 			fprintf ('DONE!\n');
+
+
 
 
 		case {'create'; 'create_mapping'}
@@ -409,6 +415,7 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 
 
 
+
 		case {'refresh'; 'refresh_mat_file'} % refresh mode is for internal testing.
 
 			[~,~,~,~] = bmp_ADNI ('initiate'); % call bmp_ADNI_studyData.m to process ADNI study data.
@@ -425,6 +432,8 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 
 		case {'prepare'} % prepare for real run
 
+			bmp_BIDSinitiator (BIDS_directory, 'ADNI');
+
 			DICOM2BIDS = bmp_ADNI ('retrieve');
 
 			DCM2NIIX = bmp_BIDSgenerator ('ADNI', DICOM2BIDS, varargin{1}, varargin{2}, 'MatOutDir', fullfile (varargin{2}, 'code', 'BMP'));
@@ -435,6 +444,74 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 		case {'checkback'} 	% using info from MRI scans (e.g., ???_S_???? IDs) and comparing with info
 							% in MRI_master table in bmp_ADNI.mat, in order to try to savage some of
 							% the scans.
+
+
+		case {'clinica'}
+
+			bmp_BIDSinitiator (BIDS_directory, 'ADNI');
+
+			DICOM_directory = varargin{1};
+			BIDS_directory  = varargin{2};
+
+			DICOM2BIDS = bmp_ADNI ('retrieve');
+			DCM2NIIX   = bmp_BIDSgenerator ('clinica-ADNI', DICOM2BIDS, DICOM_directory, BIDS_directory, 'MatOutDir', fullfile (BIDS_directory, 'code', 'BMP'));
+
+			clinica_conv_info_dir = dir (fullfile (BIDS_directory, 'conversion_info'));
+			clinica_conv_info_dir_path = fullfile (clinica_conv_info_dir(end).folder, clinica_conv_info_dir(end).name);
+			clinica_conv_info_tsv_dir = dir (fullfile (clinica_conv_info_dir_path, '*.tsv'));
+
+			comm_vars = {	
+							'Subject_ID'
+							'VISCODE'
+							'Visit'
+							'Sequence'
+							'Scan_Date'
+							'Study_ID'
+							'Series_ID'
+							'Image_ID'
+							'Is_Dicom'
+							'Path'
+						};
+
+			uncomm_vars = 	{
+							'Phase'				% PET only, but not MRI
+							'Field_Strength' 	% MRI only, but not PET
+							'Tracer'			% amyloid_pet_paths.tsv only
+							'Original'			% all except DWI, FLAIR, fMRI.
+							};
+
+			clinica_comm_vars   = cell (0, (size(  comm_vars,1)));
+			clinica_uncomm_vars = cell (0, (size(uncomm_vars,1)));
+
+			for i = 1 : size (clinica_conv_info_tsv_dir,1)
+
+				curr_tab_opts = detectImportOptions (fullfile (clinica_conv_info_tsv_dir(i).folder, clinica_conv_info_tsv_dir(i).name), ...
+														'FileType',				'delimitedtext', ...
+														'ReadVariableNames',	true, ...
+														'MissingRule',			'fill', ...
+														'ImportErrorRule',		'error', ...
+														'Delimiter',			'\t', ...
+														'ExtraColumnsRule',		'error');
+
+				curr_tab = readtable (fullfile (clinica_conv_info_tsv_dir(i).folder, clinica_conv_info_tsv_dir(i).name), curr_tab_opts);
+
+				idx_avail_uncomm_vars   = find ( ismember (uncomm_vars, curr_tab.Properties.VariableNames));
+				idx_unavail_uncomm_vars = find (~ismember (uncomm_vars, curr_tab.Properties.VariableNames));
+
+				curr_clinica_uncomm_vars = cell (size(curr_tab,1), size(uncomm_vars,1));
+
+				curr_clinica_uncomm_vars (:, idx_avail_uncomm_vars)   = table2cell(curr_tab(:,uncomm_vars(idx_avail_uncomm_vars)));
+				curr_clinica_uncomm_vars (:, idx_unavail_uncomm_vars) = {'UNKNOWN'};
+
+				clinica_uncomm_vars = [clinica_uncomm_vars; curr_clinica_uncomm_vars];
+				clinica_comm_vars =   [clinica_comm_vars;   table2cell(curr_tab(:,comm_vars))];
+
+
+			end
+
+			clinica_cell = [clinica_comm_vars, clinica_uncomm_vars];
+			clinica = cell2table(clinica_cell);
+			clinica.Properties.VariableNames = [comm_vars; uncomm_vars];
 
 	end
 
