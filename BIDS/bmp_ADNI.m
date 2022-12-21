@@ -139,6 +139,10 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 %
 %  - Assumes max of 9 runs for each modality.
 %
+%  - In 'clinica' mode, we assume T1/FLAIR/dMRI/PET conversion by Clinica do not
+%    have missing subjects. We look at the subject ID, VISCODE, Path, etc. to look
+%    for ASL.
+%
 %
 
 
@@ -448,13 +452,18 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 
 		case {'clinica'}
 
-			bmp_BIDSinitiator (BIDS_directory, 'ADNI');
-
 			DICOM_directory = varargin{1};
 			BIDS_directory  = varargin{2};
 
+			% DICOM_directory = '/Users/z3402744/Work/ADNI_test';
+			% BIDS_directory = '/Users/z3402744/Work/ADNI_test/BIDS';
+
+			bmp_BIDSinitiator (BIDS_directory, 'ADNI');
+
 			DICOM2BIDS = bmp_ADNI ('retrieve');
 			DCM2NIIX   = bmp_BIDSgenerator ('clinica-ADNI', DICOM2BIDS, DICOM_directory, BIDS_directory, 'MatOutDir', fullfile (BIDS_directory, 'code', 'BMP'));
+
+			fprintf ('%s : Reading tsv files in conversion_info folder.\n', mfilename);
 
 			clinica_conv_info_dir = dir (fullfile (BIDS_directory, 'conversion_info'));
 			clinica_conv_info_dir_path = fullfile (clinica_conv_info_dir(end).folder, clinica_conv_info_dir(end).name);
@@ -485,6 +494,8 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 
 			for i = 1 : size (clinica_conv_info_tsv_dir,1)
 
+				fprintf ('    --  Reading %s ... ', clinica_conv_info_tsv_dir(i).name),
+
 				curr_tab_opts = detectImportOptions (fullfile (clinica_conv_info_tsv_dir(i).folder, clinica_conv_info_tsv_dir(i).name), ...
 														'FileType',				'delimitedtext', ...
 														'ReadVariableNames',	true, ...
@@ -492,6 +503,10 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 														'ImportErrorRule',		'error', ...
 														'Delimiter',			'\t', ...
 														'ExtraColumnsRule',		'error');
+
+
+				curr_tab_opts.VariableTypes(find(~strcmp(curr_tab_opts.VariableNames, 'Scan_Date'))) = {'char'};
+				curr_tab_opts.VariableTypes(find(strcmp(curr_tab_opts.VariableNames, 'Scan_Date'))) = {'datetime'};
 
 				curr_tab = readtable (fullfile (clinica_conv_info_tsv_dir(i).folder, clinica_conv_info_tsv_dir(i).name), curr_tab_opts);
 
@@ -506,12 +521,39 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 				clinica_uncomm_vars = [clinica_uncomm_vars; curr_clinica_uncomm_vars];
 				clinica_comm_vars =   [clinica_comm_vars;   table2cell(curr_tab(:,comm_vars))];
 
+				fprintf ('DONE!\n')
+
 
 			end
 
+			fprintf ('%s : Gathering all info in tsv files into a table and save to bmp_ADNI.mat ... ', mfilename);
+
 			clinica_cell = [clinica_comm_vars, clinica_uncomm_vars];
-			clinica = cell2table(clinica_cell);
-			clinica.Properties.VariableNames = [comm_vars; uncomm_vars];
+
+			CLINICA = cell2table (clinica_cell, 'VariableNames', [comm_vars; uncomm_vars]);
+
+			save (fullfile(BIDS_directory, 'code', 'BMP', 'bmp_ADNI.mat'), 'CLINICA', '-append');
+
+			fprintf ('DONE!\n');
+
+			% CLINICA.Path = strrep(CLINICA.Path, '/data3/adni/adni_all/ADNI', '/Users/z3402744/Work/ADNI_test');
+
+			DCM2NIIX_TOCONVERT = DCM2NIIX(find(strcmp(DCM2NIIX.TO_CONVERT,'Yes')),:);
+			DCM2NIIX_CLINICA = outerjoin (DCM2NIIX_TOCONVERT,	CLINICA, ...
+											'LeftKeys', 		'DICOM_INPUT_DIR', ...
+											'RightKeys',		'Path', ...
+											'LeftVariables',	{	'DICOM_INPUT_DIR'
+																	'BIDS_OUTPUT_DIR'
+																	'BIDS_NII_NAME'
+																	'CMD'}, ...
+											'RightVariables',	{	'Path'
+																	'Subject_ID'
+																	'VISCODE'
+																	'Scan_Date'
+																	'Image_ID'
+																	'Is_Dicom'
+																	}, ...
+											'MergeKeys',		true);
 
 	end
 
