@@ -461,7 +461,7 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 			bmp_BIDSinitiator (BIDS_directory, 'ADNI');
 
 			DICOM2BIDS = bmp_ADNI ('retrieve');
-			DCM2NIIX   = bmp_BIDSgenerator ('clinica-ADNI', DICOM2BIDS, DICOM_directory, BIDS_directory, 'MatOutDir', fullfile (BIDS_directory, 'code', 'BMP'));
+			% DCM2NIIX   = bmp_BIDSgenerator ('clinica-ADNI', DICOM2BIDS, DICOM_directory, BIDS_directory, 'MatOutDir', fullfile (BIDS_directory, 'code', 'BMP'));
 
 			fprintf ('%s : Reading tsv files in conversion_info folder.\n', mfilename);
 
@@ -526,34 +526,84 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 
 			end
 
-			fprintf ('%s : Gathering all info in tsv files into a table and save to bmp_ADNI.mat ... ', mfilename);
+			fprintf ('%s : Gathering all info in tsv files into a table ... ', mfilename);
 
 			clinica_cell = [clinica_comm_vars, clinica_uncomm_vars];
 
 			CLINICA = cell2table (clinica_cell, 'VariableNames', [comm_vars; uncomm_vars]);
 
-			save (fullfile(BIDS_directory, 'code', 'BMP', 'bmp_ADNI.mat'), 'CLINICA', '-append');
+			fprintf ('DONE!\n');
+
+			
+			fprintf ('%s : Populating known ''Phase'' to other modalites acquired on the same day of scan ... ', mfilename);
+
+			known_phase = CLINICA (:, {'Subject_ID';'VISCODE';'Scan_Date';'Phase'});
+			known_phase = known_phase (find(~strcmp(known_phase.Phase,'UNKNOWN')),:);
+
+			for i = 1 : size (known_phase,1)
+
+				nbytes = fprintf ('(%d / %d)', i, size(known_phase,1));
+
+				CLINICA(find(ismember(CLINICA(:,{'Subject_ID';'VISCODE';'Scan_Date'}),known_phase(i,{'Subject_ID';'VISCODE';'Scan_Date'}))),{'Phase'}) = known_phase.Phase(i);
+
+				while nbytes > 0
+			         fprintf('\b')
+			         nbytes = nbytes - 1;
+			    end
+			end
 
 			fprintf ('DONE!\n');
 
-			% CLINICA.Path = strrep(CLINICA.Path, '/data3/adni/adni_all/ADNI', '/Users/z3402744/Work/ADNI_test');
+			fprintf ('%s : Saving CLINICA table to bmp_ADNI.mat ... ', mfilename);
 
-			DCM2NIIX_TOCONVERT = DCM2NIIX(find(strcmp(DCM2NIIX.TO_CONVERT,'Yes')),:);
-			DCM2NIIX_CLINICA = outerjoin (DCM2NIIX_TOCONVERT,	CLINICA, ...
-											'LeftKeys', 		'DICOM_INPUT_DIR', ...
-											'RightKeys',		'Path', ...
-											'LeftVariables',	{	'DICOM_INPUT_DIR'
-																	'BIDS_OUTPUT_DIR'
-																	'BIDS_NII_NAME'
-																	'CMD'}, ...
-											'RightVariables',	{	'Path'
-																	'Subject_ID'
-																	'VISCODE'
-																	'Scan_Date'
-																	'Image_ID'
-																	'Is_Dicom'
-																	}, ...
-											'MergeKeys',		true);
+			save (fullfile(BIDS_directory, 'code', 'BMP', 'bmp_ADNI.mat'), 'CLINICA', '-append');
+
+			fprintf ('DONE!\n');
+			
+
+			
+			fprintf ('%s : Looking for ASL using information from Clinica tsv files ... ', mfilename);
+
+			CLINICA_ASL = CLINICA (:,{'Subject_ID';'Scan_Date';'VISCODE';'Phase'});
+
+			CLINICA_ASL.ASL_dir = cellfun(@dir, fullfile (	DICOM_directory, ...
+															CLINICA_ASL.Subject_ID, ...
+															'*ASL*', ...
+															strcat(char(CLINICA_ASL.Scan_Date),'*'), ...
+															'I*'), ...
+												'UniformOutput', false);
+
+			CLINICA_ASL.ASL_exist = ~cellfun(@isempty, CLINICA_ASL.ASL_dir);
+
+			CLINICA_ASL = CLINICA_ASL(find(CLINICA_ASL.ASL_exist),:);
+
+			[~, idx_uniq] = unique(CLINICA_ASL(:,{'Subject_ID';'Scan_Date';'VISCODE'}));
+
+			CLINICA_ASL = CLINICA_ASL(idx_uniq,:);
+
+			CLINICA_ASL.DICOM_INPUT_DIR = cellfun(@(x) fullfile(x.folder,x.name), CLINICA_ASL.ASL_dir, 'UniformOutput', false);
+
+			CLINICA_ASL.SESSION_LAB = strrep(strrep(CLINICA_ASL.VISCODE, 'bl', 'M00'),'m','M'); % session label : 'bl' -> 'M00'; 'm???' -> 'M???'
+
+			CLINICA_ASL.BIDS_OUTPUT_DIR = fullfile (BIDS_directory, ...
+													strcat('sub-ADNI', strrep(CLINICA_ASL.Subject_ID,'_','')), ...
+													strcat('ses-', CLINICA_ASL.SESSION_LAB), ...
+													'perf');
+
+			CLINICA_ASL.BIDS_NII_NAME = strcat('sub-ADNI', strrep(CLINICA_ASL.Subject_ID,'_',''), '_ses-', CLINICA_ASL.SESSION_LAB, '_asl.nii');
+
+			CLINICA_ASL.DCM2NIIX_CMD = %% UP TO HERE %%							
+
+			fprintf ('DONE!\n');
+
+			fprintf ('%s : Saving CLINICA_ASL table to bmp_ADNI.mat ... ', mfilename);
+
+			
+
+
+			%% ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			%% CAN ADD OTHER MODALITES THAT ARE MISSED IN CLINICA, E.G., T2*, ETC., HERE.
+			%% ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	end
 
