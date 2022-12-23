@@ -1,0 +1,3 @@
+[submodule "SVDdetector"]
+	path = SVDdetector
+	url = https://github.com/JiyangJiang/SVDdetector
