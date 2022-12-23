@@ -1,4 +1,4 @@
-function bmp_BIDS (dataset, operation_mode, DICOM_directory, BIDS_directory);
+function varargout = bmp_BIDS (dataset, operation_mode, DICOM_directory, BIDS_directory);
 %
 % DESCRIPTION
 % =========================================================================
@@ -41,6 +41,12 @@ function bmp_BIDS (dataset, operation_mode, DICOM_directory, BIDS_directory);
 %   prepared in 'prepare' mode (/path/to/BIDS/code/BMP/bmp_ADNI.mat).
 %
 %
+%   'clinica_prepare' mode
+%
+%
+%   'clinica_run' mode
+%
+%
 %
 % HISTORY
 % =========================================================================
@@ -49,18 +55,18 @@ function bmp_BIDS (dataset, operation_mode, DICOM_directory, BIDS_directory);
 %
 %
 
-dataset = 'ADNI';
-
-operation_mode = 'run'; % 'refresh', 'prepare', 'run', 
 
 % TP-W530
-DICOM_directory  = '/sandbox/adni_examples/dicom';
-BIDS_directory = '/sandbox/adni_examples/bids';
+% DICOM_directory  = '/sandbox/adni_examples/dicom';
+% BIDS_directory = '/sandbox/adni_examples/bids';
 
 
 % MacBook
 % DICOM_directory  = '/Users/z3402744/Work/ADNI_test';
 % BIDS_directory   = '/Users/z3402744/Work/ADNI_test/BIDS';
+% CLINICA_ASL = bmp_BIDS('ADNI','clinica_prepare',DICOM_directory,BIDS_directory)
+
+
 
 switch dataset
 
@@ -68,17 +74,33 @@ switch dataset
 
 		switch operation_mode
 
-			case 'refresh'
+			case 'refresh' % internal use : update embedded bmp_ADNI.mat
 
 				bmp_ADNI ('refresh', DICOM_directory, BIDS_directory);
 
-			case 'prepare'
+			case 'prepare' % prepare dcm2niix commands according to real DICOM/BIDS directories
 
 				DCM2NIIX = bmp_ADNI ('prepare', DICOM_directory, BIDS_directory);
 
-			case 'run'
+				varargout{1} = DCM2NIIX;
+
+			case 'run' % run dcm2niix conversion
 
 				DCM2NIIX = bmp_ADNI ('dcm2niix', fullfile (BIDS_directory, 'code', 'BMP', 'bmp_ADNI.mat'));
+
+				varargout{1} = DCM2NIIX;
+
+			case 'clinica_prepare' % prepare dcm2niix commands according to information in Clinica tsv files.
+
+				CLINICA_ASL = bmp_ADNI ('clinica', DICOM_directory, BIDS_directory);
+
+				varargout{1} = CLINICA_ASL;
+
+			case 'clinica_run' % run dcm2niix conversion for clinica_prepare'ed commands.
+
+				CLINICA_ASL = bmp_ADNI ('dcm2niix_clinica', BIDS_directory);
+
+				varargout{1} = CLINICA_ASL;
 
 		end
 

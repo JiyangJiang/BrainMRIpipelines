@@ -347,6 +347,8 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 
 		case {'dcm2niix'; 'run_dcm2niix'}
 
+			fprintf ('%s : Running in ''dcm2niix'' mode.\n');
+
 			if nargin == 2 && isfile (varargin{1}) && endsWith(varargin{1},'.mat')
 				ADNI_mat = varargin{1};
 			else
@@ -354,70 +356,33 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 			end
 
 			DCM2NIIX = load(ADNI_mat).DCM2NIIX;
-			DCM2NIIX.CMD_OUT = cell(size(DCM2NIIX.CMD));
-			DCM2NIIX.CMD_OUT(:,1) = {'UNKNOWN'};
-			DCM2NIIX.CMD_STATUS = cell(size(DCM2NIIX.CMD));
-			DCM2NIIX.CMD_STATUS(:,1) = {'UNKNOWN'};
-			DCM2NIIX.CMD_WARNINGS = cell(size(DCM2NIIX.CMD));
-			DCM2NIIX.CMD_WARNINGS(:,1) = {'NONE'};
-			DCM2NIIX.BIDS_OUTPUT_DIR_MKDIR_STATUS = cell(size(DCM2NIIX.CMD));
-			DCM2NIIX.BIDS_OUTPUT_DIR_MKDIR_STATUS(:,1) = {'UNKNOWN'};
+
+			DCM2NIIX = run_dcm2niix (DCM2NIIX);
 			
 
-			for i = 1 : size(DCM2NIIX.CMD,1)
-
-				if ~ isfolder (DCM2NIIX.BIDS_OUTPUT_DIR{i,1})
-
-					status = mkdir (DCM2NIIX.BIDS_OUTPUT_DIR{i,1});
-
-					if ~ status
-
-						DCM2NIIX.BIDS_OUTPUT_DIR_MKDIR_STATUS{i,1} = 'Fail';
-
-						fprintf(2, '%s : Creating BIDS directory ''%s'' failed. This may be because you don''t have the BIDS directory in bmp_ADNI.mat. You may need to run bmp_BIDSgenerator with proper BIDS_directory argument.\n', mfilename, DCM2NIIX.BIDS_OUTPUT_DIR{i,1});
-
-						continue
-
-					else
-
-						DCM2NIIX.BIDS_OUTPUT_DIR_MKDIR_STATUS{i,1} = 'Success';
-
-					end
-
-				else
-
-					DCM2NIIX.BIDS_OUTPUT_DIR_MKDIR_STATUS{i,1} = 'Exist';
-
-				end
-
-				if strcmp (DCM2NIIX.TO_CONVERT{i,1}, 'Yes')
-
-					[~, curr_imageuidfoldername] = fileparts (DCM2NIIX.DICOM_INPUT_DIR{i,1});
-
-					fprintf ('%s : (%d / %d) : Running dcm2niix to convert ''%s'' to ''%s''.nii ... ', ...
-									mfilename, i, size (DCM2NIIX.CMD,1), curr_imageuidfoldername, DCM2NIIX.BIDS_NII_NAME{i,1});
-
-					[DCM2NIIX.CMD_STATUS{i,1}, DCM2NIIX.CMD_OUT{i,1}] = system (DCM2NIIX.CMD{i,1});
-
-					if contains (DCM2NIIX.CMD_OUT{i,1}, 'warning', 'IgnoreCase', true)
-
-						DCM2NIIX.CMD_WARNINGS{i,1} = DCM2NIIX.CMD_OUT{i,1};
-
-					end
-
-					fprintf (' DONE!\n');
-
-				end
-
-			end
-
-			fprintf('%s : Saving dcm2niix commands and command outputs to bmp_ADNI.mat.\n', mfilename);
+			fprintf('%s : Saving dcm2niix command outputs to bmp_ADNI.mat.\n', mfilename);
 
 			save (ADNI_mat, 'DCM2NIIX', '-append');
 
 			varargout{1} = DCM2NIIX;
 
 
+
+		case {'dcm2niix_clinica'; 'run_dcm2niix_clinica'}
+
+			fprintf ('%s : Running in ''dcm2niix_clinica'' mode.\n');
+
+			BIDS_directory = varargin{1};
+
+			DCM2NIIX = load(fullfile(BIDS_directory,'code','BMP','bmp_ADNI.mat')).CLINICA_ASL;
+
+			CLINICA_ASL = run_dcm2niix (DCM2NIIX);
+
+			fprintf('%s : Saving dcm2niix command outputs to bmp_ADNI.mat.\n', mfilename);
+
+			save (fullfile(BIDS_directory,'code','BMP','bmp_ADNI.mat'), 'CLINICA_ASL', '-append');
+
+			varargout{1} = CLINICA_ASL;
 
 
 		case {'refresh'; 'refresh_mat_file'} % refresh mode is for internal testing.
@@ -450,18 +415,18 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 							% the scans.
 
 
+			%% TO BE IMPLEMENTED
+
+
 		case {'clinica'}
 
 			DICOM_directory = varargin{1};
 			BIDS_directory  = varargin{2};
 
-			% DICOM_directory = '/Users/z3402744/Work/ADNI_test';
-			% BIDS_directory = '/Users/z3402744/Work/ADNI_test/BIDS';
-
 			bmp_BIDSinitiator (BIDS_directory, 'ADNI');
 
 			DICOM2BIDS = bmp_ADNI ('retrieve');
-			% DCM2NIIX   = bmp_BIDSgenerator ('clinica-ADNI', DICOM2BIDS, DICOM_directory, BIDS_directory, 'MatOutDir', fullfile (BIDS_directory, 'code', 'BMP'));
+			DCM2NIIX   = bmp_BIDSgenerator ('clinica-ADNI', DICOM2BIDS, DICOM_directory, BIDS_directory, 'MatOutDir', fullfile (BIDS_directory, 'code', 'BMP'));
 
 			fprintf ('%s : Reading tsv files in conversion_info folder.\n', mfilename);
 
@@ -581,6 +546,10 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 
 			CLINICA_ASL = CLINICA_ASL(idx_uniq,:);
 
+			fprintf ('DONE!\n');
+
+			fprintf ('%s : Preparing dcm2niix commands for ASL (N = %d) ... ', mfilename, size(CLINICA_ASL,1));
+
 			CLINICA_ASL.DICOM_INPUT_DIR = cellfun(@(x) fullfile(x.folder,x.name), CLINICA_ASL.ASL_dir, 'UniformOutput', false);
 
 			CLINICA_ASL.SESSION_LAB = strrep(strrep(CLINICA_ASL.VISCODE, 'bl', 'M00'),'m','M'); % session label : 'bl' -> 'M00'; 'm???' -> 'M???'
@@ -590,16 +559,85 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 													strcat('ses-', CLINICA_ASL.SESSION_LAB), ...
 													'perf');
 
-			CLINICA_ASL.BIDS_NII_NAME = strcat('sub-ADNI', strrep(CLINICA_ASL.Subject_ID,'_',''), '_ses-', CLINICA_ASL.SESSION_LAB, '_asl.nii');
+			CLINICA_ASL.BIDS_NII_NAME = strcat('sub-ADNI', strrep(CLINICA_ASL.Subject_ID,'_',''), '_ses-', CLINICA_ASL.SESSION_LAB, '_asl');
 
-			CLINICA_ASL.DCM2NIIX_CMD = %% UP TO HERE %%							
+			curr_datetime = strrep(char(datetime),' ','_');
+			CLINICA_ASL.CMD = strcat ('dcm2niix   -6', ...
+												' -a y', ...
+												' -b y', ...
+												' -ba n', ...
+												' -c BMP_', curr_datetime, ...
+												' -d 1', ...
+												' -e n', ...
+												' -f', {' '}, CLINICA_ASL.BIDS_NII_NAME, ...
+												' -g n', ...
+												' -i y', ...
+												' -l o', ...
+												' -o', {' '}, CLINICA_ASL.BIDS_OUTPUT_DIR, ...
+												' -p y', ...
+												' -r n', ...
+												' -s n', ...
+												' -v 0', ...
+												' -w 2', ...
+												' -x n', ...
+												' -z n', ...
+												' --big-endian o', ...
+												' --progress n', ...
+												{' '}, CLINICA_ASL.DICOM_INPUT_DIR);
 
 			fprintf ('DONE!\n');
 
+			fprintf ('%s : Cross-checking with DCM2NIIX derived from ADNI study data to find out missed ones ... ', mfilename);
+
+			DCM2NIIX = DCM2NIIX(find(strcmp(DCM2NIIX.TO_CONVERT,'Yes')),:);
+
+			CLINICA_ASL = CLINICA_ASL(:, {	'Subject_ID'
+											'Scan_Date'
+											'VISCODE'
+											'Phase'
+											'DICOM_INPUT_DIR'
+											'SESSION_LAB'
+											'BIDS_OUTPUT_DIR'
+											'BIDS_NII_NAME'
+											'CMD'});
+
+			additional_cmd 				= DCM2NIIX.CMD 				(find(~ismember(DCM2NIIX.DICOM_INPUT_DIR,CLINICA_ASL.DICOM_INPUT_DIR)));
+			additional_dicominputdir 	= DCM2NIIX.DICOM_INPUT_DIR	(find(~ismember(DCM2NIIX.DICOM_INPUT_DIR,CLINICA_ASL.DICOM_INPUT_DIR)));
+			additional_bidsoutputdir 	= DCM2NIIX.BIDS_OUTPUT_DIR	(find(~ismember(DCM2NIIX.DICOM_INPUT_DIR,CLINICA_ASL.DICOM_INPUT_DIR)));
+			additional_bidsniiname	 	= DCM2NIIX.BIDS_NII_NAME	(find(~ismember(DCM2NIIX.DICOM_INPUT_DIR,CLINICA_ASL.DICOM_INPUT_DIR)));
+
+			additional_cmd              = strrep (strrep (additional_cmd, 			'ses-bl', 'ses-M00'), 'ses-m', 'ses-M');
+			additional_dicominputdir    = strrep (strrep (additional_dicominputdir, 'ses-bl', 'ses-M00'), 'ses-m', 'ses-M');
+			additional_bidsoutputdir    = strrep (strrep (additional_bidsoutputdir, 'ses-bl', 'ses-M00'), 'ses-m', 'ses-M');
+			additional_bidsniiname      = strrep (strrep (additional_bidsniiname, 	'ses-bl', 'ses-M00'), 'ses-m', 'ses-M');
+
+
+
+			CLINICA_ASL(end+1:end+size(additional_cmd,1), {	'CMD'
+															'DICOM_INPUT_DIR'
+															'BIDS_OUTPUT_DIR'
+															'BIDS_NII_NAME'}) = [	additional_cmd, ...
+																					additional_dicominputdir, ...
+																					additional_bidsoutputdir, ...
+																					additional_bidsniiname];
+
+			CLINICA_ASL.Subject_ID(find(cellfun(@isempty, CLINICA_ASL.Subject_ID)))={'UNKNOWN'};
+			CLINICA_ASL.VISCODE(find(cellfun(@isempty, CLINICA_ASL.VISCODE)))={'UNKNOWN'};
+			CLINICA_ASL.Phase(find(cellfun(@isempty, CLINICA_ASL.Phase)))={'UNKNOWN'};
+			CLINICA_ASL.SESSION_LAB(find(cellfun(@isempty, CLINICA_ASL.SESSION_LAB)))={'UNKNOWN'};
+			CLINICA_ASL.TO_CONVERT(:) = {'Yes'};
+
+			fprintf ('DONE (Please ignore warning)!\n');
+
+
 			fprintf ('%s : Saving CLINICA_ASL table to bmp_ADNI.mat ... ', mfilename);
 
-			
+			save (fullfile (BIDS_directory, 'code', 'BMP', 'bmp_ADNI.mat'), 'CLINICA_ASL', '-append');
 
+			fprintf ('DONE!\n');
+
+			
+			varargout{1} = CLINICA_ASL;
 
 			%% ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 			%% CAN ADD OTHER MODALITES THAT ARE MISSED IN CLINICA, E.G., T2*, ETC., HERE.
@@ -609,3 +647,63 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 
 end
 	
+function DCM2NIIX = run_dcm2niix (DCM2NIIX)
+
+	DCM2NIIX.CMD_OUT = cell(size(DCM2NIIX.CMD));
+	DCM2NIIX.CMD_OUT(:,1) = {'UNKNOWN'};
+	DCM2NIIX.CMD_STATUS = cell(size(DCM2NIIX.CMD));
+	DCM2NIIX.CMD_STATUS(:,1) = {'UNKNOWN'};
+	DCM2NIIX.CMD_WARNINGS = cell(size(DCM2NIIX.CMD));
+	DCM2NIIX.CMD_WARNINGS(:,1) = {'NONE'};
+	DCM2NIIX.BIDS_OUTPUT_DIR_MKDIR_STATUS = cell(size(DCM2NIIX.CMD));
+	DCM2NIIX.BIDS_OUTPUT_DIR_MKDIR_STATUS(:,1) = {'UNKNOWN'};
+	
+
+	for i = 1 : size(DCM2NIIX.CMD,1)
+
+		if ~ isfolder (DCM2NIIX.BIDS_OUTPUT_DIR{i,1})
+
+			status = mkdir (DCM2NIIX.BIDS_OUTPUT_DIR{i,1});
+
+			if ~ status
+
+				DCM2NIIX.BIDS_OUTPUT_DIR_MKDIR_STATUS{i,1} = 'Fail';
+
+				fprintf(2, '%s : Creating BIDS directory ''%s'' failed. This may be because you don''t have the BIDS directory in bmp_ADNI.mat. You may need to run bmp_BIDSgenerator with proper BIDS_directory argument.\n', mfilename, DCM2NIIX.BIDS_OUTPUT_DIR{i,1});
+
+				continue
+
+			else
+
+				DCM2NIIX.BIDS_OUTPUT_DIR_MKDIR_STATUS{i,1} = 'Success';
+
+			end
+
+		else
+
+			DCM2NIIX.BIDS_OUTPUT_DIR_MKDIR_STATUS{i,1} = 'Exist';
+
+		end
+
+		if strcmp (DCM2NIIX.TO_CONVERT{i,1}, 'Yes')
+
+			[~, curr_imageuidfoldername] = fileparts (DCM2NIIX.DICOM_INPUT_DIR{i,1});
+
+			fprintf ('%s : (%d / %d) : Running dcm2niix to convert ''%s'' to ''%s''.nii ... ', ...
+							mfilename, i, size (DCM2NIIX.CMD,1), curr_imageuidfoldername, DCM2NIIX.BIDS_NII_NAME{i,1});
+
+			[DCM2NIIX.CMD_STATUS{i,1}, DCM2NIIX.CMD_OUT{i,1}] = system (DCM2NIIX.CMD{i,1});
+
+			if contains (DCM2NIIX.CMD_OUT{i,1}, 'warning', 'IgnoreCase', true)
+
+				DCM2NIIX.CMD_WARNINGS{i,1} = DCM2NIIX.CMD_OUT{i,1};
+
+			end
+
+			fprintf (' DONE!\n');
+
+		end
+
+	end
+
+end
