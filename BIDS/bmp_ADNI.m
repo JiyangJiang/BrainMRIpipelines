@@ -110,6 +110,30 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 %     'clinica' mode
 %     ++++++++++++++++++++++++++++++++++++
 %
+%        Look into tsv files in conversion_info folder created by Clinica, and
+%        search for ASL for subjects with other modalities (T1/FLAIR/dMRI/fMRI/PET).
+%        Will generate dcm2niix commands.
+%
+%        operation_mode = 'clinica'
+%
+%        varargin{1} = DICOM directory
+%        varargin{2} = BIDS directory
+%
+%        varargout{1} = CLINICA_ASL
+%
+%
+%     'dcm2niix_clinica' mode
+%     ++++++++++++++++++++++++++++++++++++
+%
+%        Run dcm2niix commands prepared in 'clinica' mode.
+%
+%        operation_mode = 'dcm2niix_clinica'
+%
+%        varargin{1} = BIDS directory
+%
+%        varargout{1} = CLINICA_ASL
+%
+%
 %
 %
 % SUPPORTED MODALITIES
@@ -130,6 +154,8 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 %
 %   19 December 2022 - update to describe DICOM2BIDS using MATLAB tables.
 %
+%   23 December 2022 - 'clinica' and 'dcm2niix_clinica' modes.
+%
 %
 %
 % KNOWN LIMITATIONS
@@ -139,9 +165,6 @@ function varargout = bmp_ADNI (operation_mode, varargin)
 %
 %  - Assumes max of 9 runs for each modality.
 %
-%  - In 'clinica' mode, we assume T1/FLAIR/dMRI/PET conversion by Clinica do not
-%    have missing subjects. We look at the subject ID, VISCODE, Path, etc. to look
-%    for ASL.
 %
 %
 

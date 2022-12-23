@@ -27,7 +27,7 @@ function varargout = bmp_BIDS (dataset, operation_mode, DICOM_directory, BIDS_di
 %   +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %
 %   'prepare' mode
-%   ++++++++++++++
+%   +++++++++++++++++++++++++++++++
 %   This is the mode external users should start with to converting real 
 %   ADNI DICOM data to BIDS. It prepares BIDS folder, load DICOM2BIDS 
 %   mappings, and prepare dcm2niix commands with real DICOM/BIDS paths. 
@@ -36,22 +36,28 @@ function varargout = bmp_BIDS (dataset, operation_mode, DICOM_directory, BIDS_di
 % 
 % 
 %   'run' mode
-%   ++++++++++
+%   +++++++++++++++++++++++++++++++
 %   This mode runs dcm2niix to convert DICOM to BIDS, using the commands
 %   prepared in 'prepare' mode (/path/to/BIDS/code/BMP/bmp_ADNI.mat).
 %
 %
 %   'clinica_prepare' mode
+%   +++++++++++++++++++++++++++++++
+%   Prepare dcm2niix commands (for ASL) using Clinica info, and save to
+%   /path/to/BIDS/code/BMP/bmp_ADNI.mat.
 %
 %
 %   'clinica_run' mode
-%
+%   +++++++++++++++++++++++++++++++
+%   Run dcm2niix commands prepared in 'clinica_prepare' mode.
 %
 %
 % HISTORY
 % =========================================================================
 %
 % - 19 Dec 2022 : First version.
+%
+% - 23 Dec 2022 : 'clinica_prepare' and 'clinica_run' modes.
 %
 %
 
