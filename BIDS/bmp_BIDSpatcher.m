@@ -2,6 +2,7 @@ function bmp_BIDSpatcher (varargin)
 %
 %
 % varargin{1} = BIDS directory (default = pwd)
+%
 % varargin{2} = is ADNI? (true/false) (default = true)
 %
 %
