@@ -314,7 +314,7 @@ function BMP_VCI = bmp_VCI_initialiseBmpVci (individual_original_DICOM_directory
 																												% will miss some series.
 	end
 
-	BMP_VCI.BIDS.stringInFilenamesInDicomCollectionstrToBeReplaced = 'jiyang';
-	BMP_VCI.BIDS.stringInFilenamesInDicomCollectionstrToReplaceTo  = 'brain';
+	BMP_VCI.BIDS.stringInFilenamesInDicomCollectionstrToBeReplaced = '/home/jiyang/Work';
+	BMP_VCI.BIDS.stringInFilenamesInDicomCollectionstrToReplaceTo  = '/data/vci/pilotPS';
 
 end

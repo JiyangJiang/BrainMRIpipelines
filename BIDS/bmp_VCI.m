@@ -12,13 +12,13 @@
 
 %   
 
-individual_original_DICOM_directory = '/home/brain/Work/Carbogen_volunteer_PS/DICOM';
-cohort_BIDS_directory = '/home/brain/Work/Carbogen_volunteer_PS/BIDS';
+individual_original_DICOM_directory = '/data/vci/pilotPS/Carbogen_volunteer_PS/DICOM';
+cohort_BIDS_directory = '/data/vci/pilotPS/Carbogen_volunteer_PS/BIDS';
 BIDS_subject_label = 'pilotPS';
 
 
 BMP_VCI = bmp_VCI_initialiseBmpVci (individual_original_DICOM_directory, cohort_BIDS_directory, BIDS_subject_label, 'notRunningDicomCollection'); % 'notRunningDicomCollection' for internal testing.
-BMP_VCI.BIDS.dicomCollection = load('/home/brain/Work/Carbogen_volunteer_PS/dcm_collection.mat').dcm_coll2; % for testing
+BMP_VCI.BIDS.dicomCollection = load('/data/vci/pilotPS/Carbogen_volunteer_PS/dcm_collection.mat').dcm_coll2; % for testing
 
 BMP_VCI = bmp_VCI_organiseDicomDir (BMP_VCI);
 
