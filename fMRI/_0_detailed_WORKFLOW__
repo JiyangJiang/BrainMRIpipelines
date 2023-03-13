@@ -21,8 +21,9 @@ Operations on FEAT GUI
 
 0.1) generate lists
 ------------------------------------------------
-Ini_genLists.sh cohortFolder \
-				        L_lv_type
+
+bmp_fmir_ini_genLists.sh -c /path/to/cohort/folder -l fix
+bmp_fmir_ini_genLists.sh -c /path/to/cohort/folder -l aroma
 
 
 
