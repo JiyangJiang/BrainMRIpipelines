@@ -49,10 +49,9 @@ EOF
 
 
 cohortFolder=$1
-CNS_path=$2
-SPM12_path=$3
-running_mode=$4
-overwrite_flag=$5
+SPM12_path=$2
+running_mode=$3
+overwrite_flag=$4
 
 
 while read Sfolder
@@ -64,7 +63,6 @@ do
 			
 			f_xbrain ${Sfolder} \
 					 $(basename "${Sfolder}")_anat \
-					 ${CNS_path} \
 					 ${SPM12_path} \
 					 ${overwrite_flag} \
 					 &
@@ -72,12 +70,11 @@ do
 
 		par_cluster)
 
-			$(dirname $(which $0))/Ini_Xbrain_SGE.sh ${Sfolder} \
-													 $(basename "${Sfolder}")_anat \
-													 ${CNS_path} \
-													 ${SPM12_path} \
-													 ${overwrite_flag} \
-													 ${cohortFolder}/SGE_commands/Xbrain_$(basename ${Sfolder}).sge
+			$(dirname $(which $0))/bmp_fmri_ini_Xbrain_SGE.sh ${Sfolder} \
+																												 $(basename "${Sfolder}")_anat \
+																												 ${SPM12_path} \
+																												 ${overwrite_flag} \
+																												 ${cohortFolder}/SGE_commands/Xbrain_$(basename ${Sfolder}).sge
 
 			;;
 
@@ -85,7 +82,6 @@ do
 
 			f_xbrain ${Sfolder} \
 					 $(basename "${Sfolder}")_anat \
-					 ${CNS_path} \
 					 ${SPM12_path} \
 					 ${overwrite_flag}
 			;;
@@ -128,9 +124,8 @@ wait
 
 Xbrain(){
 
-	local CNS_path=$1
-	local SPM12_path=$2
-	local anat=$3
+	local SPM12_path=$1
+	local anat=$2
 
 	anat_folder=$(dirname ${anat})
 	anat_filename=`echo $(basename ${anat}) | awk -F'.nii' '{print $1}'`
@@ -149,9 +144,10 @@ Xbrain(){
 	matlab -nodisplay \
 	   -nosplash \
 	   -r \
-	   "addpath ('${CNS_path}/Scripts');\
-	    [c1,c2,c3,rc1,rc2,rc3,seg8mat] = CNSP_segmentation('${anat}','${SPM12_path}');\
-	    CNSP_NBTRn ('${anat}',c1,c2,c3,'${anat_folder}/${anat_filename}_brain');\
+	   "BMP_PATH = getenv ('BMP_PATH');\
+	   	addpath ('${BMP_PATH}/fMRI');\
+	    [c1,c2,c3,rc1,rc2,rc3,seg8mat] = bmp_fmri_ini_Xbrain_SPMsegment('${anat}','${SPM12_path}');\
+	    bmp_fmri_ini_Xbrain_SPMnbtrN ('${anat}',c1,c2,c3,'${anat_folder}/${anat_filename}_brain');\
 	    movefile (c1, '${anat_folder}/temp');\
 	    movefile (c2, '${anat_folder}/temp');\
 	    movefile (c3, '${anat_folder}/temp');\
@@ -166,9 +162,8 @@ Xbrain(){
 f_xbrain(){
 		local studyFolder=$1
 		local anat_filename=$2
-		local CNS_path=$3
-		local SPM12_path=$4
-		local overwrite_f=$5
+		local SPM12_path=$3
+		local overwrite_f=$4
 
 		anat=`ls ${studyFolder}/${anat_filename}.nii*`
 
@@ -186,9 +181,7 @@ f_xbrain(){
 			echo "${anat_filename} exists, but overwriting ..."
 			echo
 
-			Xbrain ${CNS_path} \
-				   ${SPM12_path} \
-				   ${anat}
+			Xbrain ${SPM12_path} ${anat}
 
 		elif [ ! -f "${studyFolder}/${anat_filename}_brain.nii.gz" ]; then
 
@@ -196,9 +189,7 @@ f_xbrain(){
 			echo "Non-brain tissue removal on ${anat_filename} ..."
 			echo
 
-			Xbrain ${CNS_path} \
-				   ${SPM12_path} \
-				   ${anat}
+			Xbrain ${SPM12_path} ${anat}
 
 		fi
 }	
