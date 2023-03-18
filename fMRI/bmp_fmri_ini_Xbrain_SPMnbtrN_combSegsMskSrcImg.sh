@@ -10,60 +10,18 @@ combSegsMaskSrcImg(){
 	CSF=$4
 	outImg=$5
 
-	if [ "$6" = "" ]; then
+    outImg_folder=$(dirname "${outImg}")
+    outImg_filename=`echo $(basename "${outImg}") | awk -F'.' '{print $1}'`
 
-		${FSLDIR}/bin/fslmaths ${GM} \
-                               -add ${WM} \
-                               -add ${CSF} \
-                               -thr 0.3 \
-                               -bin \
-                               -mul ${srcImg} \
-                               ${outImg}
+    ${FSLDIR}/bin/fslmaths ${GM} -add ${WM} -thr 0.5 -bin $(dirname $GM)/temp
+    ${FSLDIR}/bin/fslmaths ${CSF} -thr 0.9 -bin -add $(dirname $GM)/temp -bin -fillh -mul $srcImg $outImg
 
-        # without CSF
-        # ${FSLDIR}/bin/fslmaths ${GM} \
-        #                     -add ${WM} \
-        #                     -thr 0.3 \
-        #                     -bin \
-        #                     -mul ${srcImg} \
-        #                     ${outImg}
-
-	elif [ "$6" = "maskout" ]; then
-
-		${FSLDIR}/bin/fslmaths ${GM} \
-                               -add ${WM} \
-                               -add ${CSF} \
-                               -thr 0.3 \
-                               -bin \
-                               -mul ${srcImg} \
-                               ${outImg}
-
-        # without CSF
-        # ${FSLDIR}/bin/fslmaths ${GM} \
-        #                     -add ${WM} \
-        #                     -thr 0.3 \
-        #                     -bin \
-        #                     -mul ${srcImg} \
-        #                     ${outImg}
-
-        outImg_folder=$(dirname "${outImg}")
-        outImg_filename=`echo $(basename "${outImg}") | awk -F'.' '{print $1}'`
-
-        ${FSLDIR}/bin/fslmaths ${GM} \
-        					   -add ${WM} \
-        					   -add ${CSF} \
-        					   -thr 0.3 \
-        					   -bin \
-        					   ${outImg_folder}/${outImg_filename}_mask
-
-        # ${FSLDIR}/bin/fslmaths ${GM} \
-        #                        -add ${WM} \
-        #                        -thr 0.3 \
-        #                        -bin \
-        #                        ${outImg_folder}/${outImg_filename}_mask
+    if [ "$6" = "maskout" ]; then
+        ${FSLDIR}/bin/fslmaths ${CSF} -thr 0.9 -bin -add $(dirname $GM)/temp -bin -fillh ${outImg_folder}/${outImg_filename}_mask
 	fi
 
-
+    rm -f $(dirname $GM)/temp.nii.gz
+    
 }
 
 # $1 = src img
@@ -71,4 +29,4 @@ combSegsMaskSrcImg(){
 # $3 = WM img
 # $4 = CSF img
 # $5 = output img
-combSegsMaskSrcImg $1 $2 $3 $4 $5 $6
+combSegsMaskSrcImg $1 $2 $3 $4 $5

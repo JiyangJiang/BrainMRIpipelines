@@ -100,8 +100,7 @@ cat << EOF
             (version $(bmp_fmri_version.sh))
        *******************************
 
-$(basename $0) : It is better to prepare grp1.list and grp2.list 
-                 with corresponding subject IDs, and save in groupICA folder.
+$(basename $0) : It is better to prepare grp1.list and grp2.list, with corresponding subject IDs, and save in groupICA folder.
 
 $(basename $0) : Started!
 

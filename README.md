@@ -10,6 +10,8 @@ BMP only works on Unix-based system (Linux, macOS, WSL on Windows). The followin
 
 <code>export BMP_PATH=/path/to/BrainMRIpipelines</code>
 
+<code>export BMP_SPM_PATH=/path/to/SPM12</code>
+
 <code>export BMP_3RD_PATH=/path/to/install/third-party/software</code>
 
 <code>export BMP_TMP_PATH=/path/to/my/temp</code>

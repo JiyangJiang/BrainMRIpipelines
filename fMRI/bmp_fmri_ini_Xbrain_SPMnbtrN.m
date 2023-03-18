@@ -24,14 +24,9 @@ function bmp_fmri_ini_Xbrain_SPMnbtrN (inputImg, cGM, cWM, cCSF, outputImg, vara
 
     % get scripts folder
     [scriptsFolder,currMfilename,ext] = fileparts(which([mfilename '.m']));
-    
-    % grant execute
-    % system (['chmod +x ' scriptsFolder '/bmp_fmri_ini_Xbrain_SPMnbtrN_combSegsMaskSrcImg.sh']);
-    
-    % combine GM/WM/CSF, threshold 0.3, binarize, and mask input img
 
     if (nargin == 5)
-    	system ([scriptsFolder '/bmp_fmri_ini_Xbrain_SPMnbtrN_combSegsMaskSrcImg.sh ' inputImg ' ' cGM ' ' cWM ' ' cCSF ' ' outputImg]);
+    	system ([scriptsFolder '/bmp_fmri_ini_Xbrain_SPMnbtrN_combSegsMskSrcImg.sh ' inputImg ' ' cGM ' ' cWM ' ' cCSF ' ' outputImg]);
     elseif (nargin == 6)
-    	system ([scriptsFolder '/bmp_fmri_ini_Xbrain_SPMnbtrN_combSegsMaskSrcImg.sh ' inputImg ' ' cGM ' ' cWM ' ' cCSF ' ' outputImg ' ' varargin{1}]);
+    	system ([scriptsFolder '/bmp_fmri_ini_Xbrain_SPMnbtrN_combSegsMskSrcImg.sh ' inputImg ' ' cGM ' ' cWM ' ' cCSF ' ' outputImg ' ' varargin{1}]);
     end

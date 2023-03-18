@@ -2,11 +2,11 @@
 Data preparation
 ================
 
-cohortFolder --- studyFolder_1 (ie. subjID) - subjID_anat.nii* & subjID_func.nii*
+cohortFolder --- studyFolder_1 (ie. subjID) - struc.nii* & func.nii*
               |
-              |- studyFolder_2 (ie. subjID) - subjID_anat.nii* & subjID_func.nii*
+              |- studyFolder_2 (ie. subjID) - struc.nii* & func.nii*
               |
-              |- studyFolder_3 (ie. subjID) - subjID_anat.nii* & subjID_func.nii*
+              |- studyFolder_3 (ie. subjID) - struc.nii* & func.nii*
 
 
 
@@ -19,6 +19,12 @@ Operations on FEAT GUI
 + ------------------------------------------------------
 
 
+
+0.0) visual inspection on image quality
+------------------------------------------------
+
+
+
 0.1) generate lists
 ------------------------------------------------
 
@@ -27,32 +33,30 @@ bmp_fmir_ini_genLists.sh -c /path/to/cohort/folder -l aroma
 
 
 
-0.2) extract anat brain (optimised for multicore)
+0.2) extract anat brain
 -------------------------------------------------
-This step performs:
-  1) generate lists (same as step 0.1)
-  2) brain extraction using SPM
-  3) despike with 3dDespike
-  4) rename existing *.feat or *.ica folders
+
+for_each -nthreads 2 /home/brain/Work/ADNI_rsfMRI/test/work/sub-* : bmp_fmri_ini_Xbrain.sh IN
 
 
-Ini_Xbrain.sh cohortFolder \
-			        CNS_path \
-			        SPM12_path \
-              running_mode ('par_Mcore', 'par_cluster', or 'sin') \
-              overwrite_flag (overwrite or skip)
+0.3 (OPTIONAL) despike
+-------------------------------------------------
 
-
-It is always helpful to visually check the non-brain
-removed images (this is now done in step 0.3).
+for_each -nthreads 2 /home/brain/Work/ADNI_rsfMRI/test/work/sub-* : bmp_fmri_ini_despike.sh IN
 
 
 
-0.3) OPTIONAL - visual inspection on raw func and anat_brain
--------------------------------------------------------------
-call *L-lv_qc_nativeSpace_slices.sh*
+0.4) visual inspection on raw func and anat_brain
+-------------------------------------------------
+
+- func
+- struc_brain
 
 
+0.5) Remove existing func.feat, func+.feat, etc.
+-------------------------------------------------
+
+for_each -nthreads 2 /home/brain/Work/ADNI_rsfMRI/test/work/sub-* : rm -fr IN/func*.feat
 
 
 
@@ -71,59 +75,78 @@ WARNING : FIX cleanup mode with FEAT GUI is not fully functional
           in my scripts. Use MELODIC GUI for the moment.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-
-0) Remove existing func_filename.feat or func_filename+.feat etc.
-   folder/s. This is important, because otherwise the following
-   steps cannot find the correct .feat folder.
+open FSL GUI -> FEAT FMRI analysis
 
 Optional : unclick "Progress watcher" in "Misc".
 
 1) First-level analysis - Preprocessing
 
-2) Data tag : Number of inputs
-              Select 4D data (Note : give full path)
-              Delete volumes
-              High pass threshold
+2) Data tag : 
 
-   Note : input the actual number of fMRI images
-          use "ls -1" to list all fMRI images, and "Paste" to the GUI.
-          use absolute path, e.g. "ls -1 ${cohortFolder}/${subjID}/*_func.nii*"
+    2.1) Number of inputs - Select 4D data (Note : give full path)
 
-3) Pre-stats tag : Motion correction = MCFLIRT
-                   ---------------------------------------------------------------
-	           			 B0 unwarping = as needed
-                   ---------------------------------------------------------------
-				           Slice timing correction = as needed
-                   ---------------------------------------------------------------
-				           BET brain extraction = tick
-                   ---------------------------------------------------------------
-				           Spatial smoothing FWHM = 5 or as needed
-                                            AROMA cleanup requires that spatial
-                                            smoothing should be done during
-                                            preprocessing.
-                    ---------------------------------------------------------------
-				            intensity normalization = untick
-                    ---------------------------------------------------------------
-				            Temporal filtering = both perf sub and highpass untick
-                                         If using AROMA cleanup, temporal filtering
-                                         should NOT be done during preprocessing -
-                                         do it after AROMA. If using FIX cleanup,
-                                         my FIX cleanup script automatically runs 
-                                         highpass.
-                    ---------------------------------------------------------------
-          				  MELODIC ICA data exploration = untick in ICA-AROMA mode
-          				  						                   tick in FIX mode
-          				  ---------------------------------------------------------------
+            Note : input the actual number of fMRI images
+            use "ls -1" to list all fMRI images, and "Paste" to the GUI.
+            use absolute path, e.g. "ls -1 ${cohortFolder}/${subjID}/*_func.nii*"
 
-4) Registration tag : tick "Main structural image"
-                      ------------------------------------------------------------------
-                      Select main struct imgs = BRAIN EXTRACTED anat (*_anat_brain.nii*)
-                      ------------------------------------------------------------------
-	           			    Main struct img : Linear - Normal search - BBR
-                      ------------------------------------------------------------------
-				              Standard space : Linear - Normal search - 12 DOF
-                      ------------------------------------------------------------------
-				   					  Nonlinear = tick
+    2.2) Delete volumes
+              
+    2.3) High pass threshold 
+
+            [--== J: need to confirm number ==--]
+
+3) Pre-stats tag :      
+
+    3.1) Motion correction = MCFLIRT
+    
+    3.2) B0 unwarping = as needed
+
+            EPI distortion correction - [--== J: implement synthesised reversed PE ==--]
+                  
+    3.3) Slice timing correction = as needed
+
+            If TR < 1 second, slice timing correction can be skipped.
+
+    3.4) BET brain extraction = tick
+    
+    3.5) Spatial smoothing FWHM = 5 or as needed
+            
+            - AROMA cleanup requires that spatial smoothing should be done during preprocessing.
+            - J: Check - FWHM is usually 2X spatial resolusion??
+
+
+    3.6) intensity normalization = untick
+    
+    3.7) Temporal filtering = both perf sub and highpass untick
+                                         
+            - If using AROMA cleanup, temporal filtering should NOT be done during preprocessing
+            - If using AROMA cleanup, temporal filtering should be done it after AROMA.
+            - If using FIX cleanup, my FIX cleanup script automatically runs highpass.
+    
+    3.8) MELODIC ICA data exploration = untick in ICA-AROMA mode; tick in FIX mode
+
+4) Registration tag : 
+
+    4.1) tick "Main structural image"
+    
+    4.2) Select main struct imgs = BRAIN EXTRACTED structural image
+
+            - i.e., all struc_brain.nii.gz
+            - use "ls -1 /path/to/study/folder/sub-*/struc_brain.nii*", then paste.
+
+    4.3) Main structural image : Linear - Normal search - BBR
+    
+    4.4) Standard space : Linear - Normal search - 12 DOF
+    
+    4.5) Nonlinear = tick
+
+    4.6) Warp resolution = 4 mm (or as needed) -- J: check if this is correct.
+
+5) Click 'Save' to save fsf files to 'fsf' folder under cohort directory.
+
+6) Use fsf file to preprocess (this can be ran on cluster if cluster is properly set up):
+
+    ${FSLDIR}/bin/feat ${cohortFolder}/fsf/design.fsf
 
 
 
