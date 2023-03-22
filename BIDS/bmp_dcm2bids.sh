@@ -288,11 +288,11 @@ yes)
 # 		# Step 6 : fix the missing "TaskName" issue
 # 		# -----------------------------------------
 # 		cd sub-${participantID}/func
-# 		for i in `ls *.json`
-# 		do
-# 			task=$(echo $i | awk -F'task-' '{print $2}' | awk -F'_' '{print $1}')
-# 			ex -s -c "2i|\"TaskName\": \"${task}\"," -c x ${i}
-# 		done
+		# for i in `ls *.json`
+		# do
+		# 	task=$(echo $i | awk -F'task-' '{print $2}' | awk -F'_' '{print $1}')
+		# 	ex -s -c "2i|\"TaskName\": \"${task}\"," -c x ${i}
+		# done
 # 		cd ${subjectFolder}
 
 
