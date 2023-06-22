@@ -38,7 +38,7 @@ x.modules.asl.M0PositionInASL4D = [];			% M0 is separate from ASL4D.
 x.modules.asl.DummyScanPositionInASL4D = [];
 
 % quantification
-x.Q.bUseBasilQuantification = false;	% Not using BASIL quantification, instead of ExploreASL's
+x.Q.bUseBasilQuantification = false;	% Using ExploreASL's quantification, instead of BASIL
 x.Q.Lambda = 0.9;
 x.Q.T2art = 50;
 x.Q.BloodT1 = 1650;
@@ -52,3 +52,16 @@ x.modules.asl.SpikeRemovalThreshold = 0.01;
 x.modules.asl.bRegistrationContrast = 2;
 x.modules.asl.bAffineRegistration = 1; 	% Default is 0 (disable affine after ASL->T1w rigid-body).
 										% Here choose 1 to force affine.
+x.modules.asl.bDCTRegistration = 1;	% Default is 0 - DCT registration disabled. Here choose
+									% 1 - DCT registration enabled if affine enabled and conditions
+									% for affine passed.
+x.modules.asl.bRegistrationM02ASL = 1;	% M0 registration enabled.
+										% Description said 'It can be useful to diable M0 registration 
+										% if ASL registration is done based on M0, and little motion 
+										% is expected btw M0 and ASL.'
+										% However, ASL and M0 haven't been coregistered in our case.
+										% Therefore, enable M0 registration.
+x.modules.asl.bUseMNIasDummyStructural = 0;
+x.modules.asl.bPVCNativeSpace = 1;	% Enable PVC in ASL native space, using GM and WM maps obtained
+									% from previously segmented T1w images.
+x.modules.asl.PVCNativeSpaceKernel = 
