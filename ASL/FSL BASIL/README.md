@@ -13,13 +13,14 @@
 - **Volumes grouped by** option is to specify how data were acquired in *multi-PLD* data. For single-PLD data, select Repeats.
 - **Label/Control Pairing** specifies the order of label/control (i.e., label then control, or control or label). See table below for CHeBA data:
 
+|   |   |
 |---|---|
-| Study                    | OATS Wave 3 Melbourne & Brisbane  |
-| ASL flavour              | Pulsed ASL  |
-| TI                       | 1.8 sec  |
-| Bolus duration           | 0.7 sec  |
-| Bolus arrival time       | 0.7 sec  |
-| Time per slice (slicedt) | 0.046666666 sec  |
-| TR                       | 2.5 sec  |
-| TE                       | 11 msec  |
-| tag/control order        | tag then control (tc)  |
+| **Study**                    | OATS Wave 3 Melbourne & Brisbane  |
+| **ASL flavour**              | Pulsed ASL  |
+| **TI**                       | 1.8 sec  |
+| **Bolus duration**           | 0.7 sec  |
+| **Bolus arrival time**       | 0.7 sec  |
+| **Time per slice (slicedt)** | 0.046666666 sec  |
+| **TR**                       | 2.5 sec  |
+| **TE**                       | 11 msec  |
+| **tag/control order**        | tag then control (tc)  |
