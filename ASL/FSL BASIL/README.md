@@ -14,6 +14,7 @@
 - **Label/Control Pairing** specifies the order of label/control (i.e., label then control, or control or label). See table below for CHeBA data:
 
 | Study                    | OATS Wave 3 Melbourne & Brisbane  |
+|---|---|
 | ASL flavour              | Pulsed ASL  |
 | TI                       | 1.8 sec  |
 | Bolus duration           | 0.7 sec  |
