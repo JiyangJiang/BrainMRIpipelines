@@ -2,6 +2,9 @@
 
 *Refer to [BASIL website](https://asl-docs.readthedocs.io/en/latest/#) for full content*
 
+## Before we go to GUI
+- **Run fsl_anat on T1 images**: For example, <code>for_each -nthreads 8 1* : fsl_anat -i IN/t1.nii.gz -o IN/t1</code>. *for_each* is [a MRtrix command for parallel computing](https://mrtrix.readthedocs.io/en/latest/tips_and_tricks/batch_processing_with_foreach.html). It is useful to run commands parallelly on local computer/workstation.
+
 ## "Input Data" tab
 
 ### "Data contents" section
@@ -21,6 +24,9 @@
 - **Time per slice (ms)**: Use numbers in the [table of parameters for processing ASL](#params4procASL). Remember to convert the numbers in the unit of seconds to milliseconds.
 - **Multi-band**: Untick as multi-band was not used in OATS and SCS data.
 
+## "Structure" tab
+- **Structural data from**: Choose *Existing FSL_ANAT output*.
+- **Existing FSL_ANAT directory**: Use *Browse* to specify */path/to/fsl_anat/output*.
 
 
 
