@@ -57,6 +57,8 @@ EOF
 
 }
 
+[ "${PATH#*$BMP_PATH/ENGINE:}" == "$PATH" ] && export PATH="$BMP_PATH/ENGINE:$PATH"
+
 
 echo -e "$(bmp_convention.sh --text_normal)[$(date)] : bmp_init.sh : Started.$(bmp_shellColour.sh --reset)"
 
