@@ -18,33 +18,31 @@
 %
 
 
-function ventricle_native = bmp_misc_getLatVent (img, T1, outputFolder, spm12path)
+function ventricle_native = bmp_misc_getLatVent (img, T1, outputFolder)
 
-
-scriptFolder = fileparts (mfilename ('fullpath'));
-addpath (scriptFolder, spm12path);
+addpath (fullfile(getenv('BMP_PATH'),'misc'), getenv('BMP_SPM_PATH'));
 
 % get T1 folder
 [T1folder, ~, ~] = fileparts (T1);
 
 % img register to T1
-CNSP_registration (img, T1, outputFolder);
+bmp_misc_spmRegistration (img, T1, outputFolder);
 
 % T1 segmentation
-[cGM,cWM,cCSF,rcGM,rcWM,rcCSF,mat] = CNSP_segmentation (T1, spm12path);
+[cGM,cWM,cCSF,rcGM,rcWM,rcCSF,mat] = bmp_misc_spmSegmentation (T1, getenv('BMP_SPM_PATH'));
 
 
 % T1 to DARTEL
-template1 = [CNSP_path '/Templates/DARTEL_0to6_templates/65to75/Template_1.nii'];
-template2 = [CNSP_path '/Templates/DARTEL_0to6_templates/65to75/Template_2.nii'];
-template3 = [CNSP_path '/Templates/DARTEL_0to6_templates/65to75/Template_3.nii'];
-template4 = [CNSP_path '/Templates/DARTEL_0to6_templates/65to75/Template_4.nii'];
-template5 = [CNSP_path '/Templates/DARTEL_0to6_templates/65to75/Template_5.nii'];
-template6 = [CNSP_path '/Templates/DARTEL_0to6_templates/65to75/Template_6.nii'];
+template1 = fullfile(getenv('BMP_PATH'), 'misc', 'Templates', 'DARTEL_0to6_templates/65to75/Template_1.nii');
+template2 = fullfile(getenv('BMP_PATH'), 'misc', 'Templates', 'DARTEL_0to6_templates/65to75/Template_2.nii');
+template3 = fullfile(getenv('BMP_PATH'), 'misc', 'Templates', 'DARTEL_0to6_templates/65to75/Template_3.nii');
+template4 = fullfile(getenv('BMP_PATH'), 'misc', 'Templates', 'DARTEL_0to6_templates/65to75/Template_4.nii');
+template5 = fullfile(getenv('BMP_PATH'), 'misc', 'Templates', 'DARTEL_0to6_templates/65to75/Template_5.nii');
+template6 = fullfile(getenv('BMP_PATH'), 'misc', 'Templates', 'DARTEL_0to6_templates/65to75/Template_6.nii');
 
-flowMap = CNSP_runDARTELe (rcGM, rcWM, rcCSF, template1, template2, template3, template4, template5, template6);
+flowMap = bmp_misc_spmRunDARTELe (rcGM, rcWM, rcCSF, template1, template2, template3, template4, template5, template6);
 
-OATS_ventricle = [CNSP_path '/Templates/DARTEL_ventricle_distance_map/DARTEL_ventricle_65to75.nii.gz'];
+OATS_ventricle = fullfile(getenv('BMP_PATH'), 'misc', 'Templates', 'DARTEL_ventricle_distance_map', 'DARTEL_ventricle_65to75.nii.gz');
 system (['if [ -f "' outputFolder '/DARTEL_ventricle_65to75.nii.gz" ];then rm -f ' outputFolder '/DARTEL_ventricle_65to75.nii.gz;fi']);
 system (['cp ' OATS_ventricle ' ' outputFolder]);
 system (['if [ -f "' outputFolder '/DARTEL_ventricle_65to75.nii" ];then rm -f ' outputFolder '/DARTEL_ventricle_65to75.nii;fi']);
@@ -52,9 +50,9 @@ system (['gunzip -f ' outputFolder '/DARTEL_ventricle_65to75.nii.gz']);
 
 
 % bring ventricle to T1
-T1space_img = CNSP_DARTELtoNative ([outputFolder '/DARTEL_ventricle_65to75.nii'], ...
-                                    flowMap, ...
-                                    'NN');
+T1space_img = bmp_misc_spmDARTELtoNative ([outputFolder '/DARTEL_ventricle_65to75.nii'], ...
+                                            flowMap, ...
+                                            'NN');
 
 % reslice T1space_img to the same dimension as T1
 files = {T1;T1space_img};
@@ -70,13 +68,13 @@ spm_reslice (files,resliceFlags);
 T1spaceanddim_vent_struct = dir ([T1folder '/T1spaceanddim_*.nii']);
 T1spaceanddim_vent = [T1folder '/' T1spaceanddim_vent_struct.name];
 
-system ([CNSP_path '/Scripts/CNSP_getLatVentricles_dilationAndMapC3.sh ' ...
+system (fullfile(getenv('BMP_PATH'), 'misc', 'bmp_misc_getLatVent_dilationAndMapC3.sh ') ...
                                                                         T1spaceanddim_vent ' ' ...
                                                                         cCSF ' ' ...
                                                                         outputFolder]);
 system (['gunzip -f ' outputFolder '/ventricular_mask.nii.gz']);
 
-CNSP_reverse_registration_wMx (img, T1, [outputFolder '/ventricular_mask.nii']);
+bmp_misc_spmReverseRegistrationWithMatrix (img, T1, [outputFolder '/ventricular_mask.nii']);
 
 system (['mv ' cGM ' ' ...
                 cWM ' ' ...
