@@ -22,6 +22,9 @@ function ventricle_native = bmp_misc_getLatVent (img, T1, outputFolder)
 
 addpath (fullfile(getenv('BMP_PATH'),'misc'), getenv('BMP_SPM_PATH'));
 
+bmp_misc_gunzipNiiMain (img);
+bmp_misc_gunzipNiiMain (T1);
+
 % get T1 folder
 [T1folder, ~, ~] = fileparts (T1);
 
