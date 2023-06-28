@@ -5,7 +5,12 @@
 ## Before we go to GUI
 - **Run fsl_anat on T1 images**: For example, <code>for_each -nthreads 8 1* : fsl_anat -i IN/t1.nii.gz -o IN/t1</code>. *for_each* is [a MRtrix command for parallel computing](https://mrtrix.readthedocs.io/en/latest/tips_and_tricks/batch_processing_with_foreach.html). It is useful to run commands parallelly on local computer/workstation.
 - For OATS Wave 3 Melbourne and Brisbane data (i.e., pulsed ASL from Siemens), the first of the 101 PASL volumes should be extracted and used as M0 image, and the rest should be considered as tag/control pairs. *fslroi* can be used for this.
-- **Segment lateral ventricles**: Run <code>/path/to/BrainMRIpipelines/misc/bmp_misc_getLatVent.m</code> to extract lateral ventricular mask for calibration. For example <code>for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : matlab -nodesktop -nodisplay -r "addpath(fullfile(getenv('BMP_PATH'),'misc'));bmp_misc_getLatVent('IN/m0.nii','IN/t1.nii.gz','IN/ventricle');exit"</code>.
+- **Segment lateral ventricles**: Run <code>/path/to/BrainMRIpipelines/misc/bmp_misc_getLatVent.m</code> to extract lateral ventricular mask for calibration. For example 
+```
+for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : mkdir -p IN/ventricle
+for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : matlab -nodesktop -nodisplay -r \"addpath\(fullfile\(getenv\(\'BMP_PATH\'\),\'misc\'\)\)\;bmp_misc_getLatVent\(\'IN/m0.nii\',\'IN/t1.nii.gz\',\'IN/ventricle\'\)\;exit\"
+for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : cp IN/ventricle/rventricular_mask.nii IN/vent.nii
+```
 
 ## "Input Data" tab
 
