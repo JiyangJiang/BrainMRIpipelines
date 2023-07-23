@@ -58,19 +58,19 @@ for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : cp IN/ventr
 
 |   |   |   |
 |---|---|---|
-| **Study**                         | OATS Wave 3 Melbourne & Brisbane | OATS Wave 4 Sydney & SCS |
-| **ASL flavour**                   | 2D pulsed ASL                    | 2D pseudo-continuous ASL |
-| **TI**                            | 1.8 sec                          | 3.8 sec                  |
-| **Bolus duration**                | 0.7 sec                          | 1.8 sec                  |
-| **Bolus arrival time**            | 0.7 sec                          | 1.3 sec                  |
-| **Time per slice (slicedt)**      | 46.67 msec                       | 35.31 msec               |
-| **Multi-band**                    | No                               | No                       |
-| **TR of tag/control pairs**       | 2.5 sec                          | 4.5 sec                  |
-| **TR of M0**                      | 2.5 sec                          | 6 sec                    |
-| **TE of both M0 and tag/control** | 11 msec                          | 12 msec                  |
-| **tag/control order**             | tag then control                 | control then tag         |
-| **M0 type**                       | Proton Density (long TR)         | Proton Density (long TR) |
-| **Calibration gain**              | 1                                | 10                       |
+| **Study**                         | **OATS Wave 3 Melbourne & Brisbane** | **OATS Wave 4 Sydney & SCS** |
+| **ASL flavour**                   | 2D pulsed ASL                        | 2D pseudo-continuous ASL     |
+| **TI**                            | 1.8 sec                              | 3.8 sec                      |
+| **Bolus duration**                | 0.7 sec                              | 1.8 sec                      |
+| **Bolus arrival time**            | 0.7 sec                              | 1.3 sec                      |
+| **Time per slice (slicedt)**      | 46.67 msec                           | 35.31 msec                   |
+| **Multi-band**                    | No                                   | No                           |
+| **TR of tag/control pairs**       | 2.5 sec                              | 4.5 sec                      |
+| **TR of M0**                      | 2.5 sec                              | 6 sec                        |
+| **TE of both M0 and tag/control** | 11 msec                              | 12 msec                      |
+| **tag/control order**             | tag then control                     | control then tag             |
+| **M0 type**                       | Proton Density (long TR)             | Proton Density (long TR)     |
+| **Calibration gain**              | 1                                    | 10                           |
 
 
 
