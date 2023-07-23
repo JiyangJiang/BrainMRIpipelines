@@ -21,7 +21,7 @@ for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : cp IN/ventr
 
 ### "Data order" section
 - **Volumes grouped by** option is to specify how data were acquired in *multi-PLD* data. For single-PLD data, select Repeats.
-- **Label/Control Pairing** specifies the order of label/control (i.e., label then control, or control or label). See [table of parameters for processing ASL](#params4procASL).
+- **Label/Control Pairing** specifies the order of label/control (i.e., label then control, or control then label). See [table of parameters for processing ASL](#params4procASL).
 
 ### "Acquisition parameters" section
 - **Labelling**: choose corresponding ASL flavour according to [table of parameters for processing ASL](#params4procASL).
@@ -43,7 +43,10 @@ for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : cp IN/ventr
 - **Sequence TR (s)**: Refer to *TR of M0* in the [table of parameters for processing ASL](#params4procASL).
 - **Calibration mode**: Choose *Reference Region* (Note this is not compliant with White paper, but in many casese voxelwise and reference mask methods are equivalent).
 - **Type**: Choose *CSF*.
-
+- **Mask**: Tick, and select the ventricular mask generated in "Before we go to GUI" section, e.g. rventricular_mask.nii.
+- **Sequence TE (ms)**: Refer to *TE of both M0 and tag/control* in the [table of parameters for processing ASL](#params4procASL).
+- **Reference T1 (s), Reference T2 (ms), and Blood T2 (ms)**: Leave them as default values.
+- **Reference image for sensitiviey correction**: untick.
 
 
 
