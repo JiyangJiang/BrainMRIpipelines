@@ -32,24 +32,58 @@ for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : cp IN/ventr
 - **Multi-band**: Untick as OATS and SCS didn't use multiband.
 
 ## "Structure" tab
+
+### "Structure" section
 - **Structural data from**: Choose *Existing FSL_ANAT output*.
 - **Existing FSL_ANAT directory**: Use *Browse* to specify */path/to/fsl_anat/output*.
+
+### "Registration" section
 - **Transform to standard space**: Tick, and select *Use FSL_ANAT*. This can be useful for applying templates and extracting regional CBF.
 
 ## "Calibration" tab
+
+### "Enable Calibration" section
 - **Enable calibration**: Tick to enable calibration.
 - **Calibration image**: Select the corresponding M0 map.
 - **M0 Type**: *Proton Density (long TR)*. See references.
 - **Sequence TR (s)**: Refer to *TR of M0* in the [table of parameters for processing ASL](#params4procASL).
 - **Calibration mode**: Choose *Reference Region* (Note this is not compliant with White paper, but in many casese voxelwise and reference mask methods are equivalent).
+
+### "Reference tissue" section
 - **Type**: Choose *CSF*.
 - **Mask**: Tick, and select the ventricular mask generated in "Before we go to GUI" section, e.g. rventricular_mask.nii.
 - **Sequence TE (ms)**: Refer to *TE of both M0 and tag/control* in the [table of parameters for processing ASL](#params4procASL).
 - **Reference T1 (s), Reference T2 (ms), and Blood T2 (ms)**: Leave them as default values.
 - **Reference image for sensitiviey correction**: untick.
 
+## "Distortion Correction" tab
+- *untick* as no additional images for distortion correction of ASL/M0 were acquired in OATS or SCS. Also see "Future work" below.
 
+## "Analysis" tab
 
+### "Basic analysis options" section
+- **Output Derectory**: Path to save output.
+- **User-specified brain mask**: *Untick* to let BASIL create brain mask. Also see "Future work" below.
+
+### "Initial parameter values" section
+- **Arterial Transit Time (s)**: For pulsed ASL data (OATS Wave 3 Melbourne and Brisbane), set Arterial Transit Time to 0.7 sec. For pseudo-continuous ASL data (OATS Wave 4 Sydney and SCS), set Arterial Transit Time to 1.3 sec. Note that *white paper mode* will reset this Arterial Transit Time to 0.
+- **T1 (s)**: T1 for tissue. Use default 1.3 sec. Note that *white paper mode* will set this T1 for tissue to 1.65 sec.
+- **T1b (s)**: T1 for blood. Use default 1.65 sec. *white paper mode* will also set this T1 for blood to 1.3 sec.
+- **Inversion Efficiency**: 0.85 for pseudo-continuous ASL (OATS Wave 4 Sydney and SCS), and 0.98 for pulsed ASL (OATS Wave 3 Melbourne and Brisbane). These values were taken from white paper.
+
+### "Analysis options" section
+- **Adaptive spatial regularisation on perfusion**: *tick*. This option applies a spatial prior to the perfusion image during estimation, thus making use of neighbourhood information. This is strongly recommended.
+- **Incorporate T1 uncertainty**: *untick*. This option permits voxelwise variability in the T1 values, this will primiarly be reflected in the variance images for the estimated parameters, dont expect accurate T1 maps from conventional ASL data.
+- **Include macro vascular component**: *untick*. This option corrects for arterial or macrovascular contamination, and it suits where the data have multi-PLD (even where flow suppresion has been applied). Untick because OATS and SCS ASL data are single PLD.
+- **Fix label duration**: *tick* for psudo-continuous ASL data (OATS Wave 4 Sydney and SCS). *untick* for pulsed ASL data (OATS Wave 3 Melbourne and Brisbane). This option takes the value for the label duration from the Input Data tab as fixed, turn off to estimate this from the data (the value on the data tab will be used as prior information in that case). You are most likely to want to deselect the option for pASL data, particularly where QUIPSSII/Q2TIPS has not been used to fix the label duration.
+- **Partial Volume Correction**: *tick*. This option correct for the different contributions from GM, WM and CSF to the perfusion image. This will produce separate grey and white matter perfusion maps.
+- **Motion Correction**: *tick*. This option uses *mcflirt* to perform motion correction of ASL data (and the calibration image).
+- **Exchange/Dispersion model**: Leave as default.
+
+### "White paper mode" section
+- **Check compatibility**: *untick* to run with the options/parameters set above. Can then *tick*, *View issues*, and *Make compatible* to run in white paper mode and compare with previous results.
+
+## Expected outputs
 
 
 ## Imaging parameters in OATS and SCS
@@ -80,9 +114,11 @@ for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : cp IN/ventr
 
 > *Victoria and Queensland Sites*: Both Victoria and Queensland study centers have used the same scanner model and identical scanning parameters for ASL and T1. At both sites, PASL scans were acquired from 3T Siemens Magnetom Trio scanners, using the PICORE Q2T perfusion mode. The acquisition parameters were TR/TE = 2,500/11 ms, TI1/TI2 = 700/1,800 ms, flip angle = 90°, phase partial Fourier factor = 7/8, bandwidth = 2232 Hz/pix, imaging matrix = 64 × 64, and FOV = 192 mm. Eleven sequential 6-mm thick slices with a distance factor (i.e., gap) of 25% between adjacent slices were acquired for each volume. The first of the 101 PASL volumes was used as the M0 image. T1-weighted images were acquired in Victoria and Queensland sites with TR/TE/TI = 2,300/2.98/900 ms, flip angle = 9°, 208 sagittal slices, within plane FOV = 256 × 240 mm2, voxel size = 1 × 1 × 1 mm3, and bandwidth = 240 Hz/pix.
 
-## Known issues
+## Future work
 - To confirm whether OATS Wave 4 Melbourne has the same parameters as OATS Wave 3 Melbourne and Brisbane.
 - To confirm calibration gain of 1 for OATS Wave 3 Melbourne and Brisbane (i.e., no background suppression).
+- "Distortion correction" tab: Can Synb0-DISCO be used to correct for distortion?
+- "Analysis" tab: Compare BASIL-generated brain mask with MRtrix's dwi2mask and T1 brain mask from fsl_anat.
 
 ## References
 * M0 type normally set to long TR:
