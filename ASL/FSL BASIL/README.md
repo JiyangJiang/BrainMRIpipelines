@@ -136,6 +136,9 @@ oxford_asl -i /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/asl.nii --ia
 - "Distortion correction" tab: Can Synb0-DISCO be used to correct for distortion?
 - "Analysis" tab: Compare BASIL-generated brain mask with MRtrix's dwi2mask and T1 brain mask from fsl_anat.
 
+## Known issues
+- It seems when running *asl_calib* to calibrate with CSF as reference, a warning of *WARNING:: Inconsistent orientations for individual images in pipeline. Will use voxel-based orientation which is probably incorrect - \*PLEASE CHECK\*!* will appear. Have had a look at ventricular mask superimposed on M0 map, and found no issue.
+
 ## References
 * M0 type normally set to long TR:
   * https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2002&L=FSL&P=R60377
