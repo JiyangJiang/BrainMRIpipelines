@@ -55,6 +55,7 @@ for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : fslmaths IN
 - **Calibration image**: Select the corresponding M0 map.
 - **M0 Type**: *Proton Density (long TR)*. See references.
 - **Sequence TR (s)**: Refer to *TR of M0* in the [table of parameters for processing ASL](#params4procASL).
+- **Calibration Gain**: Set to 1. A few FSL email threads suggest calibration gain of 10 is a good number to start with for ASL tag/control pairs acquired with background suppression (see 'References' section in the end). However, this leads to abnormally low CBF (~ 2-3) in examples if OATS Wave 4 Sydney data. After experiments, it seems setting the gain to 1 gives reasonable CBF estimates.
 - **Calibration mode**: Choose *Reference Region* (Note this is not compliant with White paper, but in many casese voxelwise and reference mask methods are equivalent).
 
 ### "Reference tissue" section
@@ -95,11 +96,17 @@ for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : fslmaths IN
 ## Command line
 The above settings translate to below command for an OATS Wave 4 Sydney (pseudo-continuous ASL) example. This can be used to prepare scripts for batch processing.
 ```
-oxford_asl -i /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/asl.nii --iaf ct --ibf rpt --casl --bolus 1.8 --rpts 30 --slicedt 0.03531 --tis 3.8 --fslanat /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/t1.anat -c /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/m0.nii --cmethod single --tr 6 --cgain 10 --tissref csf --csf /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/vent.nii --t1csf 4.3 --t2csf 750 --t2bl 150 --te 12 -o /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/basil_output --bat 1.3 --t1 1.3 --t1b 1.65 --alpha 0.85 --spatial --fixbolus --mc --pvcorr --artoff
+oxford_asl -i /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/asl.nii --iaf ct --ibf rpt --casl --bolus 1.8 --rpts 30 --slicedt 0.03531 --tis 3.8 --fslanat /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/t1.anat -c /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/m0.nii --cmethod single --tr 6 --cgain 1 --tissref csf --csf /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/vent.nii --t1csf 4.3 --t2csf 750 --t2bl 150 --te 12 -o /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/basil_output --bat 1.3 --t1 1.3 --t1b 1.65 --alpha 0.85 --spatial --fixbolus --mc --pvcorr --artoff
 ```
 
 ## Expected outputs
 
+## Quality control
+- In the BASIL GUI, after loading ASL tag/control pairs and clicking *Update* in the data preview, you should see a pattern of higher intensities in GM than WM, corresponding to higher perfusion in GM than WM.
+- Whole brain average CBF is normally lower than 60, typically 30-40 ([ref](https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1408&L=FSL&P=R86444)).
+- Whole brain GM CBF (if you are looking at native_space subdirectory at perfusion_calib_gm_mean.txt) should be in the range of 30-50. If you are looking at partial volume corrected results the equivalent value should be a bit higher, reflecting the correction that has been done. ([ref](https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2004&L=FSL&P=R91652)). White paper advises that GM CBF should be anywhere between 40-100 for healthy adult controls (not elderly).
+- Whole brain WM CBF (perfusion_calib_wm_mean.txt in native_space subdirectory) should be in the range of 10-20 ([ref](https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2004&L=FSL&P=R91652)).
+- If you are examining images, then WM CBF should be of clearly lower intensity than GM CBF.
 
 ## Imaging parameters in OATS and SCS
 
@@ -120,7 +127,7 @@ oxford_asl -i /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/asl.nii --ia
 | **TE of both M0 and tag/control**              | 11 msec                              | 12 msec                      |
 | **tag/control order**                          | tag then control                     | control then tag             |
 | **M0 type**                                    | Proton Density (long TR)             | Proton Density (long TR)     |
-| **Calibration gain**                           | 1                                    | 10                           |
+| **Calibration gain**                           | 1?                                   | 1                            |
 
 
 
@@ -137,7 +144,8 @@ oxford_asl -i /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/asl.nii --ia
 - "Analysis" tab: Compare BASIL-generated brain mask with MRtrix's dwi2mask and T1 brain mask from fsl_anat.
 
 ## Known issues
-- It seems when running *asl_calib* to calibrate with CSF as reference, a warning of *WARNING:: Inconsistent orientations for individual images in pipeline. Will use voxel-based orientation which is probably incorrect - \*PLEASE CHECK\*!* will appear. Have had a look at ventricular mask superimposed on M0 map, and found no issue.
+- It seems when running *asl_calib* to calibrate with CSF as reference, a warning of "*WARNING:: Inconsistent orientations for individual images in pipeline. Will use voxel-based orientation which is probably incorrect - \*PLEASE CHECK\*!*" will appear. Have had a look at ventricular mask superimposed on M0 map, and found no issue.
+- Notice that since automated cropping was conducted in *fsl_anat*, all BASIL results in structural space are not in the original T1 space, but cropped T1 space. If, for ROI analyses, ROIs are defined in original T1 space, *flirt* registration may be needed, or see if the same cropping can be applied to the ROI template in original T1 space. fsl_anat cropping can be avoided by including *--nocrop* flag.
 
 ## References
 * M0 type normally set to long TR:
