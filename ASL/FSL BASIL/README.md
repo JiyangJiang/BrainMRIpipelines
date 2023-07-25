@@ -7,9 +7,17 @@
 - For OATS Wave 3 Melbourne and Brisbane data (i.e., pulsed ASL from Siemens), the first of the 101 PASL volumes should be extracted and used as M0 image, and the rest should be considered as tag/control pairs. *fslroi* can be used for this.
 - **Segment lateral ventricles**: Run <code>/path/to/BrainMRIpipelines/misc/bmp_misc_getLatVent.m</code> to extract lateral ventricular mask for calibration. For example 
 ```
+# Create 'ventricle' folder to keep intermediate files
 for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : mkdir -p IN/ventricle
+
+# Extract lateral ventricles
 for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : matlab -nodesktop -nodisplay -r \"addpath\(fullfile\(getenv\(\'BMP_PATH\'\),\'misc\'\)\)\;bmp_misc_getLatVent\(\'IN/m0.nii\',\'IN/t1.nii.gz\',\'IN/ventricle\'\)\;exit\"
+
+# Copy ventricular mask to the same folder as asl/m0/t1
 for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : cp IN/ventricle/rventricular_mask.nii IN/vent.nii
+
+# Erode ventricular masks - ventricular reference masks should be conservative
+for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : fslmaths IN/vent -kernel boxv 2 -ero IN/vent_ero
 ```
 
 ## "Input Data" tab
@@ -43,7 +51,7 @@ for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : cp IN/ventr
 ## "Calibration" tab
 
 ### "Enable Calibration" section
-- **Enable calibration**: Tick to enable calibration.
+- **Enable calibration**: *Tick* to enable calibration.
 - **Calibration image**: Select the corresponding M0 map.
 - **M0 Type**: *Proton Density (long TR)*. See references.
 - **Sequence TR (s)**: Refer to *TR of M0* in the [table of parameters for processing ASL](#params4procASL).
@@ -51,13 +59,14 @@ for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : cp IN/ventr
 
 ### "Reference tissue" section
 - **Type**: Choose *CSF*.
-- **Mask**: Tick, and select the ventricular mask generated in "Before we go to GUI" section, e.g. rventricular_mask.nii.
+- **Mask**: *Tick*, and select the ventricular mask generated in "Before we go to GUI" section. Try both full and eroded ventricular masks. In theory, reference masks should be conservative. The only concern may be an empty mask after erosion. So it is a good idea to visualise eroded masks.
 - **Sequence TE (ms)**: Refer to *TE of both M0 and tag/control* in the [table of parameters for processing ASL](#params4procASL).
 - **Reference T1 (s), Reference T2 (ms), and Blood T2 (ms)**: Leave them as default values.
 - **Reference image for sensitiviey correction**: untick.
 
 ## "Distortion Correction" tab
-- *untick* as no additional images for distortion correction of ASL/M0 were acquired in OATS or SCS. Also see "Future work" below.
+- *untick* 'Apply distortion correction', as no additional images for distortion correction of ASL/M0 were acquired in OATS or SCS.
+- Click *Next* to ignore distortion correction for now. Also see "Future work" below.
 
 ## "Analysis" tab
 
@@ -82,6 +91,12 @@ for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : cp IN/ventr
 
 ### "White paper mode" section
 - **Check compatibility**: *untick* to run with the options/parameters set above. Can then *tick*, *View issues*, and *Make compatible* to run in white paper mode and compare with previous results.
+
+## Command line
+The above settings translate to below command for an OATS Wave 4 Sydney (pseudo-continuous ASL) example. This can be used to prepare scripts for batch processing.
+```
+oxford_asl -i /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/asl.nii --iaf ct --ibf rpt --casl --bolus 1.8 --rpts 30 --slicedt 0.03531 --tis 3.8 --fslanat /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/t1.anat -c /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/m0.nii --cmethod single --tr 6 --cgain 10 --tissref csf --csf /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/vent.nii --t1csf 4.3 --t2csf 750 --t2bl 150 --te 12 -o /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/test/12301/basil_output --bat 1.3 --t1 1.3 --t1b 1.65 --alpha 0.85 --spatial --fixbolus --mc --pvcorr --artoff
+```
 
 ## Expected outputs
 
