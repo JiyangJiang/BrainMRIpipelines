@@ -1,0 +1,29 @@
+# 
+
+
+## Global environment setup
+
+
+
+
+
+
+## Set MATLAB paths
+
+<code>Set Path - Add with Subfolders ... - Select BrainMRIpipelines folder</code>. This will be automatically configured in <code>bmp_init.sh</code> in the future.
+
+
+## Workflows
+
+Please go to specific folders for details:
+
+- [Initialisation for BMP](https://github.com/JiyangJiang/BrainMRIpipelines/tree/master/init)
+- [Converting to BIDS](https://github.com/JiyangJiang/BrainMRIpipelines/tree/master/BIDS)
+- [Structural MRI workflow](https://github.com/JiyangJiang/BrainMRIpipelines/tree/master/sMRI)
+- [ASL workflow](https://github.com/JiyangJiang/BrainMRIpipelines/tree/master/ASL)
+
+## Useful readings
+- [Siemens scanner slice ordering](https://practicalfmri.blogspot.com/2012/07/siemens-slice-ordering.html)
+- [practiCal fMRI: the nuts & bolts](https://practicalfmri.blogspot.com/)
+- [U of A: Neuroimaging Core Documentation](https://neuroimaging-core-docs.readthedocs.io/en/latest/index.html)
+- [Chris Rordens Neuropsychology Lab Documentation](https://crnl.readthedocs.io/index.html)

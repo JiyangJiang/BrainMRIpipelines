@@ -3,7 +3,7 @@
 *Refer to [BASIL website](https://asl-docs.readthedocs.io/en/latest/#) for full content*
 
 ## Before we go to GUI
-- **Run fsl_anat on T1 images**: For example, <code>for_each -nthreads 8 1* : fsl_anat -i IN/t1.nii.gz -o IN/t1</code>. *for_each* is [a MRtrix command for parallel computing](https://mrtrix.readthedocs.io/en/latest/tips_and_tricks/batch_processing_with_foreach.html). It is useful to run commands parallelly on local computer/workstation.
+- **Run fsl_anat on T1 images**: For example, <code>for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : fsl_anat -i IN/t1 -o IN/t1</code>. *for_each* is [a MRtrix command for parallel computing](https://mrtrix.readthedocs.io/en/latest/tips_and_tricks/batch_processing_with_foreach.html). It is useful to run commands parallelly on local computer/workstation.
 - For OATS Wave 3 Melbourne and Brisbane data (i.e., pulsed ASL from Siemens), the first of the 101 PASL volumes should be extracted and used as M0 image, and the rest should be considered as tag/control pairs. *fslroi* can be used for this.
 - **Segment lateral ventricles**: Run <code>/path/to/BrainMRIpipelines/misc/bmp_misc_getLatVent.m</code> to extract lateral ventricular mask for calibration. For example 
 ```
@@ -83,7 +83,7 @@ for_each -nthreads 8 /srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1* : fslmaths IN
 
 ### "Analysis options" section
 - **Adaptive spatial regularisation on perfusion**: *tick*. This option applies a spatial prior to the perfusion image during estimation, thus making use of neighbourhood information. This is strongly recommended.
-- **Incorporate T1 uncertainty**: *untick*. This option permits voxelwise variability in the T1 values, this will primiarly be reflected in the variance images for the estimated parameters, dont expect accurate T1 maps from conventional ASL data.
+- **Incorporate T1 uncertainty**: *untick*. This option permits voxelwise variability in the T1 values, this will primiarly be reflected in the variance images for the estimated parameters, don't expect accurate T1 maps from conventional ASL data.
 - **Include macro vascular component**: *untick*. This option corrects for arterial or macrovascular contamination, and it suits where the data have multi-PLD (even where flow suppresion has been applied). Untick because OATS and SCS ASL data are single PLD.
 - **Fix label duration**: *tick* for psudo-continuous ASL data (OATS Wave 4 Sydney and SCS). *untick* for pulsed ASL data (OATS Wave 3 Melbourne and Brisbane). This option takes the value for the label duration from the Input Data tab as fixed, turn off to estimate this from the data (the value on the data tab will be used as prior information in that case). You are most likely to want to deselect the option for pASL data, particularly where QUIPSSII/Q2TIPS has not been used to fix the label duration.
 - **Partial Volume Correction**: *tick*. This option correct for the different contributions from GM, WM and CSF to the perfusion image. This will produce separate grey and white matter perfusion maps.
