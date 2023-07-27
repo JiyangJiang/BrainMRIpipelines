@@ -35,10 +35,10 @@ For MATLAB, ``Set Path - Add with Subfolders ... - Select BrainMRIpipelines fold
 Author
 ----------
 
-Jiyang Jiang, PhD
-Centre for Healthy Brain Ageing
-University of New South Wales
-Australia
+| Jiyang Jiang, PhD
+| Centre for Healthy Brain Ageing
+| University of New South Wales
+| Australia
 
 
 License
