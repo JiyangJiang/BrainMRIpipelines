@@ -8,11 +8,11 @@ BrainMRIpipelines (BMP) - pipelines for neuroimaging data processing
 BrainMRIpipelines contains pipelines for neuroimaging data processing. Although the scripts are developed to process neuroimaging data available at Centre for Healthy Brain Ageing (CHeBA), University of New South Wales, some of them can be generalised to other datsets.
 
 
-MRI modalities
+Current available modules
 --------
 
-- Be awesome
-- Make things faster
+- Converting DICOM to BIDS
+- Arterial Spin Labelling (ASL)
 
 Installation
 ------------
@@ -29,6 +29,8 @@ BMP only works on Unix-based system (Linux, macOS, WSL on Windows). The followin
 
 
 where ``/path/to/BrainMRIpipelines`` and ``/path/to/install/third-party/software`` need to be replaced with the path to BrainMRIpipelines and the path to install third-party software, respectively.
+
+For MATLAB, ``Set Path - Add with Subfolders ... - Select BrainMRIpipelines folder``.
 
 Contribute
 ----------
