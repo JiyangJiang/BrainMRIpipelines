@@ -17,7 +17,7 @@ MRI modalities
 Installation
 ------------
 
-BMP only works on Unix-based system (Linux, macOS, WSL on Windows). The following parameters need to be included in *~/.bashrc* (Linux) or *~/.bash_profile* (macOS):
+BMP only works on Unix-based system (Linux, macOS, WSL on Windows). The following parameters need to be included in ``~/.bashrc`` (Linux) or ``~/.bash_profile`` (macOS):
 
 ..  code-block::
 
@@ -28,7 +28,7 @@ BMP only works on Unix-based system (Linux, macOS, WSL on Windows). The followin
     source ${BMP_PATH}/ENGINE/bmp_init.sh &> /dev/null
 
 
-where <code>/path/to/BrainMRIpipelines</code> and <code>/path/to/install/third-party/software</code> need to be replaced with the path to BrainMRIpipelines and the path to install third-party software, respectively.
+where ``/path/to/BrainMRIpipelines`` and ``/path/to/install/third-party/software`` need to be replaced with the path to BrainMRIpipelines and the path to install third-party software, respectively.
 
 Contribute
 ----------
