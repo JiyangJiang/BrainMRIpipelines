@@ -19,10 +19,10 @@ Installation
 
 BMP only works on Unix-based system (Linux, macOS, WSL on Windows). The following parameters need to be included in <code>\~/.bashrc</code> (Linux) or <code>\~/.bash_profile</code> (macOS):
 
-
-    export BMP_PATH=/path/to/BrainMRIpipelines::
-    export BMP_SPM_PATH=/path/to/SPM12::
-    export BMP_3RD_PATH=/path/to/install/third-party/software::
+.. code-block::
+    export BMP_PATH=/path/to/BrainMRIpipelines
+    export BMP_SPM_PATH=/path/to/SPM12
+    export BMP_3RD_PATH=/path/to/install/third-party/software
     export BMP_TMP_PATH=/path/to/my/temp
     source ${BMP_PATH}/ENGINE/bmp_init.sh &> /dev/null
 
