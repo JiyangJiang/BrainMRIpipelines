@@ -1,18 +1,14 @@
 BrainMRIpipelines (BMP) - pipelines for neuroimaging data processing
 ========
 
-.. image:: http://unmaintained.tech/badge.svg
-  :target: http://unmaintained.tech
-  :alt: No Maintenance Intended
-
 BrainMRIpipelines contains pipelines for neuroimaging data processing. Although the scripts are developed to process neuroimaging data available at Centre for Healthy Brain Ageing (CHeBA), University of New South Wales, some of them can be generalised to other datsets.
 
 
-Current available modules
---------
+Document
+------------
 
-- Converting DICOM to BIDS
-- Arterial Spin Labelling (ASL)
+
+
 
 Installation
 ------------
@@ -32,6 +28,14 @@ where ``/path/to/BrainMRIpipelines`` and ``/path/to/install/third-party/software
 
 For MATLAB, ``Set Path - Add with Subfolders ... - Select BrainMRIpipelines folder``.
 
+
+Current available modules
+--------
+
+- Converting DICOM to BIDS
+- Arterial Spin Labelling (ASL)
+
+
 Author
 ----------
 
@@ -40,8 +44,3 @@ Author
 | University of New South Wales
 | Australia
 
-
-License
--------
-
-The project is licensed under the BSD license.
