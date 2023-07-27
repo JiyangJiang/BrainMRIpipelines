@@ -32,17 +32,14 @@ where ``/path/to/BrainMRIpipelines`` and ``/path/to/install/third-party/software
 
 For MATLAB, ``Set Path - Add with Subfolders ... - Select BrainMRIpipelines folder``.
 
-Contribute
+Author
 ----------
 
-- Issue Tracker: github.com/$project/$project/issues
-- Source Code: github.com/$project/$project
+Jiyang Jiang, PhD
+Centre for Healthy Brain Ageing
+University of New South Wales
+Australia
 
-Support
--------
-
-If you are having issues, please let us know.
-We have a mailing list located at: project@google-groups.com
 
 License
 -------
