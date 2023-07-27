@@ -19,7 +19,7 @@ Installation
 
 BMP only works on Unix-based system (Linux, macOS, WSL on Windows). The following parameters need to be included in *~/.bashrc* (Linux) or *~/.bash_profile* (macOS):
 
-..  code-block:: none
+..  codeblock:: none
     :linenos:
 
     export BMP_PATH=/path/to/BrainMRIpipelines
