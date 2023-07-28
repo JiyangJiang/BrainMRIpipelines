@@ -16,5 +16,6 @@ MRI modalities
 --------
 
 .. toctree::
+   :maxdepth: 1
 
    asl
