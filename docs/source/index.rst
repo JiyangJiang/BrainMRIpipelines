@@ -1,10 +1,9 @@
-Welcome to Lumache's documentation!
+Welcome to BrainMRIpipelines documentation!
 ===================================
 
-**Lumache** (/lu'make/) is a Python library for cooks and food lovers
-that creates recipes mixing random ingredients.
-It pulls data from the `Open Food Facts database <https://world.openfoodfacts.org/>`_
-and offers a *simple* and *intuitive* API.
+BrainMRIpipelines (BMP) record how I process neuroimaging data at Centre for Healthy Brain Ageing (CHeBA), University of New South Wales. The purposes are to allow future replication of results, and educate new PhD students. Also, the processing steps and some tips and tricks can be generalised to other datasets.
+
+This document is maintained by Dr. Jiyang Jiang.
 
 Check out the :doc:`usage` section for further information, including
 how to :ref:`installation` the project.
@@ -13,10 +12,9 @@ how to :ref:`installation` the project.
 
    This project is under active development.
 
-Contents
+MRI modalities
 --------
 
 .. toctree::
 
-   usage
-   api
+   asl

@@ -4,10 +4,10 @@ BrainMRIpipelines (BMP) - pipelines for neuroimaging data processing
 BrainMRIpipelines contains pipelines for neuroimaging data processing. Although the scripts are developed to process neuroimaging data available at Centre for Healthy Brain Ageing (CHeBA), University of New South Wales, some of them can be generalised to other datsets.
 
 
-Document
+Documentation
 ------------
 
-
+`Go to documentation <https://brainmripipelines.readthedocs.io/en/latest/>`_
 
 
 Installation
