@@ -5,13 +5,6 @@ BrainMRIpipelines (BMP) record how I process neuroimaging data at Centre for Hea
 
 This document is maintained by Dr. Jiyang Jiang.
 
-Check out the :doc:`usage` section for further information, including
-how to :ref:`installation` the project.
-
-.. note::
-
-   This project is under active development.
-
 MRI modalities
 --------
 
