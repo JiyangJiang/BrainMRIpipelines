@@ -12,3 +12,4 @@ MRI modalities
    :maxdepth: 1
 
    asl
+   dwi
