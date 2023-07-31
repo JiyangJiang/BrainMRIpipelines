@@ -1,8 +1,8 @@
 Arterial spin labelling (ASL)
 =============================
 
-Single PLD ASL using BASIL GUI
-------------------------------
+Single PLD ASL data from OATS 4 Sydney and SCS using BASIL GUI
+--------------------------------------------------------------
 Older Australian Twins Study (OATS) and Sydney Centenarians Study (SCS) have acquired pulsed and pseudo-continuous ASL data. This section details the settings on BASIL GUI for processing these data.
 
 Refer to `BASIL website <https://asl-docs.readthedocs.io/en/latest/>`_ for full content.
@@ -126,6 +126,12 @@ The above settings translate to below command for an OATS Wave 4 Sydney (pseudo-
 
 Expected outputs
 ~~~~~~~~~~~~~~~~
+- *perfusion.nii.gz*: Perfusion image providing blood flow in relative (scanner) units.
+- *perfusion_calib.nii.gz*: Calibrated perfusion image providing blood flow in absolute units (ml/100g/min).
+- Results in *native ASL*, *structural*, and *standard space* will appear in the output directory within separate subdirectories.
+- Summary measures of perfusion will be available in *native_space* subdirectory.
+- *M0.txt* in *calib* subdirectory: The estimated M0 value from arterial blood.
+- *refmask.nii.gz* in *calib* subdirectory: Reference tissue mask for calibration.
 
 Quality control
 ~~~~~~~~~~~~~~~
@@ -134,6 +140,7 @@ Quality control
 - Whole brain GM CBF (if you are looking at native_space subdirectory at perfusion_calib_gm_mean.txt) should be in the range of 30-50. If you are looking at partial volume corrected results the equivalent value should be a bit higher, reflecting the correction that has been done. (`ref <https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2004&L=FSL&P=R91652>`_). White paper advises that GM CBF should be anywhere between 40-100 for healthy adult controls (not elderly).
 - Whole brain WM CBF (perfusion_calib_wm_mean.txt in native_space subdirectory) should be in the range of 10-20 (`ref <https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2004&L=FSL&P=R91652>`_).
 - If you are examining images, then WM CBF should be of clearly lower intensity than GM CBF.
+- Refernce tissue mask (*refmask.nii.gz* in *calib* subdirectory) should be a conservative lateral ventricular CSF mask of M0 image.
 
 .. _ASL parameter table:
 
