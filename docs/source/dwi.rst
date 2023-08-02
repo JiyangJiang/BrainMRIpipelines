@@ -200,12 +200,12 @@ Motion and distortion correction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 For EPI distortion correction, a pair of B0 images, one in AP and one in PA PE directions, will be used. Several B0 images were acquired in both PE directions for VCI and MAS2 data, both within the DWI blocks and as separate sequences (refer to `VCI and MAS2 DWI data description`_). The purpose of this is to get a cleaner B0 for either direction by taking the mean. Here we carry out three experiments for distortion correction in VCI and MAS2 data: 1) using the separate B0 acquisitions, 2) using the B0's acquired in DWI blocks, and 3) using both the separate B0's and the B0's in DWI blocks.
 
-  ..  note::
+..  note::
 
     Note that slice-to-volume motion correction is only available for CUDA version of eddy. Suggest running on GRID workstation at CHeBA where eddy_cuda is already configured.
 
 
-  ..  note::
+..  note::
 
 	NOTE THAT ACQPARAMS.TXT IS AUTOMATICALLY GENERATED IF YOU RUN DWIFSLPREPRROC. YOU DO NOT NEED TO PREPARE THIS BY YOURSELF. THIS PART IF FOR YOUR REFERENCE IF YOU RUN THE ORIGINAL FSL TOPUP COMMAND.
 
@@ -272,7 +272,7 @@ Now, we are ready to conduct motion and distortion correction. In MRtrix, both t
 
   * We use default settings for topup here, without customising any options.
 
-* *-eddy_options* to pass eddy options.
+* *-eddy_options* to pass eddy options. eddy options that need to be specified include:
 
   * *--repol*: Remove any slices deemed as outliers and replace them with predictions made by the Gaussian Process. Outlier is defined by *--ol_nstd*, *--ol_nvox*, *--ol_type*, *--ol_pos*, and *--ol_sqr*. If defaults are used for those options, outliers are defined as a slice whose average intensity is at least 4 SD lower than the expected intensity, where the expectation is given by the Gaussian Process prediction. FSL group's experience and tests indicate that it is always a good idea to use *--repol* (`Reference <https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide#A--repol>`_).
 
@@ -376,9 +376,9 @@ Now, we are ready to conduct motion and distortion correction. In MRtrix, both t
 
 	mkdir AP_eddy_QC PA_eddy_QC
 
-	dwifslpreproc AP_den_unr.mif AP_den_unr_preproc.mif -rpe_pair -se_epi AP-then-PA_B0_pair.mif -pe_dir AP -eddy_options " --repol --niter=8 --fwhm==10,6,4,2,0,0,0,0 --ol_type=both --mporder=19 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --data_is_shelled --flm=quadratic --slm=linear" -eddy_slspec my_slspec.txt -eddyqc_all AP_eddy_QC
+	dwifslpreproc AP_den_unr.mif AP_den_unr_preproc.mif -rpe_pair -se_epi AP-then-PA_B0_pair.mif -pe_dir AP -eddy_options " --repol --niter=8 --fwhm==10,6,4,2,0,0,0,0 --ol_type=both --mporder=19 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --data_is_shelled --flm=quadratic --slm=linear --estimate_move_by_susceptibility --cnr_maps" -eddy_slspec my_slspec.txt -eddyqc_all AP_eddy_QC
 
-	dwifslpreproc PA_den_unr.mif PA_den_unr_preproc.mif -rpe_pair -se_epi PA-then-AP_B0_pair.mif -pe_dir PA -eddy_options " --repol --niter=8 --fwhm==10,6,4,2,0,0,0,0 --ol_type=both --mporder=19 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --data_is_shelled --flm=quadratic --slm=linear" -eddy_slspec my_slspec.txt -eddyqc_all PA_eddy_QC
+	dwifslpreproc PA_den_unr.mif PA_den_unr_preproc.mif -rpe_pair -se_epi PA-then-AP_B0_pair.mif -pe_dir PA -eddy_options " --repol --niter=8 --fwhm==10,6,4,2,0,0,0,0 --ol_type=both --mporder=19 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --data_is_shelled --flm=quadratic --slm=linear --estimate_move_by_susceptibility --cnr_maps" -eddy_slspec my_slspec.txt -eddyqc_all PA_eddy_QC
 
 
 References and further readings
