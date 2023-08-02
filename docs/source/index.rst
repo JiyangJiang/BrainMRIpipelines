@@ -6,7 +6,7 @@ BrainMRIpipelines (BMP) record how I process neuroimaging data at Centre for Hea
 This document is maintained by Dr. Jiyang Jiang.
 
 MRI modalities
---------
+--------------
 
 .. toctree::
    :maxdepth: 1
