@@ -13,3 +13,4 @@ MRI modalities
 
    asl
    dwi
+   misc
