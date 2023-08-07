@@ -363,8 +363,6 @@ Here, we run topup and eddy correction on DWI data acquired in AP and PA PE dire
 
 
 
-
-
 [USE THIS] Combining data of all PE's and process in one go
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -373,8 +371,8 @@ Here, we run topup and eddy correction on DWI data acquired in AP and PA PE dire
 	Inspired by `this MRtrix thread <https://community.mrtrix.org/t/rotating-bvecs-after-correction-for-susceptibility-induced-distortions-using-t1/2718/2>`_ (this is a very relevant example to our data), and slightly by `this thread <https://community.mrtrix.org/t/beginner-combining-two-hardi-acquisitions/1023/5>`_, we now switch to combining all DWI data, no matter it was acquired in AP or PA PE, and let MRtrix's *dwifslpreproc* to figure out everything.
 
 
-Convert DICOM data
-~~~~~~~~~~~~~~~~~~
+Preprocessing - Convert DICOM data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ..  _slice location error of MRtrix:
 
 ..  warning::
@@ -432,6 +430,7 @@ Then, concatenate all DWI data into a single file, and all additionally acquired
 
 ..  code-block::
 
+	# merge DWI datasets
 	dwicat AP_1.mif AP_2.mif PA_1.mif PA_2.mif dwi_noPEtab.mif
 	
 	# Gradient table and PE table for B0's
@@ -464,8 +463,8 @@ Then, concatenate all DWI data into a single file, and all additionally acquired
 
 `dwicat <https://mrtrix.readthedocs.io/en/dev/reference/commands/dwicat.html>`_ is used to automatically adjust for differences in intensity scaling. This is now preperred approach to concatenate data over *mrcat*.
 
-Denoising
-~~~~~~~~~
+Preprocessing - Denoising
+~~~~~~~~~~~~~~~~~~~~~~~~~
 To estimate the spatially varying noise map.
 
 ..  code-block::
@@ -482,8 +481,8 @@ Using MRView, we can visualise the noise and difference maps. Use *page up/done*
 ..  image:: figures/residual.png
     :width: 400
 
-Unringing
-~~~~~~~~~
+Preprocessing - Unringing
+~~~~~~~~~~~~~~~~~~~~~~~~~
 To remove Gibb's ringing artefacts.
 
 ..  code-block::
@@ -508,8 +507,8 @@ We can then calculate the difference between the denoised image and the unringed
 ..  image:: figures/residual_unringed.png
 	:width: 400
 
-Motion and distortion correction
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Preprocessing - Motion and distortion correction
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ..  note::
 
@@ -641,7 +640,72 @@ Several B0 images were acquired in both PE directions for VCI and MAS2 data, bot
 
 	mkdir eddy_QC
 
-	dwifslpreproc dwi_den_unr.mif dwi_den_unr_preproc.mif -rpe_header -se_epi b0.mif -eddyqc_all eddy_QC -nocleanup -eddy_slspec my_slspec.txt -force -eddy_options " --repol --niter=8 --fwhm==10,6,4,2,0,0,0,0 --ol_type=both --mporder=19 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --data_is_shelled --flm=quadratic --slm=linear --estimate_move_by_susceptibility --cnr_maps"
+	dwifslpreproc dwi_den_unr.mif dwi_den_unr_preproc.mif -nthreads 40 -force -rpe_header -se_epi b0.mif -eddyqc_all eddy_QC -nocleanup -eddy_slspec my_slspec.txt -eddy_options " --repol --niter=8 --fwhm==10,6,4,2,0,0,0,0 --ol_type=both --mporder=19 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --data_is_shelled --flm=quadratic --slm=linear --estimate_move_by_susceptibility --cnr_maps"
+
+..  figure:: figures/AP_before_dwifslpreproc.png
+	:width: 400
+
+	*AP before dwifslpreproc*
+
+..  figure:: figures/AP_after_dwifslpreproc.png
+	:width: 400
+
+	*AP after dwifslpreproc*
+
+..  figure:: figures/PA_before_dwifslpreproc.png
+	:width: 400
+
+	*PA before dwifslpreproc*
+
+..  figure:: figures/PA_after_dwifslpreproc.png
+	:width: 400
+
+	*PA after dwifslpreproc*
+
+Preprocessing - Bias field correction
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This step performed bias field correction, aiming at improving the following brain mask estimation. However, if no strong bias fields are present in data, running this step will deteriorate brain mask estimation and result in inferior brain mask estimation. *Brain masks should be checked to decide whether this step should be included in the pipeline*. Note that the *ants* option is recommended by BATMAN tutorial for *dwibiascorrect*, and for this, ANTs needs to be installed.
+
+..  code-block::
+
+	dwibiascorrect ants dwi_den_unr_preproc.mif dwi_den_unr_preproc_unbiased.mif -bias bias.mif
+
+Preprocessing - Brain mask estimation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This step will create a binary mask of brain. Downstream analyses will be performed within the mask to improve biological plausibility of streamlines and reduce computation time. Here, we also compare masks derived from *bias-corrected* and *non-bias-corrected* data.
+
+..  code-block::
+
+	dwi2mask dwi_den_unr_preproc_unbiased.mif mask_den_unr_preproc_unb.mif  # mask from bias-corrected.
+	dwi2mask dwi_den_unr_preproc.mif mask_den_unr_preproc.mif               # mask from non-bias-corrected.
+
+	mrview dwi_den_unr_preproc.mif -overlay.load mask_den_unr_preproc_unb.mif
+
+..  figure:: figures/dwi_for_displaying_mask.png
+	:width: 400
+
+	*DWI data.*
+
+..  figure:: figures/mask_unbiased.png
+	:width: 400
+
+	*Mask after bias correction (mask in red superimposed onto DWI).*
+
+..  figure:: figures/mask_non-unbiased.png
+	:width: 400
+
+	*Mask without running bais correction (mask in red superimposed onto DWI).*
+
+We can see that the mask with bias-correction looks better. It is always a good idea to visualise the genrated mask.
+
+Now, we finish preprocessing steps, and are ready for post-processing, e.g., creating streamlines.
+
+FOD - Response function estimation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**[[[[[ TO BE CONTINUED (BATMAN page 11) ]]]]]**
+
+
+
 
 
 
@@ -664,10 +728,10 @@ Known issues
 
 To-do's
 +++++++
-* To test combining AP/PA from beginning and let MRtrix to figure out PE direction automatically.
-* To interpret eddy QC metrics, and determine whether results are good/bad.
-* Experiment 1: How to combine two DWI datasets after topup and eddy? Particularly, how to rotate bvecs after co-registering the two datasets?
+* To interpret eddy QC metrics, and determine whether results are good/bad. Probably need to run *eddy_squad* on cohort level.
 * Confirm with MRtrix people regarding `slice location error of MRtrix`_.
+* SMS factor = 2, but SliceTiming in DICOM header indicates an interleaved acquisition without simultaneous multi-slices.
+* Ask why B0's have different spatial dimension as DWI dataset.
 
 References and further readings
 +++++++++++++++++++++++++++++++
@@ -678,6 +742,9 @@ Appendices
 ++++++++++
 
 .. _Generating acqparam:
+
+acqparam.txt and total readout time
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ..  note::
 
