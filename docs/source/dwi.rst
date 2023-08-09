@@ -709,8 +709,8 @@ FOD - Response function estimation
 
 
 
-Known issues
-++++++++++++
+Troubleshooting
++++++++++++++++
 
 .. _issue with eddy_quad:
 
@@ -726,8 +726,8 @@ Known issues
 
 .. _To_dos:
 
-To-do's
-+++++++
+To-do list
+++++++++++
 * To interpret eddy QC metrics, and determine whether results are good/bad. Probably need to run *eddy_squad* on cohort level.
 * Confirm with MRtrix people regarding `slice location error of MRtrix`_.
 * SMS factor = 2, but SliceTiming in DICOM header indicates an interleaved acquisition without simultaneous multi-slices.
