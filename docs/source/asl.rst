@@ -255,14 +255,14 @@ Create folder to store BASIL outputs
 
     mkdir BASIL_output
 
-GUI - Input Data - Data contents
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Input Data - Data contents
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 * **Input Image**: select *asl.nii*.
 * **Number of PLDs**: There are 16 PLDs in VCI/MAS2 ASL datasets.
 * **Repeats**: *Fixed*.
 
-GUI - Input Data - Data order
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Input Data - Data order
+~~~~~~~~~~~~~~~~~~~~~~~
 * **Volumes grouped by**: *Repeats*. Although it is quite common that multi-PLD ASL data are acquired in repeats and each repeat has several PLDs, it may vary as of how it is ordered in the final image file. VCI/MAS2 ASL data are ordered according to repeats. The data order preview at the bottom right connor of GUI (screenshot below) illustrates how data in VCI/MAS2 are ordered.
 
   ..  image:: figures/ASL_data_order_preview.png
@@ -289,8 +289,8 @@ GUI - Input Data - Data order
     ..  image:: figures/ASL_time_series.png
         :width: 800
 
-GUI - Input Data - Acquisition parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Input Data - Acquisition parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * **Labelling**: *cASL/pcASL*.
 
 * **Bolus duration (s)**: *Variable*.
@@ -314,14 +314,14 @@ The final 'Input Data' tab should look like below:
 
 Now, click *Next* to go to *Structure* tab.
 
-GUI - Structure - Structure
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Structure - Structure
+~~~~~~~~~~~~~~~~~~~~~
 * **Structural data from**: *Existing FSL_ANAT output*.
 
 * **Existing FSL_ANAT directory**: Click *Browse* to select fsl_anat directory (t1.anat) generated in *Run fsl_anat on T1 image* section.
 
-GUI - Structure - Registration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Structure - Registration
+~~~~~~~~~~~~~~~~~~~~~~~~
 * Tick **Transform to standard space**, and choose **Use FSL_ANAT**.
 
 The final 'Structure' tab should look like below:
@@ -331,8 +331,8 @@ The final 'Structure' tab should look like below:
 
 Click *Next* to go to *Calibration* tab.
 
-GUI - Calibration - Enable Calibration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Calibration - Enable Calibration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * Tick **Enable Calibraiton**.
 
 * **Calibration Image**: Choose *m0.nii*.
@@ -345,8 +345,8 @@ GUI - Calibration - Enable Calibration
 
 * **Calibration mode**: *Reference Region*.
 
-GUI - Calibration - Reference tissue
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Calibration - Reference tissue
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * **Type**: *CSF*.
 
 * Tick **Mask** and selct the ventricular mask generated in the earlier step (e.g., vent_ero.nii.gz).
@@ -364,8 +364,8 @@ The final 'Calibration' tab should look like below:
 
 Click *Next* to go to *Distortion Correction* tab.
 
-GUI - Distortion Correction
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Distortion Correction
+~~~~~~~~~~~~~~~~~~~~~
 * Untick **Apply distortion correction**. Also see `further work to correct distortion`_.
 
 We leave out distortion correction for now, but also see see `further work to correct distortion`_. The final "Distortion Correction" tab should look like:
@@ -375,20 +375,20 @@ We leave out distortion correction for now, but also see see `further work to co
 
 Click *Next* to go to *Analysis* tab.
 
-GUI - Analysis - Basic analysis options
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Analysis - Basic analysis options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * **Output Directory**: Select the output directory created before (e.g., BASIL_output).
 
 * Untick **User-specified brain Mask**.
 
-GUI - Analysis - Initial parameter values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Analysis - Initial parameter values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * Leave **Arterial Transit Time (s)**, **T1 (s)**, and **T1b (s)** as defaults.
 
 * **Inversion Efficiency**: *0.6*. Default inversion efficiency (alpha) for cASL is 0.85. Nevertheless, WIP document stated that 1) for PCASL without background suppression (i.e., 0 background suppression pulses), alpha is 85%, 2) PCASL with GRAY-WHITE background suppression (i.e., 2 background suppression pulses) has an alpha of 70%, and 3) PCASL with GRAY-WHITE-STRONG background suppression (which is used in our VCI/MAS2 data according to protocol PDF) has an alpha of 60%. Therefore, 0.6 is set here.
 
-GUI - Analysis - Analysis Options
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Analysis - Analysis Options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - **Adaptive spatial regularisation on perfusion**: *tick*. This option applies a spatial prior to the perfusion image during estimation, thus making use of neighbourhood information. This is strongly recommended.
 
 - **Incorporate T1 uncertainty**: *untick*. This option permits voxelwise variability in the T1 values, this will primiarly be reflected in the variance images for the estimated parameters, don't expect accurate T1 maps from conventional ASL data.
@@ -403,8 +403,8 @@ GUI - Analysis - Analysis Options
 
 - **Exchange/Dispersion model**: Leave as default.
 
-GUI - Analysis - White paper mode
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Analysis - White paper mode
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * Untick *check compatibility* to use our customised settings for now.
 
 The final "Analysis" tab should look like:
@@ -413,6 +413,15 @@ The final "Analysis" tab should look like:
     :width: 600
 
 Now, click "Run" to start processing.
+
+Command line
+~~~~~~~~~~~~
+The above settings were translated into the following command:
+
+..  code-block::
+
+    oxford_asl -i /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/asl.nii --iaf tc --ibf rpt --casl --bolus 0,0,0,0,0,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8 --rpts 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 --tis 0.8,1,1.2,1.4,1.6,1.8,2,2.2,2.4,2.6,2.8,3,3.2,3.4,3.6,3.8 --fslanat /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/t1.anat -c /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/m0.nii --cmethod single --tr 8.44 --cgain 10 --tissref csf --csf /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/vent_ero.nii.gz --t1csf 4.3 --t2csf 750 --t2bl 150 --te 20.4 -o /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/BASIL_output --bat 1.3 --t1 1.3 --t1b 1.65 --alpha 0.6 --spatial --fixbolus --mc --pvcorr
+
 
 Further work
 ~~~~~~~~~~~~
