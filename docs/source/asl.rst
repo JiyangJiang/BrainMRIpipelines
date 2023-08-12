@@ -227,12 +227,12 @@ First, we aim to extract lateral ventricles from M0 map. In VCI/MAS2 data, the f
     fslroi mTI16_800-3800_tgse_pcasl_3.4x3.4x4_14_31_2_24slc_20230721150610_21001 asl 1 -1
     gunzip m0.nii.gz asl.nii.gz
 
+    # extract lateral ventricles
     mkdir ventricle
     module load matlab/R2019a
     curr_dir=$(pwd)
-
-    # extract lateral ventricles
-    matlab -nodesktop -nodisplay -r "addpath(fullfile(getenv('BMP_PATH'),'misc'));bmp_misc_getLatVent('${curr_dir}/m0.nii','${curr_dir}/T1_MPRAGE_0.8_iso_20230721150610_6001.nii','${curr_dir}/ventricle');exit"
+    t1w='T1_MEMPRAGE_64ch_RMS_20230803144848_13.nii'
+    matlab -nodesktop -nodisplay -r "addpath(fullfile(getenv('BMP_PATH'),'misc'));bmp_misc_getLatVent('${curr_dir}/m0.nii','${curr_dir}/${t1w}','${curr_dir}/ventricle');exit"
 
     # erosion to get conservative ventricles
     fslmaths ${curr_dir}/ventricle/rventricular_mask.nii -kernel boxv 2 -ero ${curr_dir}/vent_ero
@@ -366,9 +366,9 @@ Click *Next* to go to *Distortion Correction* tab.
 
 Distortion Correction
 ~~~~~~~~~~~~~~~~~~~~~
-* Untick **Apply distortion correction**. Also see `further work to correct distortion`_.
+* Untick **Apply distortion correction**. Also see *further work* section.
 
-We leave out distortion correction for now, but also see see `further work to correct distortion`_. The final "Distortion Correction" tab should look like:
+We leave out distortion correction for now, but also see *further work* section. The final "Distortion Correction" tab should look like:
 
 ..  image:: figures/ASL_distortion_correction.png
     :width: 600
@@ -428,7 +428,5 @@ Further work
 * Need to find evidence to determine M0 type. M0 type is currently set to the default *proton density (long TR)* for now, as no info is found in documents.
 
 * What is the TR for M0? It is in the same 4D dataset as the tag-control pairs
-
-.. _further work to correct distortion:
 
 * ASL has a PE direction of "j" (i.e., PA). In pilot scan 1, AP/PA B0's for correcting distortions in DWI were acquired very close to ASL. Therefore, can consider using PA B0 for distortion correction for ASL.

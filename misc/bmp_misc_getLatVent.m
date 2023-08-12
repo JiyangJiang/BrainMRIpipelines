@@ -52,7 +52,7 @@ OATS_ventricle = fullfile(getenv('BMP_PATH'), 'misc', 'Templates', 'DARTEL_ventr
 system (['if [ -f "' outputFolder '/DARTEL_ventricle_65to75.nii.gz" ];then rm -f ' outputFolder '/DARTEL_ventricle_65to75.nii.gz;fi']);
 system (['cp ' OATS_ventricle ' ' outputFolder]);
 system (['if [ -f "' outputFolder '/DARTEL_ventricle_65to75.nii" ];then rm -f ' outputFolder '/DARTEL_ventricle_65to75.nii;fi']);
-system (['gunzip -f ' outputFolder '/DARTEL_ventricle_65to75.nii.gz']);
+system (['gunzip ' outputFolder '/DARTEL_ventricle_65to75.nii.gz']);
 
 
 % bring ventricle to T1
