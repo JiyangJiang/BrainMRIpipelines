@@ -236,6 +236,7 @@ First, we aim to extract lateral ventricles from M0 map. In VCI/MAS2 data, the f
 
     # erosion to get conservative ventricles
     fslmaths ${curr_dir}/ventricle/rventricular_mask.nii -kernel boxv 2 -ero ${curr_dir}/vent_ero
+    # You may see this warning: "Off-centre morphfilter being performed as kernel has even dimensions" - not to worry!
 
     # !! Always good to check eroded ventricular mask
     # fsleyes ${curr_dir}/m0 ${curr_dir}/vent_ero
@@ -246,7 +247,7 @@ Next, we run *fsl_anat* on T1 image. The results will be used as structural refe
 
 ..  code-block::
 
-    fsl_anat -i T1_MPRAGE_0.8_iso_20230721150610_6001 -o t1
+    fsl_anat -i ${t1w} -o t1
 
 Create folder to store BASIL outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
