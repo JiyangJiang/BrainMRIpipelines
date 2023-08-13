@@ -13,4 +13,5 @@ MRI modalities
 
    asl
    dwi
+   rsfmri
    misc

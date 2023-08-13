@@ -218,11 +218,11 @@ Multi-PLD ASL data from VCI and MAS2 using BASIL GUI
 
 Extract lateral ventricles
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-First, we aim to extract lateral ventricles from M0 map. In VCI/MAS2 data, the first volume of the 4D ASL dataset is M0 map.
+First, we aim to separate M0 map from tag/control pairs, and extract lateral ventricles from M0 map. In VCI/MAS2 data, the first volume of the 4D ASL dataset is M0 map.
 
 ..  code-block::
 
-    # extract the 1st volume as M0
+    # extract the 1st volume as M0, and the rest as tag/control ASL pairs
     fslroi mTI16_800-3800_tgse_pcasl_3.4x3.4x4_14_31_2_24slc_20230721150610_21001 m0 0 1
     fslroi mTI16_800-3800_tgse_pcasl_3.4x3.4x4_14_31_2_24slc_20230721150610_21001 asl 1 -1
     gunzip m0.nii.gz asl.nii.gz
