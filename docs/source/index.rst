@@ -11,7 +11,7 @@ MRI modalities
 .. toctree::
    :maxdepth: 1
 
-   asl
-   dwi
-   rsfmri
-   misc
+   asl_ini
+   dwi_ini
+   rsfmri_ini
+   misc_ini

@@ -31,4 +31,6 @@ func_img=`ls ${Sfolder}/func.nii*`
 
 rm -f ${Sfolder}/func_despike+orig.*
 
-
+# change name to continue with following steps
+mv ${Sfolder}/func.nii ${Sfolder}/func_beforeDespike.nii
+mv ${Sfolder}/func_despike.nii ${Sfolder}/func.nii

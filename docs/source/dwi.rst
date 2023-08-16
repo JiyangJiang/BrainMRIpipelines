@@ -71,7 +71,7 @@ The acquisition was separated into 4 blocks so that if volumes in a certain bloc
 
 ..  note::
 
-	Why some volumes have b-values slightly different from what they should be? - Refer to `this <https://mrtrix.readthedocs.io/en/dev/concepts/dw_scheme.html#b-value-shells>`_for explanation.
+	Why some volumes have b-values slightly different from what they should be? - Refer to `this <https://mrtrix.readthedocs.io/en/dev/concepts/dw_scheme.html#b-value-shells>`_ for explanation.
 
 Brief overview of MRtrix method
 +++++++++++++++++++++++++++++++
@@ -341,7 +341,7 @@ Now, we are ready to conduct motion and distortion correction. In MRtrix, both t
 
   * *--cnr_maps*: This will generate *my_eddy_output.eddy_cnr_maps*. This is a 4D image file with N+1 volumes where N is the number of non-zero b-value shells. The first volume contains the voxelwise SNR for the b=0 shell and the remaining volumes contain the voxelwise CNR (Contrast to Noise Ratio) for the non-zero b-shells in order of ascending b-value. For example if your data consists of 5 b=0, 48 b=1000 and 64 b=2000 volumes, my_eddy_output.eddy_cnr_maps will have three volumes where the first is the SNR for the b=0 volumes, followed by CNR maps for b=1000 and b=2000. The SNR for the b=0 shell is defined as mean(b0)/std(b0). The CNR for the DWI shells is defined as std(GP)/std(res) where std is the standard deviation of the Gaussian Process (GP) predictions and std(res) is the standard deviation of the residuals (the difference between the observations and the GP predictions). The my_eddy_output.eddy_cnr_maps can be useful for assessing the overall quality of the data.
 
-* *-readout_time 0.046*: This option provides total time required for the EPI readout train (`Reference <https://mrtrix.readthedocs.io/en/dev/concepts/pe_scheme.html?highlight=readout%20time>`_). Specifically the time between the centre of the 1st echo, and centre of the last echo, in the train. This is sometimes referred to as the "FSL definition". It should be defined in seconds. *This corresponds to the fourth number in acqparam.txt* (see `Variable phase encoding section of this link <https://mrtrix.readthedocs.io/en/dev/concepts/pe_scheme.html?highlight=readout%20time>`_. The calculation of this readout time is detailed in `Effection echo spacing and total readout time section of this website <https://lcni.uoregon.edu/wiki/tags/fmri/>`_. 0.046 seconds is the total readout time for VCI and MAS2 data (see `Generating acqparam`_ for the calculation). Note that the calculation was based on SPM definition which should be very close to FSL definition. `MRConvert <https://idoimaging.com/programs/214>`_ can report values from both definitions.
+* *-readout_time 0.052*: This option provides total time required for the EPI readout train (`Reference <https://mrtrix.readthedocs.io/en/dev/concepts/pe_scheme.html?highlight=readout%20time>`_). Specifically the time between the centre of the 1st echo, and centre of the last echo, in the train. This is sometimes referred to as the "FSL definition". It should be defined in seconds. *This corresponds to the fourth number in acqparam.txt* (see `Variable phase encoding section of this link <https://mrtrix.readthedocs.io/en/dev/concepts/pe_scheme.html?highlight=readout%20time>`_. The calculation of this readout time is detailed in `Effection echo spacing and total readout time section of this website <https://lcni.uoregon.edu/wiki/tags/fmri/>`_. 0.052 seconds is the total readout time for VCI and MAS2 data (see `Generating acqparam`_ for the calculation). Note that the calculation was based on SPM definition which should be very close to FSL definition. `MRConvert <https://idoimaging.com/programs/214>`_ can report values from both definitions.
 
 * Note that *-align_seepi* option is advocated, to ensure the 1st volume in the series provided to top up is also the 1st volume in series provided to eddy, guaranteeing alignment. However, this requires the image contrast of the opposing PE B0's provided to -se_epi option matching B0 volumes in the input DWI series, meaning equivalent TR, TE, and flip angle (also note that multi-band factors between two images may lead to differences in TR). However, this is not the case in VCI/MAS2. Therefore, discarding *-align_seepi*.
 
@@ -355,9 +355,9 @@ Now, we are ready to conduct motion and distortion correction. In MRtrix, both t
 
 	mkdir AP_eddy_QC PA_eddy_QC
 
-	dwifslpreproc AP_den_unr.mif AP_den_unr_preproc.mif -rpe_pair -se_epi AP-then-PA_B0_pair.mif -pe_dir AP -eddy_options " --repol --niter=8 --fwhm==10,6,4,2,0,0,0,0 --ol_type=both --mporder=19 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --data_is_shelled --flm=quadratic --slm=linear --estimate_move_by_susceptibility --cnr_maps" -eddy_slspec my_slspec.txt -eddyqc_all AP_eddy_QC -nocleanup -readout_time 0.046 -force
+	dwifslpreproc AP_den_unr.mif AP_den_unr_preproc.mif -rpe_pair -se_epi AP-then-PA_B0_pair.mif -pe_dir AP -eddy_options " --repol --niter=8 --fwhm==10,6,4,2,0,0,0,0 --ol_type=both --mporder=19 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --data_is_shelled --flm=quadratic --slm=linear --estimate_move_by_susceptibility --cnr_maps" -eddy_slspec my_slspec.txt -eddyqc_all AP_eddy_QC -nocleanup -readout_time 0.052 -force
 
-	dwifslpreproc PA_den_unr.mif PA_den_unr_preproc.mif -rpe_pair -se_epi PA-then-AP_B0_pair.mif -pe_dir PA -eddy_options " --repol --niter=8 --fwhm==10,6,4,2,0,0,0,0 --ol_type=both --mporder=19 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --data_is_shelled --flm=quadratic --slm=linear --estimate_move_by_susceptibility --cnr_maps" -eddy_slspec my_slspec.txt -eddyqc_all PA_eddy_QC -nocleanup -readout_time 0.046 -force
+	dwifslpreproc PA_den_unr.mif PA_den_unr_preproc.mif -rpe_pair -se_epi PA-then-AP_B0_pair.mif -pe_dir PA -eddy_options " --repol --niter=8 --fwhm==10,6,4,2,0,0,0,0 --ol_type=both --mporder=19 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --data_is_shelled --flm=quadratic --slm=linear --estimate_move_by_susceptibility --cnr_maps" -eddy_slspec my_slspec.txt -eddyqc_all PA_eddy_QC -nocleanup -readout_time 0.052 -force
 
 Here, we run topup and eddy correction on DWI data acquired in AP and PA PE directions separately. Theoretically, the next step is to merge AP and PA parts into a single DWI data file for further analyses. However, I found this step was challenging, because 1) there may be subject movement between AP and PA parts, and 2) I am not sure how to rotate bvecs after coregistering the AP and PA datasets (see `To_dos`_).
 
@@ -371,8 +371,8 @@ Here, we run topup and eddy correction on DWI data acquired in AP and PA PE dire
 	Inspired by `this MRtrix thread <https://community.mrtrix.org/t/rotating-bvecs-after-correction-for-susceptibility-induced-distortions-using-t1/2718/2>`_ (this is a very relevant example to our data), and slightly by `this thread <https://community.mrtrix.org/t/beginner-combining-two-hardi-acquisitions/1023/5>`_, we now switch to combining all DWI data, no matter it was acquired in AP or PA PE, and let MRtrix's *dwifslpreproc* to figure out everything.
 
 
-Preprocessing - Convert DICOM data
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ALTERNATIVE 1] Preprocessing - Convert DICOM data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ..  _slice location error of MRtrix:
 
 ..  warning::
@@ -426,7 +426,7 @@ Then, concatenate all DWI data into a single file, and all additionally acquired
 
 ..  warning::
 
-	When dwicat B0's in different PE, an error of no gradient table with B0's will raise. B0 DICOM's do not have gradient table stored. We manually add this info, i.e., all zeros. In addition, phase encoding tables are missing from mif header for both B0's and DWI. We'll also add those. For reasons why "0 -1 0 0.046" for AP and "0 1 0 0.046" for PA were set, refer to `Generating acqparam`_.
+	When dwicat B0's in different PE, an error of no gradient table with B0's will raise. B0 DICOM's do not have gradient table stored. We manually add this info, i.e., all zeros. In addition, phase encoding tables are missing from mif header for both B0's and DWI. We'll also add those. For reasons why "0 -1 0 0.052" for AP and "0 1 0 0.052" for PA were set, refer to `Generating acqparam`_.
 
 ..  code-block::
 
@@ -441,9 +441,9 @@ Then, concatenate all DWI data into a single file, and all additionally acquired
 	echo "0 0 0 0" > tempGradTab.bval
 
 	[ -f "AP_pe_table_B0" ] && rm -f AP_pe_table_B0;
-	for i in {1..4};do echo "0 -1 0 0.046" >> AP_pe_table_B0;done
+	for i in {1..4};do echo "0 -1 0 0.052" >> AP_pe_table_B0;done
 	[ -f "PA_pe_table_B0" ] && rm -f PA_pe_table_B0;
-	for i in {1..4};do echo "0 1 0 0.046" >> PA_pe_table_B0;done
+	for i in {1..4};do echo "0 1 0 0.052" >> PA_pe_table_B0;done
 
 	mrconvert -fslgrad tempGradTab.bvec tempGradTab.bval -import_pe_table AP_pe_table_B0 AP_B0.mif AP_B0_wGradTab_wPEtab.mif
 	mrconvert -fslgrad tempGradTab.bvec tempGradTab.bval -import_pe_table PA_pe_table_B0 PA_B0.mif PA_B0_wGradTab_wPEtab.mif
@@ -452,9 +452,9 @@ Then, concatenate all DWI data into a single file, and all additionally acquired
 	
 	# PE table for DWI
 	[ -f "AP_pe_table" ] && rm -f AP_pe_table;
-	for i in {1..62};do echo "0 -1 0 0.046" >> AP_pe_table;done
+	for i in {1..62};do echo "0 -1 0 0.052" >> AP_pe_table;done
 	[ -f "PA_pe_table" ] && rm -f PA_pe_table;
-	for i in {1..62};do echo "0 1 0 0.046" >> PA_pe_table;done
+	for i in {1..62};do echo "0 1 0 0.052" >> PA_pe_table;done
 
 	cat AP_pe_table > pe_table
 	cat PA_pe_table >> pe_table
@@ -462,6 +462,28 @@ Then, concatenate all DWI data into a single file, and all additionally acquired
 	mrconvert -import_pe_table pe_table dwi_noPEtab.mif dwi.mif
 
 `dwicat <https://mrtrix.readthedocs.io/en/dev/reference/commands/dwicat.html>`_ is used to automatically adjust for differences in intensity scaling. This is now preperred approach to concatenate data over *mrcat*.
+
+[ALTERNATIVE 2] Preprocessing - Convert DICOM data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I noticed the JSON files associated with NIFTI files that had been automatically exported to Flywheel, and stored in the same folder as the DOCIM files, have correct slice timing information. Therefore, the current strategy is to assemble the MIF file using those NIFTI and associated JSON files. Note that all *.nii.gz, *.bval, *.bvec, and *.json are copied from DICOM folders.
+
+..  code-block::
+
+	# convert DWI data
+	mrconvert -json_import AP_1.json -fslgrad AP_1.bvec AP_1.bval AP_1.nii.gz AP_1.mif
+	mrconvert -json_import AP_2.json -fslgrad AP_2.bvec AP_2.bval AP_2.nii.gz AP_2.mif
+	mrconvert -json_import PA_1.json -fslgrad PA_1.bvec PA_1.bval PA_1.nii.gz PA_1.mif
+	mrconvert -json_import PA_2.json -fslgrad PA_2.bvec PA_2.bval PA_2.nii.gz PA_2.mif
+	dwicat AP_1.mif AP_2.mif PA_1.mif PA_2.mif dwi.mif
+
+	# convert B0
+	echo "0 0 0 0" > tempGradTab.bvec
+	echo "0 0 0 0" >> tempGradTab.bvec
+	echo "0 0 0 0" >> tempGradTab.bvec
+	echo "0 0 0 0" > tempGradTab.bval
+	mrconvert -fslgrad tempGradTab.bvec tempGradTab.bval -json_import AP_B0.json AP_B0.nii.gz AP_B0.mif
+	mrconvert -fslgrad tempGradTab.bvec tempGradTab.bval -json_import PA_B0.json PA_B0.nii.gz PA_B0.mif
+	dwicat AP_B0.mif PA_B0.mif b0.mif
 
 Preprocessing - Denoising
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -544,7 +566,7 @@ Several B0 images were acquired in both PE directions for VCI and MAS2 data, bot
 
   ..  code-block::
 
-	fp = fopen('AP_BLOCK_1_DIFFUSION_30DIR_20230721150610_27001.json','r');
+	fp = fopen('AP_1.json','r');
 	fcont = fread(fp);
 	fclose(fp);
 	cfcont = char(fcont');
@@ -558,17 +580,59 @@ Several B0 images were acquired in both PE directions for VCI and MAS2 data, bot
 	slspec = reshape(sindx,[mb length(sindx)/mb])'-1;
 	dlmwrite('my_slspec.txt',slspec,'delimiter',' ','precision','%3d');
 
+  The resultant slice order should look like:
+
+  ..  code-block::
+
+	0  37
+	2  39
+	4  41
+	6  43
+	8  45
+	10  47
+	12  49
+	14  51
+	16  53
+	18  55
+	20  57
+	22  59
+	24  61
+	26  63
+	28  65
+	30  67
+	32  69
+	34  71
+	36  73
+	1  38
+	3  40
+	5  42
+	7  44
+	9  46
+	11  48
+	13  50
+	15  52
+	17  54
+	19  56
+	21  58
+	23  60
+	25  62
+	27  64
+	29  66
+	31  68
+	33  70
+	35  72
+
   ..  warning::
 
 	Although the protocol and the *MultibandAccelerationFactor* field of json file indicate that a multi-band factor of 2 was applied, *SliceTiming* recorded in DICOM/json seems to indicate it was an interleaved acquisition without simultaneous multi-slices.
 
 	**Old solusion**: We presume the *SliceTiming* field gives accurate data, i.e., data were acquired in an interleaved manner without simultaneous multi-slices. We still supply the *my_slspec.txt* file generated by the above code, although it will be a single column indicating slice order (i.e., single band). We also set *--ol_type* option to *both*, although there's only a single multi-band group. In the future, if multi-band is confirmed, simply replace the my_slspec.txt file to reflect this, and other parts do not need to be changed. However, note that *--mporder* value needs to be changed if multi-band is confirmed.
 
-	**13/08/2023 update**: I noticed that the NIFTI data automatically converted when exporting from scanner to Flywheel, and stored in the same folder as DICOM files contains the correct slice timing (multi-band factor = 2).
+	**13/08/2023 update**: I noticed that the NIFTI data automatically converted when exporting from scanner to Flywheel, and stored in the same folder as DICOM files contains the correct slice timing (multi-band factor = 2). See *my_slspec.txt* generated above.
 
   * *--ol_type=both*: This option defines how outliers are assessed. *both* means that the program will consider an multi-band group as the unit, but additionally looks for slice-wise outliers. This is to find single slices within a group that has been affected by pulsatile movement not affecting the other slices.
 
-  * *--mporder=19*: This option is related to slice-to-volume motion correction. Since this correction is time-consuming, it is `recommended <https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide#A--mporder>`_ to set the value in the range of N/4 to N/2, where N is the number of excitations per volume. The number of excitations is equivalent to number of slices for single band data, and should divide by multi-band factor for multi-band data. For example an MB/SMS factor of 3 means that you acquired 3 slices for each excitation. If you for example have 63 slices and an MB/SMS factor of 3 it means that you have 21 excitations (`Reference <https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1712&L=FSL&P=R34891>`_). Since we have 74 slices and assume it is single band (no simultaneous multi-slices), this value is now set to 19.
+  * *--mporder=10*: This option is related to slice-to-volume motion correction. Since this correction is time-consuming, it is `recommended <https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide#A--mporder>`_ to set the value in the range of N/4 to N/2, where N is the number of excitations per volume. The number of excitations is equivalent to number of slices for single band data, and should divide by multi-band factor for multi-band data. For example an MB/SMS factor of 3 means that you acquired 3 slices for each excitation. If you for example have 63 slices and an MB/SMS factor of 3 it means that you have 21 excitations (`Reference <https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1712&L=FSL&P=R34891>`_). Since we have 74 slices and multiband factor of 2, this value is now set to 10.
 
   * *--s2v_niter=8*: This option defines number of iterations for estimating slice-to-volume movement parameters. 5-10 iterations gives good results, with small advantage of 10 over 5. Slice-to-volume is time-consuming.
 
@@ -587,14 +651,14 @@ Several B0 images were acquired in both PE directions for VCI and MAS2 data, bot
 
   ..  code-block::
 
-	bvec_AP1 = load('AP_BLOCK_1_DIFFUSION_30DIR_20230721150610_27001.bvec');
-	bval_AP1 = load('AP_BLOCK_1_DIFFUSION_30DIR_20230721150610_27001.bval');
-	bvec_AP2 = load('AP_BLOCK_2_DIFFUSION_30DIR_20230721150610_35001.bvec');
-	bval_AP2 = load('AP_BLOCK_2_DIFFUSION_30DIR_20230721150610_35001.bval');
-	bvec_PA1 = load('PA_BLOCK_1_DIFFUSION_30DIR_20230721150610_43001.bvec');
-	bval_PA1 = load('PA_BLOCK_1_DIFFUSION_30DIR_20230721150610_43001.bval');
-	bvec_PA2 = load('PA_BLOCK_2_DIFFUSION_30DIR_20230721150610_51001.bvec');
-	bval_PA2 = load('PA_BLOCK_2_DIFFUSION_30DIR_20230721150610_51001.bval');
+	bvec_AP1 = load('AP_1.bvec');
+	bval_AP1 = load('AP_1.bval');
+	bvec_AP2 = load('AP_2.bvec');
+	bval_AP2 = load('AP_2.bval');
+	bvec_PA1 = load('PA_1.bvec');
+	bval_PA1 = load('PA_1.bval');
+	bvec_PA2 = load('PA_2.bvec');
+	bval_PA2 = load('PA_2.bval');
 
 	bvecs = [bvec_AP1 bvec_AP2 bvec_PA1 bvec_PA2];
 	bvals = [bval_AP1 bval_AP2 bval_PA1 bval_PA2];
@@ -642,7 +706,7 @@ Several B0 images were acquired in both PE directions for VCI and MAS2 data, bot
 
 	mkdir eddy_QC
 
-	dwifslpreproc dwi_den_unr.mif dwi_den_unr_preproc.mif -nthreads 40 -force -rpe_header -se_epi b0.mif -eddyqc_all eddy_QC -nocleanup -eddy_slspec my_slspec.txt -eddy_options " --repol --niter=8 --fwhm==10,6,4,2,0,0,0,0 --ol_type=both --mporder=19 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --data_is_shelled --flm=quadratic --slm=linear --estimate_move_by_susceptibility --cnr_maps"
+	dwifslpreproc dwi_den_unr.mif dwi_den_unr_preproc.mif -nthreads 40 -force -rpe_header -se_epi b0.mif -eddyqc_all eddy_QC -nocleanup -eddy_slspec my_slspec.txt -eddy_options " --repol --niter=8 --fwhm==10,6,4,2,0,0,0,0 --ol_type=both --mporder=10 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --data_is_shelled --flm=quadratic --slm=linear --estimate_move_by_susceptibility --cnr_maps"
 
 ..  figure:: figures/AP_before_dwifslpreproc.png
 	:width: 400
@@ -763,17 +827,17 @@ acqparam.txt and total readout time
 
 	* BandwidthPerPixelPhaseEncode
 
-	  * For VCI and MAS2 data, *BandwidthPerPixelPhaseEncode* field in json file has a value of 21.858. The fourth number in acqaram.txt should be 1 / 21.858 = 0.046. Note that this is referred to as "total readout time" in MRtrix which is total time required for the EPI readout train (`Reference <https://mrtrix.readthedocs.io/en/dev/concepts/pe_scheme.html?highlight=readout%20time>`_). Specifically the time between the centre of the 1st echo, and centre of the last echo, in the train. This is sometimes referred to as the "FSL definition". It should be defined in seconds. This corresponds to the fourth number in acqparam.txt (see `Variable phase encoding section of this link <https://mrtrix.readthedocs.io/en/dev/concepts/pe_scheme.html?highlight=readout%20time>`_. The calculation of this readout time is detailed in `Effection echo spacing and total readout time section of this website <https://lcni.uoregon.edu/wiki/tags/fmri/>`_. 0.046 seconds is the total readout time for VCI and MAS2 data (see `Generating acqparam`_ for the calculation). Note that the calculation was based on SPM definition which should be very close to FSL definition. `MRConvert <https://idoimaging.com/programs/214>`_ can report values from both definitions.
+	  * For VCI and MAS2 data, *BandwidthPerPixelPhaseEncode* field in json file of B0 has a value of 19.3799992. The fourth number in acqaram.txt should be 1 / 19.3799992 = 0.052. Note that this is referred to as "total readout time" in MRtrix which is total time required for the EPI readout train (`Reference <https://mrtrix.readthedocs.io/en/dev/concepts/pe_scheme.html?highlight=readout%20time>`_). Specifically the time between the centre of the 1st echo, and centre of the last echo, in the train. This is sometimes referred to as the "FSL definition". It should be defined in seconds. This corresponds to the fourth number in acqparam.txt (see `Variable phase encoding section of this link <https://mrtrix.readthedocs.io/en/dev/concepts/pe_scheme.html?highlight=readout%20time>`_. The calculation of this readout time is detailed in `Effection echo spacing and total readout time section of this website <https://lcni.uoregon.edu/wiki/tags/fmri/>`_. 0.052 seconds is the total readout time for VCI and MAS2 data (see `Generating acqparam`_ for the calculation). Note that the calculation was based on SPM definition which should be very close to FSL definition. `MRConvert <https://idoimaging.com/programs/214>`_ can report values from both definitions.
 
 	Therefore, acqparam.txt file for VCI and MAS2 DWI data should read as:
 
-	| 0 -1 0 0.046
-	| 0 1 0 0.046
+	| 0 -1 0 0.052
+	| 0 1 0 0.052
 
 	for *AP-then-PA_B0_pair.mif*, and
 
-	| 0 1 0 0.046
-	| 0 -1 0 0.046
+	| 0 1 0 0.052
+	| 0 -1 0 0.052
 
 	for *PA-then-AP_B0_pair.mif*.
 

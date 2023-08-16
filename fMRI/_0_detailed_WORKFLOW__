@@ -28,8 +28,8 @@ Operations on FEAT GUI
 0.1) generate lists
 ------------------------------------------------
 
-bmp_fmir_ini_genLists.sh -c /path/to/cohort/folder -l fix
-bmp_fmir_ini_genLists.sh -c /path/to/cohort/folder -l aroma
+bmp_fmri_ini_genLists.sh -c /path/to/cohort/folder -l fix
+bmp_fmri_ini_genLists.sh -c /path/to/cohort/folder -l aroma
 
 
 

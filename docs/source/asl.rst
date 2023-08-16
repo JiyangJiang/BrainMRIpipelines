@@ -340,7 +340,7 @@ Calibration - Enable Calibration
 
 * **M0 Type**: *Proton density (long TR)*. I couldn't find information from WIP document or protocol PDF. BASIL tutorial said the most common case would be proton density. In addition, M0 is in the same 4D dataset as tag-control pairs, and therefore share the same TR in json/header. I leave this parameter as *Proton density (long TR)* for now. `This reference <https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2002&L=FSL&P=R60377>`_ may give some peace of mind.
 
-* **Sequence TR (s)**: *8.44*. JSON file says the *RepetitionTime* is 8.43617 seconds, and *RepetitionTimeExcitation* is 4.14 seconds. Protocol PDF says TR is 4.14 seconds. I am not sure about this, and leaving it as 8.44 for now.
+* **Sequence TR (s)**: *4.14*. JSON file says the *RepetitionTime* is 8.43617 seconds, and *RepetitionTimeExcitation* is 4.14 seconds. Protocol PDF says TR is 4.14 seconds. I am not sure about this, and leaving it as 4.14 for now as this is the TR in everywhere except for JSON converted from DICOM by myself.
 
 * **Calibration Gain**: *10*. 10 is the common value set for calibration gain (Reference `1 <https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1905&L=FSL&P=R86460>`_, `2 <https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2004&L=FSL&P=R91652>`_, and `3 <https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1904&L=FSL&P=R57828>`_). The WIP document says that the M0 image is always scaled down by a factor of 10.
 
@@ -421,7 +421,7 @@ The above settings were translated into the following command:
 
 ..  code-block::
 
-    oxford_asl -i /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/asl.nii --iaf tc --ibf rpt --casl --bolus 0,0,0,0,0,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8 --rpts 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 --tis 0.8,1,1.2,1.4,1.6,1.8,2,2.2,2.4,2.6,2.8,3,3.2,3.4,3.6,3.8 --fslanat /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/t1.anat -c /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/m0.nii --cmethod single --tr 8.44 --cgain 10 --tissref csf --csf /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/vent_ero.nii.gz --t1csf 4.3 --t2csf 750 --t2bl 150 --te 20.4 -o /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/BASIL_output --bat 1.3 --t1 1.3 --t1b 1.65 --alpha 0.6 --spatial --fixbolus --mc --pvcorr
+    oxford_asl -i /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/asl.nii --iaf tc --ibf rpt --casl --bolus 0,0,0,0,0,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8 --rpts 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 --tis 0.8,1,1.2,1.4,1.6,1.8,2,2.2,2.4,2.6,2.8,3,3.2,3.4,3.6,3.8 --fslanat /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/t1.anat -c /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/m0.nii --cmethod single --tr 4.14 --cgain 10 --tissref csf --csf /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/vent_ero.nii.gz --t1csf 4.3 --t2csf 750 --t2bl 150 --te 20.4 -o /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/BASIL_output --bat 1.3 --t1 1.3 --t1b 1.65 --alpha 0.6 --spatial --fixbolus --mc --pvcorr
 
 
 Further work
