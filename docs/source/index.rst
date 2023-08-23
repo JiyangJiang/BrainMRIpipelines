@@ -5,13 +5,14 @@ BrainMRIpipelines (BMP) record how I process neuroimaging data at Centre for Hea
 
 This document is maintained by Dr. Jiyang Jiang.
 
-MRI modalities
---------------
+Modules
+-------
 
 .. toctree::
    :maxdepth: 1
 
-   asl_ini
-   dwi_ini
-   rsfmri_ini
-   misc_ini
+   io
+   asl
+   dwi
+   rsfmri
+   misc

@@ -371,8 +371,8 @@ Here, we run topup and eddy correction on DWI data acquired in AP and PA PE dire
 	Inspired by `this MRtrix thread <https://community.mrtrix.org/t/rotating-bvecs-after-correction-for-susceptibility-induced-distortions-using-t1/2718/2>`_ (this is a very relevant example to our data), and slightly by `this thread <https://community.mrtrix.org/t/beginner-combining-two-hardi-acquisitions/1023/5>`_, we now switch to combining all DWI data, no matter it was acquired in AP or PA PE, and let MRtrix's *dwifslpreproc* to figure out everything.
 
 
-[ALTERNATIVE 1] Preprocessing - Convert DICOM data
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[OPTION 1] Preprocessing - Convert DICOM data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ..  _slice location error of MRtrix:
 
 ..  warning::
@@ -463,8 +463,8 @@ Then, concatenate all DWI data into a single file, and all additionally acquired
 
 `dwicat <https://mrtrix.readthedocs.io/en/dev/reference/commands/dwicat.html>`_ is used to automatically adjust for differences in intensity scaling. This is now preperred approach to concatenate data over *mrcat*.
 
-[ALTERNATIVE 2] Preprocessing - Convert DICOM data
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[OPTION 2] Preprocessing - Convert DICOM data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 I noticed the JSON files associated with NIFTI files that had been automatically exported to Flywheel, and stored in the same folder as the DOCIM files, have correct slice timing information. Therefore, the current strategy is to assemble the MIF file using those NIFTI and associated JSON files. Note that all *.nii.gz, *.bval, *.bvec, and *.json are copied from DICOM folders.
 
 ..  code-block::
