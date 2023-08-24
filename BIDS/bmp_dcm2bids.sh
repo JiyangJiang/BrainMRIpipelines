@@ -216,7 +216,6 @@ case $is_first_run in
 				echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Running dcm2bids_helper to convert DICOM of the current subject (ID = $curr_subjID) to NIFTI and json, so that configuration file can be prepared.$(bmp_shellColour.sh --reset)"
 
 				dcm2bids_helper --dicom_dir   $BIDS_directory/sourcedata/$curr_subjID \
-								--force \
 								--nest \
 								--log_level DEBUG \
 								> $BIDS_directory/tmp_dcm2bids/dcm2bids_helper.debug_log
