@@ -188,12 +188,14 @@ echo -n "[$(date)] : $(basename $0) : Copying DICOM directory to sourcedata, and
 cp -r $DICOM_directory $BIDS_directory/sourcedata/$curr_subjID
 echo "done!"
 
-subjID_list=$(ls -1d $BIDS_directory/sourcedata/* | awk -F'/' '{print $NF}')
+if [ -d "$BIDS_directory/sourcedata" ]; then
+	subjID_list=$(ls -1d $BIDS_directory/sourcedata/* | awk -F'/' '{print $NF}')
 
-echo "[$(date)] : $(basename $0) : $(ls -1d $BIDS_directory/sourcedata/* | wc -l) subjects are currently in DICOM directory."
-ls -1d $BIDS_directory/sourcedata/* | head -n5 | awk -F'/' '{print $NF}'
-echo "... ..."
-ls -1d $BIDS_directory/sourcedata/* | tail -n5 | awk -F'/' '{print $NF}'
+	echo "[$(date)] : $(basename $0) : $(ls -1d $BIDS_directory/sourcedata/* | wc -l) subjects are currently in DICOM directory."
+	ls -1d $BIDS_directory/sourcedata/* | head -n5 | awk -F'/' '{print $NF}'
+	echo "... ..."
+	ls -1d $BIDS_directory/sourcedata/* | tail -n5 | awk -F'/' '{print $NF}'
+fi
 
 case $is_first_run in
 
