@@ -4,10 +4,9 @@
 #
 # DATA PREPARATION
 # ------------------------------------------------------------------------------
-# 1. all DICOM or PAR/REC files should be put in a folder inside the subjectFolder.
-#    and this should be the only folder in subjectFolder.
-#
-# 2. subjectFolder should have the folder name same as participant's ID.
+# All DICOM or PAR/REC files should be put in the 'sourcedata' folder in the
+# BIDS directory. Each subject should have a separate folder in sourcedata,
+# with subject ID as the folder name.
 #
 #
 # OUTPUT
@@ -47,6 +46,7 @@
 # - Nov 2022 : Jiyang Jiang modifies to incorporate into BrainMRIpipelines.
 
 
+
 usage() {
 
 echo -e "$(cat << EOM
@@ -56,42 +56,6 @@ $(bmp_convention.sh --script_name)$(basename $0)$(bmp_shellColour.sh --reset)
 $(bmp_convention.sh --usage_section_title)DESCRIPTION :$(bmp_shellColour.sh --reset)
 
   This script runs Dcm2Bids to convert DICOM files to BIDS format.
-
-
-DATA PREPARATION :
-
-  DICOM directory should contain a folder for each subject. 
-  Folder name is the subject ID. Folder contains DICOM files
-  for that particular subject.
-
-  [DICOM directory]
-        |
-        |
-        -- [subject ID 1]
-        |       |
-        |       -- DICOM file 1 for [subject ID 1]
-        |       |
-        |       -- DICOM file 2 for [subject ID 1]
-        |       |
-        |       -- ......
-        |       |
-        |       -- DICOM file N for [subject ID 1]
-        |
-        |
-        -- [suject ID 2]
-        |       |
-        |       -- [any number of intermediate folders]
-        |                          |
-        |                          -- DICOM file 1 for [subject ID 2]
-        |                          |
-        |                          -- DICOM file 2 for [subject ID 2]
-        |                          |
-        |                          -- ......
-        |                          |
-        |                          -- DICOM file N for [subject ID 2]
-        .
-        .
-        .
 
 
 $(bmp_convention.sh --usage_section_title)WORKFLOW :$(bmp_shellColour.sh --reset)
@@ -106,11 +70,11 @@ $(bmp_convention.sh --usage_section_title)USAGE :$(bmp_shellColour.sh --reset)
 
 $(bmp_convention.sh --usage_section_title)COMPULSORY :$(bmp_shellColour.sh --reset)
 
-  -d, --dicom_directory        <DICOM_directory>        Path to DICOM directory, which contains
-                                                        folders with subject IDs as folder name,
-                                                        and DICOM files stored in the folder.
-                                                        Intermediate folders between subject ID
-                                                        folder and DICOM files can exist.
+  -d, --dicom_directory        <DICOM_directory>        Path to DICOM directory.
+
+  -i, --subject_ID             <subject ID>             This subject ID will be used to rename
+                                                        DICOM directory and copy to sourcedata
+                                                        folder in the DICOM directory.
 
 
 $(bmp_convention.sh --usage_section_title)OPTIONAL :$(bmp_shellColour.sh --reset)
@@ -162,6 +126,12 @@ do
 			shift 2
 			;;
 
+		-i|--subject_ID)
+
+			curr_subjID=$2
+			shift 2
+			;;
+
 		-b|--bids_directory)
 
 			BIDS_directory=$2
@@ -199,13 +169,31 @@ done
 
 
 if [ -z ${BIDS_directory:+x} ]; then
+	echo "$(basename $0) : BIDS directory is not set. Use $(dirname $DICOM_directory)/BIDS as BIDS directory."
 	BIDS_directory=$(dirname $DICOM_directory)/BIDS
+else
+	echo "$(basename $0) : BIDS directory is set as $BIDS_directory."
 fi
-mkdir -p $BIDS_directory
 
-subjID_list=$(basename $(ls -1d $DICOM_directory))
+if [ -d $BIDS_directory ]; then
+	echo "$(basename $0) : BIDS directory $BIDS_directory exists."
+else
+	echo -n "$(basename $0) : BIDS directory $BIDS_directory does not exist. Creating ... "
+	mkdir -p $BIDS_directory
+	echo "done!"
+fi
 
+echo "$(basename $0) : Moving DICOM directory to sourcedata, and renaming it with subject ID."
+set -x
+mv $DICOM_directory $BIDS_directory/sourcedata/$curr_subjID
+set +x
 
+subjID_list=$(ls -1d $BIDS_directory/sourcedata/* | awk -F'/' '{print $NF}')
+
+echo "$(basename $0) : $(ls -1d $BIDS_directory/sourcedata/* | wc -l) subjects are currently in DICOM directory."
+ls -1d $BIDS_directory/sourcedata/* | head -n5 | awk -F'/' '{print $NF}'
+echo "... ..."
+ls -1d $BIDS_directory/sourcedata/* | tail -n5 | awk -F'/' '{print $NF}'
 
 case $is_first_run in
 
@@ -217,17 +205,19 @@ yes)
 
 	echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Running dcm2bids_scaffold to create basic files and directories for BIDS.$(bmp_shellColour.sh --reset)"
 
-	dcm2bids_scaffold --output_dir $BIDS_directory
+	dcm2bids_scaffold --output_dir $BIDS_directory --force
 
 	if [ "$use_dcm2bids_helper" == "yes" ]; then
-		echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Running dcm2bids_helper to convert DICOM of the first subject (ID = $(echo $subjID_list | awk '{print $1}')) to NIFTI and json, so that configuration file can be prepared.$(bmp_shellColour.sh --reset)"
+		echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Running dcm2bids_helper to convert DICOM of the current subject (ID = $curr_subjID) to NIFTI and json, so that configuration file can be prepared.$(bmp_shellColour.sh --reset)"
 
-		dcm2bids_helper --dicom_dir   $DICOM_directory/$(echo $subjID_list | awk '{print $1}') \
-										--output_dir  $BMP_TMP_PATH/bmp/dcm2bids/helper \
+		dcm2bids_helper --dicom_dir   $BIDS_directory/sourcedata/$curr_subjID \
+										--output_dir  $BIDS_directory/tmp_dcm2bids \
+										--nest \
 										--force \
-										> /dev/null
+										--log_level DEBUG \
+										> $BIDS_directory/tmp_dcm2bids/dcm2bids_helper.debug_log
 
-		echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Investigate json files in $(bmp_convention.sh --text_path)$BMP_TMP_PATH/bmp/dcm2bids/helper$(bmp_convention.sh --text_normal) to create the configuration file.$(bmp_shellColour.sh --reset)"
+		echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Investigate json files in $(bmp_convention.sh --text_path)$BIDS_directory/tmp_dcm2bids/sourcedata/$curr_subjID$(bmp_convention.sh --text_normal) to create the configuration file.$(bmp_shellColour.sh --reset)"
 
 	else
 

@@ -29,3 +29,19 @@ Full installation instructions can be found `here <https://unfmontreal.github.io
 Tutorial go-through
 +++++++++++++++++++
 Tutorial can be found `here <https://unfmontreal.github.io/Dcm2Bids/3.0.1/tutorial/>`_.
+
+..  code-block::
+
+	conda activate dcm2bids
+
+	mkdir dcm2bids-tutorial
+	cd dcm2bids-tutorial
+
+	dcm2bids_scaffold  # Help structure and organise data in an effient way
+	                   # by creating automatically a basic directory structure
+	                   # and the core files according to BIDS specification.
+
+	git clone https://github.com/neurolabusc/dcm_qa_nih/ sourcedata/dcm_qa_nih   # download/clone example DICOM data to sourcedata folder
+
+	
+
