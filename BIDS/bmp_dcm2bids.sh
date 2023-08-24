@@ -170,26 +170,26 @@ done
 
 
 if [ -z ${BIDS_directory:+x} ]; then
-	echo "$(basename $0) : BIDS directory is not set. Use $(dirname $DICOM_directory)/BIDS as BIDS directory."
+	echo "[$(date)] : $(basename $0) : BIDS directory is not set. Use $(dirname $DICOM_directory)/BIDS as BIDS directory."
 	BIDS_directory=$(dirname $DICOM_directory)/BIDS
 else
-	echo "$(basename $0) : BIDS directory is set as $BIDS_directory."
+	echo "[$(date)] : $(basename $0) : BIDS directory is set as $BIDS_directory."
 fi
 
 if [ -d $BIDS_directory ]; then
-	echo "$(basename $0) : BIDS directory $BIDS_directory exists."
+	echo "[$(date)] : $(basename $0) : BIDS directory $BIDS_directory exists."
 else
-	echo -n "$(basename $0) : BIDS directory $BIDS_directory does not exist. Creating ... "
+	echo -n "[$(date)] : $(basename $0) : BIDS directory $BIDS_directory does not exist. Creating ... "
 	mkdir -p $BIDS_directory
 	echo "done!"
 fi
 
-echo "$(basename $0) : Moving DICOM directory to sourcedata, and renaming it with subject ID."
-mv $DICOM_directory $BIDS_directory/sourcedata/$curr_subjID
+echo "[$(date)] : $(basename $0) : Moving DICOM directory to sourcedata, and renaming it with subject ID."
+cp -r $DICOM_directory $BIDS_directory/sourcedata/$curr_subjID
 
 subjID_list=$(ls -1d $BIDS_directory/sourcedata/* | awk -F'/' '{print $NF}')
 
-echo "$(basename $0) : $(ls -1d $BIDS_directory/sourcedata/* | wc -l) subjects are currently in DICOM directory."
+echo "[$(date)] : $(basename $0) : $(ls -1d $BIDS_directory/sourcedata/* | wc -l) subjects are currently in DICOM directory."
 ls -1d $BIDS_directory/sourcedata/* | head -n5 | awk -F'/' '{print $NF}'
 echo "... ..."
 ls -1d $BIDS_directory/sourcedata/* | tail -n5 | awk -F'/' '{print $NF}'
