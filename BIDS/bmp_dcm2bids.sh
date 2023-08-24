@@ -109,6 +109,7 @@ EOM
 
 }
 
+conda init bash
 conda activate dcm2bids # activate dcm2bids conda env
 
 is_first_run=no
@@ -184,9 +185,7 @@ else
 fi
 
 echo "$(basename $0) : Moving DICOM directory to sourcedata, and renaming it with subject ID."
-set -x
 mv $DICOM_directory $BIDS_directory/sourcedata/$curr_subjID
-set +x
 
 subjID_list=$(ls -1d $BIDS_directory/sourcedata/* | awk -F'/' '{print $NF}')
 
@@ -318,5 +317,5 @@ yes)
 # 	echo "using the online validator http://bids-standard.github.io/bids-validator/"
 
 # ;;
-# esac
+esac
 
