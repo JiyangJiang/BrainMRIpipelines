@@ -203,8 +203,7 @@ case $is_first_run in
 
 		echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Running dcm2bids_scaffold to create basic files and directories for BIDS.$(bmp_shellColour.sh --reset)"
 
-		cd $BIDS_directory
-		dcm2bids_scaffold
+		dcm2bids_scaffold --output_dir $BIDS_directory
 
 		echo -n "[$(date)] : $(basename $0) : Copying $DICOM_directory to $BIDS_directory/sourcedata, and renaming it with $curr_subjID ... "
 		cp -r $DICOM_directory $BIDS_directory/sourcedata/$curr_subjID
