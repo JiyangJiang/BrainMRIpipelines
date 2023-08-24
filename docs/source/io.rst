@@ -43,7 +43,10 @@ Tutorial can be found `here <https://unfmontreal.github.io/Dcm2Bids/3.0.1/tutori
 
 	git clone https://github.com/neurolabusc/dcm_qa_nih/ sourcedata/dcm_qa_nih   # download/clone example DICOM data to sourcedata folder
 
-	dcm2bids_helper -d sourcedata/dcm_qa_nih/In
+	dcm2bids_helper -d sourcedata/dcm_qa_nih/In  # convert DICOM to NIFTI and save in temporary folder *tmp_dcm2bids*, 
+	                                             # for inspection and making filters for the config file.
+
+
 
 Running dcm2bids in VCI/MAS2
 ++++++++++++++++++++++++++++
