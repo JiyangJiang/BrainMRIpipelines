@@ -109,8 +109,8 @@ EOM
 
 }
 
-conda init bash
-conda activate dcm2bids # activate dcm2bids conda env
+# conda init bash
+# conda activate dcm2bids # activate dcm2bids conda env
 
 is_first_run=no
 use_dcm2bids_helper=no
