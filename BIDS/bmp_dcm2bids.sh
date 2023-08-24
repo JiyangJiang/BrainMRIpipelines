@@ -184,8 +184,9 @@ else
 	echo "done!"
 fi
 
-echo "[$(date)] : $(basename $0) : Moving DICOM directory to sourcedata, and renaming it with subject ID."
+echo -n "[$(date)] : $(basename $0) : Copying DICOM directory to sourcedata, and renaming it with subject ID ... "
 cp -r $DICOM_directory $BIDS_directory/sourcedata/$curr_subjID
+echo "done!"
 
 subjID_list=$(ls -1d $BIDS_directory/sourcedata/* | awk -F'/' '{print $NF}')
 
@@ -204,7 +205,7 @@ case $is_first_run in
 
 		echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Running dcm2bids_scaffold to create basic files and directories for BIDS.$(bmp_shellColour.sh --reset)"
 
-		dcm2bids_scaffold --output_dir $BIDS_directory --force
+		dcm2bids_scaffold --output_dir $BIDS_directory
 
 		case $use_dcm2bids_helper in
 
