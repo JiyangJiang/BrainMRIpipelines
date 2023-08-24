@@ -203,7 +203,8 @@ case $is_first_run in
 
 		echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Running dcm2bids_scaffold to create basic files and directories for BIDS.$(bmp_shellColour.sh --reset)"
 
-		dcm2bids_scaffold --output_dir $BIDS_directory
+		cd $BIDS_directory
+		dcm2bids_scaffold
 
 		echo -n "[$(date)] : $(basename $0) : Copying $DICOM_directory to $BIDS_directory/sourcedata, and renaming it with $curr_subjID ... "
 		cp -r $DICOM_directory $BIDS_directory/sourcedata/$curr_subjID
@@ -218,6 +219,7 @@ case $is_first_run in
 				dcm2bids_helper --dicom_dir   $BIDS_directory/sourcedata/$curr_subjID \
 								--nest \
 								--log_level DEBUG \
+								--firce \
 								> $BIDS_directory/tmp_dcm2bids/dcm2bids_helper.debug_log
 
 				echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Investigate json files in $(bmp_convention.sh --text_path)$BIDS_directory/tmp_dcm2bids/sourcedata/$curr_subjID$(bmp_convention.sh --text_normal) to create the configuration file.$(bmp_shellColour.sh --reset)"
