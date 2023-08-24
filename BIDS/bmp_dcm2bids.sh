@@ -225,12 +225,12 @@ case $is_first_run in
 
 			no)
 
-				matlab -nodisplay -nodesktop -r ("bmp_DICOMenquirer ('$BIDS_directory');exit")
+				matlab -nodisplay -nodesktop -r "bmp_DICOMenquirer ('$BIDS_directory');exit"
 
 				;;
 
 		esac
-		
+
 		;;
 
 
