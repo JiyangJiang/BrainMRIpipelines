@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Processing multi PLD ASL data from VCI and MAS2 studies using BASIL GUI &mdash; BrainMRIpipelines 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=2709fde1"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Processing multi PLD ASL data from VCI and MAS2 studies using ExploreASL" href="asl_multiPLD_ExploreASL.html" />
+    <link rel="prev" title="Processing single PLD ASL data from OATS 4 Sydney and SCS using BASIL GUI" href="asl_singlePLD_BASIL.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BrainMRIpipelines
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="bmp.html">Welcome to BrainMRIpipelines documentation!</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="bmp.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="io.html">Input/output module</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="asl.html">Arterial spin labelling (ASL)</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="asl_singlePLD_BASIL.html">Processing single PLD ASL data from OATS 4 Sydney and SCS using BASIL GUI</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Processing multi PLD ASL data from VCI and MAS2 studies using BASIL GUI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="asl_multiPLD_ExploreASL.html">Processing multi PLD ASL data from VCI and MAS2 studies using ExploreASL</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dwi.html">Diffusion-weighted imaging (DWI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rsfmri.html">Resting-state BOLD imaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc.html">Miscellaneous tips</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="svdd.html">Cerebral Small Vessel Disease Lesion Detectors (SVD Detector)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BrainMRIpipelines</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="bmp.html">Welcome to BrainMRIpipelines documentation!</a></li>
+          <li class="breadcrumb-item"><a href="asl.html">Arterial spin labelling (ASL)</a></li>
+      <li class="breadcrumb-item active">Processing multi PLD ASL data from VCI and MAS2 studies using BASIL GUI</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/asl_multiPLD_BASIL.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="processing-multi-pld-asl-data-from-vci-and-mas2-studies-using-basil-gui">
+<h1>Processing multi PLD ASL data from VCI and MAS2 studies using BASIL GUI<a class="headerlink" href="#processing-multi-pld-asl-data-from-vci-and-mas2-studies-using-basil-gui" title="Link to this heading"></a></h1>
+<section id="extract-lateral-ventricles">
+<h2>Extract lateral ventricles<a class="headerlink" href="#extract-lateral-ventricles" title="Link to this heading"></a></h2>
+<p>First, we aim to separate M0 map from tag/control pairs, and extract lateral ventricles from M0 map. In VCI/MAS2 data, the first volume of the 4D ASL dataset is M0 map.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># extract the 1st volume as M0, and the rest as tag/control ASL pairs
+fslroi mTI16_800-3800_tgse_pcasl_3.4x3.4x4_14_31_2_24slc_20230721150610_21001 m0 0 1
+fslroi mTI16_800-3800_tgse_pcasl_3.4x3.4x4_14_31_2_24slc_20230721150610_21001 asl 1 -1
+gunzip m0.nii.gz asl.nii.gz
+
+# extract lateral ventricles
+mkdir ventricle
+module load matlab/R2019a
+curr_dir=$(pwd)
+t1w=&#39;T1_MEMPRAGE_64ch_RMS_20230803144848_13.nii&#39;
+matlab -nodesktop -nodisplay -r &quot;addpath(fullfile(getenv(&#39;BMP_PATH&#39;),&#39;misc&#39;));bmp_misc_getLatVent(&#39;${curr_dir}/m0.nii&#39;,&#39;${curr_dir}/${t1w}&#39;,&#39;${curr_dir}/ventricle&#39;);exit&quot;
+
+# erosion to get conservative ventricles
+fslmaths ${curr_dir}/ventricle/rventricular_mask.nii -kernel boxv 2 -ero ${curr_dir}/vent_ero
+# You may see this warning: &quot;Off-centre morphfilter being performed as kernel has even dimensions&quot; - not to worry!
+
+# !! Always good to check eroded ventricular mask
+# fsleyes ${curr_dir}/m0 ${curr_dir}/vent_ero
+</pre></div>
+</div>
+</section>
+<section id="run-fsl-anat-on-t1-image">
+<h2>Run fsl_anat on T1 image<a class="headerlink" href="#run-fsl-anat-on-t1-image" title="Link to this heading"></a></h2>
+<p>Next, we run <em>fsl_anat</em> on T1 image. The results will be used as structural reference.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>fsl_anat -i ${t1w} -o t1
+</pre></div>
+</div>
+</section>
+<section id="create-folder-to-store-basil-outputs">
+<h2>Create folder to store BASIL outputs<a class="headerlink" href="#create-folder-to-store-basil-outputs" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">BASIL_output</span>
+</pre></div>
+</div>
+</section>
+<section id="input-data-data-contents">
+<h2>Input Data - Data contents<a class="headerlink" href="#input-data-data-contents" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Input Image</strong>: select <em>asl.nii</em>.</p></li>
+<li><p><strong>Number of PLDs</strong>: There are 16 PLDs in VCI/MAS2 ASL datasets.</p></li>
+<li><p><strong>Repeats</strong>: <em>Fixed</em>.</p></li>
+</ul>
+</section>
+<section id="input-data-data-order">
+<h2>Input Data - Data order<a class="headerlink" href="#input-data-data-order" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>Volumes grouped by</strong>: <em>Repeats</em>. Although it is quite common that multi-PLD ASL data are acquired in repeats and each repeat has several PLDs, it may vary as of how it is ordered in the final image file. VCI/MAS2 ASL data are ordered according to repeats. The data order preview at the bottom right connor of GUI (screenshot below) illustrates how data in VCI/MAS2 are ordered.</p>
+<a class="reference internal image-reference" href="_images/ASL_data_order_preview.png"><img alt="_images/ASL_data_order_preview.png" src="_images/ASL_data_order_preview.png" style="width: 600px;" /></a>
+</li>
+<li><p><strong>Label/Control pairing</strong>: <em>Label then control</em>. This is determined by changing the options and <em>update</em> data preview for perfusion weighted image on the right side of GUI (see screenshots below).</p>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/ASL_PWI_data_preview_LC.png"><img alt="_images/ASL_PWI_data_preview_LC.png" src="_images/ASL_PWI_data_preview_LC.png" style="width: 600px;" /></a>
+</figure>
+<p><em>PWI data preview when assuming label-then-control order.</em></p>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/ASL_PWI_data_preview_CL.png"><img alt="_images/ASL_PWI_data_preview_CL.png" src="_images/ASL_PWI_data_preview_CL.png" style="width: 600px;" /></a>
+</figure>
+<p><em>PWI data preview when assuming control-then-label order.</em></p>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that getting a plausible looking PWI is a good sign that the data order (tag-then-control, or control-then-tag) is correct, but it is not a guarantee that the PLD ordering is correct. Always check carefully - one way is to open data in <em>fsleyes</em> and look at the timeseries: the raw intensity of both label and control images for one PLD are different to those from another PLD (due to background suppression). The timeseries for the raw data looks like a series of steps, indicating the repeated measurements from each PLD are grouped together (<em>vs.</em> grouped by repeats).</p>
+<p>VCI/MAS2 data has only 1 repeat, and 16 tag-control pairs (see time series screenshot below).</p>
+<a class="reference internal image-reference" href="_images/ASL_time_series.png"><img alt="_images/ASL_time_series.png" src="_images/ASL_time_series.png" style="width: 800px;" /></a>
+</div>
+</section>
+<section id="input-data-acquisition-parameters">
+<h2>Input Data - Acquisition parameters<a class="headerlink" href="#input-data-acquisition-parameters" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>Labelling</strong>: <em>cASL/pcASL</em>.</p></li>
+<li><p><strong>Bolus duration (s)</strong>: <em>Variable</em>.</p></li>
+<li><p><strong>Bolus durations (s)</strong> and <strong>PLDs</strong>: See table below. This is a specific parameter handling by Siemens for multi-TI regarding PCASL LDs and PLDs. See Page 11 of Siemens WIP ASL document.</p>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text"><strong>LDs and PLDs</strong></span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
+<tbody>
+<tr class="row-odd"><td><p><strong>Bolus durations (s)</strong></p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1.8</p></td>
+<td><p>1.8</p></td>
+<td><p>1.8</p></td>
+<td><p>1.8</p></td>
+<td><p>1.8</p></td>
+<td><p>1.8</p></td>
+<td><p>1.8</p></td>
+<td><p>1.8</p></td>
+<td><p>1.8</p></td>
+<td><p>1.8</p></td>
+<td><p>1.8</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>PLDs</strong></p></td>
+<td><p>0.8</p></td>
+<td><p>1.0</p></td>
+<td><p>1.2</p></td>
+<td><p>1.4</p></td>
+<td><p>1.6</p></td>
+<td><p>0</p></td>
+<td><p>0.2</p></td>
+<td><p>0.4</p></td>
+<td><p>0.6</p></td>
+<td><p>0.8</p></td>
+<td><p>1.0</p></td>
+<td><p>1.2</p></td>
+<td><p>1.4</p></td>
+<td><p>1.6</p></td>
+<td><p>1.8</p></td>
+<td><p>2.0</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p><strong>Readout</strong>: <em>3D (eg GRASE)</em>.</p></li>
+</ul>
+<p>The final ‘Input Data’ tab should look like below:</p>
+<a class="reference internal image-reference" href="_images/ASL_input_data.png"><img alt="_images/ASL_input_data.png" src="_images/ASL_input_data.png" style="width: 600px;" /></a>
+<p>Now, click <em>Next</em> to go to <em>Structure</em> tab.</p>
+</section>
+<section id="structure-structure">
+<h2>Structure - Structure<a class="headerlink" href="#structure-structure" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Structural data from</strong>: <em>Existing FSL_ANAT output</em>.</p></li>
+<li><p><strong>Existing FSL_ANAT directory</strong>: Click <em>Browse</em> to select fsl_anat directory (t1.anat) generated in <em>Run fsl_anat on T1 image</em> section.</p></li>
+</ul>
+</section>
+<section id="structure-registration">
+<h2>Structure - Registration<a class="headerlink" href="#structure-registration" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Tick <strong>Transform to standard space</strong>, and choose <strong>Use FSL_ANAT</strong>.</p></li>
+</ul>
+<p>The final ‘Structure’ tab should look like below:</p>
+<a class="reference internal image-reference" href="_images/ASL_structure.png"><img alt="_images/ASL_structure.png" src="_images/ASL_structure.png" style="width: 600px;" /></a>
+<p>Click <em>Next</em> to go to <em>Calibration</em> tab.</p>
+</section>
+<section id="calibration-enable-calibration">
+<h2>Calibration - Enable Calibration<a class="headerlink" href="#calibration-enable-calibration" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Tick <strong>Enable Calibraiton</strong>.</p></li>
+<li><p><strong>Calibration Image</strong>: Choose <em>m0.nii</em>.</p></li>
+<li><p><strong>M0 Type</strong>: <em>Proton density (long TR)</em>. I couldn’t find information from WIP document or protocol PDF. BASIL tutorial said the most common case would be proton density. In addition, M0 is in the same 4D dataset as tag-control pairs, and therefore share the same TR in json/header. I leave this parameter as <em>Proton density (long TR)</em> for now. <a class="reference external" href="https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2002&amp;L=FSL&amp;P=R60377">This reference</a> may give some peace of mind.</p></li>
+<li><p><strong>Sequence TR (s)</strong>: <em>4.14</em>. JSON file says the <em>RepetitionTime</em> is 8.43617 seconds, and <em>RepetitionTimeExcitation</em> is 4.14 seconds. Protocol PDF says TR is 4.14 seconds. I am not sure about this, and leaving it as 4.14 for now as this is the TR in everywhere except for JSON converted from DICOM by myself.</p></li>
+<li><p><strong>Calibration Gain</strong>: <em>10</em>. 10 is the common value set for calibration gain (Reference <a class="reference external" href="https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1905&amp;L=FSL&amp;P=R86460">1</a>, <a class="reference external" href="https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2004&amp;L=FSL&amp;P=R91652">2</a>, and <a class="reference external" href="https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1904&amp;L=FSL&amp;P=R57828">3</a>). The WIP document says that the M0 image is always scaled down by a factor of 10.</p></li>
+<li><p><strong>Calibration mode</strong>: <em>Reference Region</em>.</p></li>
+</ul>
+</section>
+<section id="calibration-reference-tissue">
+<h2>Calibration - Reference tissue<a class="headerlink" href="#calibration-reference-tissue" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Type</strong>: <em>CSF</em>.</p></li>
+<li><p>Tick <strong>Mask</strong> and selct the ventricular mask generated in the earlier step (e.g., vent_ero.nii.gz).</p></li>
+<li><p><strong>Sequence TE (ms)</strong>: <em>20.4</em>. 20.4 msec is the TE found on both JSON and protocol PDF.</p></li>
+<li><p>Leave <strong>Reference T1 (s)</strong>, <strong>Reference T2 (ms)</strong>, and <strong>Blood T2 (ms)</strong> as default.</p></li>
+<li><p>Untick <strong>Reference Image for sensitivity correction</strong>.</p></li>
+</ul>
+<p>The final ‘Calibration’ tab should look like below:</p>
+<a class="reference internal image-reference" href="_images/ASL_calibration.png"><img alt="_images/ASL_calibration.png" src="_images/ASL_calibration.png" style="width: 600px;" /></a>
+<p>Click <em>Next</em> to go to <em>Distortion Correction</em> tab.</p>
+</section>
+<section id="distortion-correction">
+<h2>Distortion Correction<a class="headerlink" href="#distortion-correction" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Untick <strong>Apply distortion correction</strong>. Also see <em>further work</em> section.</p></li>
+</ul>
+<p>We leave out distortion correction for now, but also see <em>further work</em> section. The final “Distortion Correction” tab should look like:</p>
+<a class="reference internal image-reference" href="_images/ASL_distortion_correction.png"><img alt="_images/ASL_distortion_correction.png" src="_images/ASL_distortion_correction.png" style="width: 600px;" /></a>
+<p>Click <em>Next</em> to go to <em>Analysis</em> tab.</p>
+</section>
+<section id="analysis-basic-analysis-options">
+<h2>Analysis - Basic analysis options<a class="headerlink" href="#analysis-basic-analysis-options" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Output Directory</strong>: Select the output directory created before (e.g., BASIL_output).</p></li>
+<li><p>Untick <strong>User-specified brain Mask</strong>.</p></li>
+</ul>
+</section>
+<section id="analysis-initial-parameter-values">
+<h2>Analysis - Initial parameter values<a class="headerlink" href="#analysis-initial-parameter-values" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Leave <strong>Arterial Transit Time (s)</strong>, <strong>T1 (s)</strong>, and <strong>T1b (s)</strong> as defaults.</p></li>
+<li><p><strong>Inversion Efficiency</strong>: <em>0.6</em>. Default inversion efficiency (alpha) for cASL is 0.85. Nevertheless, WIP document stated that 1) for PCASL without background suppression (i.e., 0 background suppression pulses), alpha is 85%, 2) PCASL with GRAY-WHITE background suppression (i.e., 2 background suppression pulses) has an alpha of 70%, and 3) PCASL with GRAY-WHITE-STRONG background suppression (which is used in our VCI/MAS2 data according to protocol PDF) has an alpha of 60%. Therefore, 0.6 is set here.</p></li>
+</ul>
+</section>
+<section id="analysis-analysis-options">
+<h2>Analysis - Analysis Options<a class="headerlink" href="#analysis-analysis-options" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Adaptive spatial regularisation on perfusion</strong>: <em>tick</em>. This option applies a spatial prior to the perfusion image during estimation, thus making use of neighbourhood information. This is strongly recommended.</p></li>
+<li><p><strong>Incorporate T1 uncertainty</strong>: <em>untick</em>. This option permits voxelwise variability in the T1 values, this will primiarly be reflected in the variance images for the estimated parameters, don’t expect accurate T1 maps from conventional ASL data.</p></li>
+<li><p><strong>Include macro vascular component</strong>: <em>tick</em>. This option corrects for arterial or macrovascular contamination, and it suits where the data have multi-PLD (even where flow suppresion has been applied).</p></li>
+<li><p><strong>Fix label duration</strong>: <em>tick</em>. This option takes the value for the label duration from the Input Data tab as fixed, turn off to estimate this from the data (the value on the data tab will be used as prior information in that case). You are most likely to want to deselect the option for pASL data, particularly where QUIPSSII/Q2TIPS has not been used to fix the label duration.</p></li>
+<li><p><strong>Partial Volume Correction</strong>: <em>tick</em>. This option correct for the different contributions from GM, WM and CSF to the perfusion image. This will produce separate grey and white matter perfusion maps.</p></li>
+<li><p><strong>Motion Correction</strong>: <em>tick</em>. This option uses <em>mcflirt</em> to perform motion correction of ASL data (and the calibration image).</p></li>
+<li><p><strong>Exchange/Dispersion model</strong>: Leave as default.</p></li>
+</ul>
+</section>
+<section id="analysis-white-paper-mode">
+<h2>Analysis - White paper mode<a class="headerlink" href="#analysis-white-paper-mode" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Untick <em>check compatibility</em> to use our customised settings for now.</p></li>
+</ul>
+<p>The final “Analysis” tab should look like:</p>
+<a class="reference internal image-reference" href="_images/ASL_analysis.png"><img alt="_images/ASL_analysis.png" src="_images/ASL_analysis.png" style="width: 600px;" /></a>
+<p>Now, click “Run” to start processing.</p>
+</section>
+<section id="command-line">
+<h2>Command line<a class="headerlink" href="#command-line" title="Link to this heading"></a></h2>
+<p>The above settings were translated into the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">oxford_asl</span> <span class="o">-</span><span class="n">i</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">cheba</span><span class="o">/</span><span class="n">Imaging</span><span class="o">/</span><span class="n">mas2</span><span class="o">/</span><span class="n">pilot1_Amanda</span><span class="o">/</span><span class="n">asl</span><span class="o">/</span><span class="n">asl</span><span class="o">.</span><span class="n">nii</span> <span class="o">--</span><span class="n">iaf</span> <span class="n">tc</span> <span class="o">--</span><span class="n">ibf</span> <span class="n">rpt</span> <span class="o">--</span><span class="n">casl</span> <span class="o">--</span><span class="n">bolus</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">1.8</span><span class="p">,</span><span class="mf">1.8</span><span class="p">,</span><span class="mf">1.8</span><span class="p">,</span><span class="mf">1.8</span><span class="p">,</span><span class="mf">1.8</span><span class="p">,</span><span class="mf">1.8</span><span class="p">,</span><span class="mf">1.8</span><span class="p">,</span><span class="mf">1.8</span><span class="p">,</span><span class="mf">1.8</span><span class="p">,</span><span class="mf">1.8</span><span class="p">,</span><span class="mf">1.8</span> <span class="o">--</span><span class="n">rpts</span> <span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span> <span class="o">--</span><span class="n">tis</span> <span class="mf">0.8</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">1.2</span><span class="p">,</span><span class="mf">1.4</span><span class="p">,</span><span class="mf">1.6</span><span class="p">,</span><span class="mf">1.8</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mf">2.2</span><span class="p">,</span><span class="mf">2.4</span><span class="p">,</span><span class="mf">2.6</span><span class="p">,</span><span class="mf">2.8</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mf">3.2</span><span class="p">,</span><span class="mf">3.4</span><span class="p">,</span><span class="mf">3.6</span><span class="p">,</span><span class="mf">3.8</span> <span class="o">--</span><span class="n">fslanat</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">cheba</span><span class="o">/</span><span class="n">Imaging</span><span class="o">/</span><span class="n">mas2</span><span class="o">/</span><span class="n">pilot1_Amanda</span><span class="o">/</span><span class="n">asl</span><span class="o">/</span><span class="n">t1</span><span class="o">.</span><span class="n">anat</span> <span class="o">-</span><span class="n">c</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">cheba</span><span class="o">/</span><span class="n">Imaging</span><span class="o">/</span><span class="n">mas2</span><span class="o">/</span><span class="n">pilot1_Amanda</span><span class="o">/</span><span class="n">asl</span><span class="o">/</span><span class="n">m0</span><span class="o">.</span><span class="n">nii</span> <span class="o">--</span><span class="n">cmethod</span> <span class="n">single</span> <span class="o">--</span><span class="n">tr</span> <span class="mf">4.14</span> <span class="o">--</span><span class="n">cgain</span> <span class="mi">10</span> <span class="o">--</span><span class="n">tissref</span> <span class="n">csf</span> <span class="o">--</span><span class="n">csf</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">cheba</span><span class="o">/</span><span class="n">Imaging</span><span class="o">/</span><span class="n">mas2</span><span class="o">/</span><span class="n">pilot1_Amanda</span><span class="o">/</span><span class="n">asl</span><span class="o">/</span><span class="n">vent_ero</span><span class="o">.</span><span class="n">nii</span><span class="o">.</span><span class="n">gz</span> <span class="o">--</span><span class="n">t1csf</span> <span class="mf">4.3</span> <span class="o">--</span><span class="n">t2csf</span> <span class="mi">750</span> <span class="o">--</span><span class="n">t2bl</span> <span class="mi">150</span> <span class="o">--</span><span class="n">te</span> <span class="mf">20.4</span> <span class="o">-</span><span class="n">o</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">cheba</span><span class="o">/</span><span class="n">Imaging</span><span class="o">/</span><span class="n">mas2</span><span class="o">/</span><span class="n">pilot1_Amanda</span><span class="o">/</span><span class="n">asl</span><span class="o">/</span><span class="n">BASIL_output</span> <span class="o">--</span><span class="n">bat</span> <span class="mf">1.3</span> <span class="o">--</span><span class="n">t1</span> <span class="mf">1.3</span> <span class="o">--</span><span class="n">t1b</span> <span class="mf">1.65</span> <span class="o">--</span><span class="n">alpha</span> <span class="mf">0.6</span> <span class="o">--</span><span class="n">spatial</span> <span class="o">--</span><span class="n">fixbolus</span> <span class="o">--</span><span class="n">mc</span> <span class="o">--</span><span class="n">pvcorr</span>
+</pre></div>
+</div>
+</section>
+<section id="further-work">
+<h2>Further work<a class="headerlink" href="#further-work" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Need to find evidence to determine M0 type. M0 type is currently set to the default <em>proton density (long TR)</em> for now, as no info is found in documents.</p></li>
+<li><p>What is the TR for M0? It is in the same 4D dataset as the tag-control pairs</p></li>
+<li><p>ASL has a PE direction of “j” (i.e., PA). In pilot scan 1, AP/PA B0’s for correcting distortions in DWI were acquired very close to ASL. Therefore, can consider using PA B0 for distortion correction for ASL.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="asl_singlePLD_BASIL.html" class="btn btn-neutral float-left" title="Processing single PLD ASL data from OATS 4 Sydney and SCS using BASIL GUI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="asl_multiPLD_ExploreASL.html" class="btn btn-neutral float-right" title="Processing multi PLD ASL data from VCI and MAS2 studies using ExploreASL" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Graziella.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

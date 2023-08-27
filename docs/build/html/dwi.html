@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diffusion-weighted imaging (DWI) &mdash; BrainMRIpipelines 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=2709fde1"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Resting-state BOLD imaging" href="rsfmri.html" />
+    <link rel="prev" title="Processing multi PLD ASL data from VCI and MAS2 studies using ExploreASL" href="asl_multiPLD_ExploreASL.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BrainMRIpipelines
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="bmp.html">Welcome to BrainMRIpipelines documentation!</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="bmp.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="io.html">Input/output module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="asl.html">Arterial spin labelling (ASL)</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Diffusion-weighted imaging (DWI)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#multi-shell-diffusion-weighted-imaging-data-with-mrtrix3-and-fsl">Multi-shell diffusion-weighted imaging data with MRtrix3 and FSL</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rsfmri.html">Resting-state BOLD imaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc.html">Miscellaneous tips</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="svdd.html">Cerebral Small Vessel Disease Lesion Detectors (SVD Detector)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BrainMRIpipelines</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="bmp.html">Welcome to BrainMRIpipelines documentation!</a></li>
+      <li class="breadcrumb-item active">Diffusion-weighted imaging (DWI)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/dwi.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="diffusion-weighted-imaging-dwi">
+<h1>Diffusion-weighted imaging (DWI)<a class="headerlink" href="#diffusion-weighted-imaging-dwi" title="Link to this heading"></a></h1>
+<section id="multi-shell-diffusion-weighted-imaging-data-with-mrtrix3-and-fsl">
+<h2>Multi-shell diffusion-weighted imaging data with MRtrix3 and FSL<a class="headerlink" href="#multi-shell-diffusion-weighted-imaging-data-with-mrtrix3-and-fsl" title="Link to this heading"></a></h2>
+<p>This section records steps for processing multi-shell dMRI data using MRtrix3 and FSL. The VCI and MAS2 study data will suit the methods described here.</p>
+<section id="description-of-dmri-data-acquired-for-vci-and-mas2">
+<span id="vci-and-mas2-dwi-data-description"></span><h3>Description of dMRI data acquired for VCI and MAS2<a class="headerlink" href="#description-of-dmri-data-acquired-for-vci-and-mas2" title="Link to this heading"></a></h3>
+<p>VCI and MAS2 dMRI data were acquired in 4 blocks, together with B0 images acquired in reverse phase encoding directions for distortion correction:</p>
+<ul class="simple">
+<li><p>4 B0 images in posterior-anterior (PA) PE direction</p>
+<ul>
+<li><p>Series description = PA_FMAP_for_DIFFUSION</p></li>
+</ul>
+</li>
+<li><p>4 B0 images in anterior-posterior (AP) PE direction</p>
+<ul>
+<li><p>Series description = AP_FMAP_for_DIFFUSION</p></li>
+</ul>
+</li>
+<li><p>AP block 1 has 31 volumes including:</p>
+<ul>
+<li><p>3 B0’s (Volume #1, #2, #20)</p></li>
+<li><p>28 B1 directions in AP PE direction including:</p>
+<ul>
+<li><p>5  * B1=1000</p></li>
+<li><p>1  * B1=1950</p></li>
+<li><p>7  * B1=2000</p></li>
+<li><p>1  * B1=2950</p></li>
+<li><p>14 * B1=3000</p></li>
+</ul>
+</li>
+<li><p>Series description = AP_BLOCK_1_DIFFUSION_30DIR</p></li>
+</ul>
+</li>
+<li><p>AP block 2 has 31 volumes including:</p>
+<ul>
+<li><p>3 B0’s (Volume #1, #2, #20)</p></li>
+<li><p>28 B1 directions in AP PE direction including:</p>
+<ul>
+<li><p>5  * B1=1000</p></li>
+<li><p>8  * B1=2000</p></li>
+<li><p>1  * B1=2950</p></li>
+<li><p>14 * B1=3000</p></li>
+</ul>
+</li>
+<li><p>Series description = AP_BLOCK_2_DIFFUSION_30DIR</p></li>
+</ul>
+</li>
+<li><p>PA block 1 has 31 volumes including:</p>
+<ul>
+<li><p>3 B0’s (Volume #1, #2, #20)</p></li>
+<li><p>28 B1 directions in PA PE direction including:</p>
+<ul>
+<li><p>5 *  B1=1000</p></li>
+<li><p>8 *  B1=2000</p></li>
+<li><p>15 * B1=3000</p></li>
+</ul>
+</li>
+<li><p>Series description = PA_BLOCK_1_DIFFUSION_30DIR</p></li>
+</ul>
+</li>
+<li><p>PA block 2 has 31 volumes including:</p>
+<ul>
+<li><p>3 B0’s (Volume #1, #2, #20)</p></li>
+<li><p>28 B1 directions in PA PE direction including:</p>
+<ul>
+<li><p>5 *  B1=1000</p></li>
+<li><p>8 *  B1=2000</p></li>
+<li><p>1 *  B1=2950</p></li>
+<li><p>14 * B1=3000</p></li>
+</ul>
+</li>
+<li><p>Series description = PA_BLOCK_2_DIFFUSION_30DIR</p></li>
+</ul>
+</li>
+</ul>
+<p>The acquisition was separated into 4 blocks so that if volumes in a certain block are of poor quality, only the gradient table in that particular block needs to be repeated, saving scanning time. This is particularly favourable for participants with cognitive decline or dementia. The sequence also sample higher b-value shells with a good number of directions. It also integrated many good acpects of HCP diffusion protocols. The sequnce takes 10 minutes to run, with each block taking 2.5 minutes. DWI data has voxel size = 2.23 * 2.23 * 2.0 mm^3, in-plane = 122 * 122, 74 slices.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Why some volumes have b-values slightly different from what they should be? - Refer to <a class="reference external" href="https://mrtrix.readthedocs.io/en/dev/concepts/dw_scheme.html#b-value-shells">this</a> for explanation.</p>
+</div>
+</section>
+<section id="brief-overview-of-mrtrix-method">
+<h3>Brief overview of MRtrix method<a class="headerlink" href="#brief-overview-of-mrtrix-method" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><em>Issue with the traditional tensor model of diffusion data</em>: In brain regions containing crossing or kissing (i.e., tangentially touching) fibers, diffusion tensor model does not perform well. This is because tensor model approaches fiber orientatin with an ellipsoid shape. In crossing-fiber regions, the orientation estimation of the tensor model will approach a sphere and thus cannot capture the orientation of two separate fibers. This is a severe problem as up to 90% of all brain image voxels contain crossing fibers.</p></li>
+<li><p><em>The way MRtrix approach crossing-fiber issue</em>: Constrained Spherical Deconvolution (CSD) is proposed by MRtrix, which outperforms tensor model and other alternatives for crossing fibers.</p></li>
+<li><p><em>Further development of MRtrix after CSD</em>: Following the success of CSD, MRtrix developers developed more algorithms to improve biological plausibility of fiber tracking:</p>
+<ul>
+<li><p><em>Anatomically Constrained Tractography (ACT)</em>: Rejects streamlines that end in biologically implausible tissue (e.g., CSF).</p></li>
+<li><p><em>Spherical-deconvolution informed filtering of tractograms (SIFT)</em>: Corrects for the fact that longer streamlines tend to be overestimated in tractography.</p></li>
+<li><p><em>multi-shell multi-tissue CSD (MSMT)</em>: Improves tractography in voxels containing partial volumes by exploiting the differences in b-value sensitivity of different tissue types.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="detailed-processing-steps">
+<h3>Detailed processing steps<a class="headerlink" href="#detailed-processing-steps" title="Link to this heading"></a></h3>
+<section id="discard-processing-ap-pa-separately">
+<h4>[DISCARD] Processing AP/PA separately<a class="headerlink" href="#discard-processing-ap-pa-separately" title="Link to this heading"></a></h4>
+<section id="convert-dicom-data">
+<h5>Convert DICOM data<a class="headerlink" href="#convert-dicom-data" title="Link to this heading"></a></h5>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that it seems DWI data transferred from scanner to Flywheel will lose some info, and are not compatible with MRtrix. Some observed issues include: 1) error of “slice position information missing from DICOM header!” when using mrconvert/mrinfo/mrcat to convert/view DICOM data downloaded from Flywheel, and 2) mif converted from data downloaded from Flywheel has more than 4 dimentions, and gives error of “contains more than 4 dimensions” when concatenate with other mif. By using mrinfo to view the header, dimension is 122 x 122 x 1 x 74 x 9, while 122 x 122 x 74 x 31 is expected. These errors led me to work around it using the following methods and data copied from scanner to a portable hard drive.</p>
+</div>
+<p>Use <em>3D Slicer</em> to extract series with the following series description to a specific folder, e.g., <em>3DslicerExtractedDWI</em>.</p>
+<ul class="simple">
+<li><p>PA_FMAP_for DIFFUSION</p></li>
+<li><p>AP_FMAP_for DIFFUSION</p></li>
+<li><p>AP_BLOCK_1_DIFFUSION_30DIR</p></li>
+<li><p>AP_BLOCK_2_DIFFUSION_30DIR</p></li>
+<li><p>PA_BLOCK_1_DIFFUSION_30DIR</p></li>
+<li><p>PA_BLOCK_2_DIFFUSION_30DIR</p></li>
+</ul>
+<p>Use the following commands to convert DICOM to MIF:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mrconvert</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="mi">3</span><span class="n">DslicerExtractedDWI</span> <span class="n">PA_B0</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrconvert</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="mi">3</span><span class="n">DslicerExtractedDWI</span> <span class="n">AP_B0</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrconvert</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="mi">3</span><span class="n">DslicerExtractedDWI</span> <span class="n">AP_1</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrconvert</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="mi">3</span><span class="n">DslicerExtractedDWI</span> <span class="n">AP_2</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrconvert</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="mi">3</span><span class="n">DslicerExtractedDWI</span> <span class="n">PA_1</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrconvert</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="mi">3</span><span class="n">DslicerExtractedDWI</span> <span class="n">PA_2</span><span class="o">.</span><span class="n">mif</span>
+</pre></div>
+</div>
+<p>Each <em>mrconvert</em> command will generate the following output in the shell:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>mrconvert: [.   ] scanning DICOM folder &quot;/srv/scrat...2pilot/3DslicerExtractedDWI&quot;...
+mrconvert: [WARNING] mismatched series number and UID - this may cause problems with series grouping
+mrconvert: [done] scanning DICOM folder &quot;/srv/scrat...2pilot/3DslicerExtractedDWI&quot;
+Select series (&#39;q&#39; to abort):
+   0 -  240 MR images 15:50:05 PA_FMAP_for DIFFUSION (*epse2d1_86) [25001] ORIGINAL PRIMARY M ND NORM MFSPLIT
+   1 -  240 MR images 15:50:42 AP_FMAP_for DIFFUSION (*epse2d1_86) [26001] ORIGINAL PRIMARY M ND NORM MFSPLIT
+   2 - 2294 MR images 15:51:51 AP_BLOCK_1_DIFFUSION_30DIR (*ep_b0) [27001] ORIGINAL PRIMARY DIFFUSION NONE ND NORM MFSPLIT
+   3 - 2294 MR images 15:54:44 AP_BLOCK_2_DIFFUSION_30DIR (*ep_b0) [35001] ORIGINAL PRIMARY DIFFUSION NONE ND NORM MFSPLIT
+   4 - 2294 MR images 15:57:37 PA_BLOCK_1_DIFFUSION_30DIR (*ep_b0) [43001] ORIGINAL PRIMARY DIFFUSION NONE ND NORM MFSPLIT
+   5 - 2294 MR images 16:00:29 PA_BLOCK_2_DIFFUSION_30DIR (*ep_b0) [51001] ORIGINAL PRIMARY DIFFUSION NONE ND NORM MFSPLIT
+?
+</pre></div>
+</div>
+<p>Select corresponding series number for the mrconvert call. For example, when converting PA_B0.mif, select 0. When converting AP_B0, select 1, and so on.</p>
+<p>Then, concatenate all DWI data acquired in the same PE direction:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dwicat</span> <span class="n">AP_1</span><span class="o">.</span><span class="n">mif</span> <span class="n">AP_2</span><span class="o">.</span><span class="n">mif</span> <span class="n">AP</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">dwicat</span> <span class="n">PA_1</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA_2</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA</span><span class="o">.</span><span class="n">mif</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="https://mrtrix.readthedocs.io/en/dev/reference/commands/dwicat.html">dwicat</a> is used to automatically adjust for differences in intensity scaling.</p>
+</section>
+<section id="denoising">
+<h5>Denoising<a class="headerlink" href="#denoising" title="Link to this heading"></a></h5>
+<p>To estimate the spatially varying noise map.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dwidenoise</span> <span class="n">AP</span><span class="o">.</span><span class="n">mif</span> <span class="n">AP_den</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">noise</span> <span class="n">AP_noise</span><span class="o">.</span><span class="n">mif</span>                <span class="c1"># denoise AP.mif</span>
+<span class="n">dwidenoise</span> <span class="n">PA</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA_den</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">noise</span> <span class="n">PA_noise</span><span class="o">.</span><span class="n">mif</span>                <span class="c1"># denoise PA.mif</span>
+
+<span class="n">mrcalc</span> <span class="n">AP</span><span class="o">.</span><span class="n">mif</span> <span class="n">AP_den</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">subtract</span> <span class="n">AP_residual</span><span class="o">.</span><span class="n">mif</span>              <span class="c1"># calculate difference btw raw and denoised iamges</span>
+<span class="n">mrview</span> <span class="n">AP_noise</span><span class="o">.</span><span class="n">mif</span> <span class="n">AP_residual</span><span class="o">.</span><span class="n">mif</span>
+
+<span class="n">mrcalc</span> <span class="n">PA</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA_den</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">subtract</span> <span class="n">PA_residual</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrview</span> <span class="n">PA_noise</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA_residual</span><span class="o">.</span><span class="n">mif</span>
+</pre></div>
+</div>
+<p>Using MRView, we can visualise the noise and difference maps. Use <em>page up/done</em> key to change between the displayed images.</p>
+<a class="reference internal image-reference" href="_images/AP_noise.png"><img alt="_images/AP_noise.png" src="_images/AP_noise.png" style="width: 400px;" /></a>
+<a class="reference internal image-reference" href="_images/AP_residual.png"><img alt="_images/AP_residual.png" src="_images/AP_residual.png" style="width: 400px;" /></a>
+<a class="reference internal image-reference" href="_images/PA_noise.png"><img alt="_images/PA_noise.png" src="_images/PA_noise.png" style="width: 400px;" /></a>
+<a class="reference internal image-reference" href="_images/PA_residual.png"><img alt="_images/PA_residual.png" src="_images/PA_residual.png" style="width: 400px;" /></a>
+</section>
+<section id="unringing">
+<h5>Unringing<a class="headerlink" href="#unringing" title="Link to this heading"></a></h5>
+<p>To remove Gibb’s ringing artefacts.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mrdegibbs</span> <span class="n">AP_den</span><span class="o">.</span><span class="n">mif</span> <span class="n">AP_den_unr</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">axes</span> <span class="mi">0</span><span class="p">,</span><span class="mi">1</span>
+<span class="n">mrdegibbs</span> <span class="n">PA_den</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA_den_unr</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">axes</span> <span class="mi">0</span><span class="p">,</span><span class="mi">1</span>
+
+<span class="c1"># -axes is used to inform the plane the data were acquired.</span>
+<span class="c1"># -axes 0,1 refers to axial slices.</span>
+<span class="c1"># -axes 0,2 refers to coronal slices.</span>
+<span class="c1"># -axes 1,2 refers to sagittal slices.</span>
+</pre></div>
+</div>
+<p>We can then calculate the difference between the denoised image and the unringed image, and visualise the images.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mrcalc</span> <span class="n">AP_den</span><span class="o">.</span><span class="n">mif</span> <span class="n">AP_den_unr</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">subtract</span> <span class="n">AP_residual_unringed</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrcalc</span> <span class="n">PA_den</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA_den_unr</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">subtract</span> <span class="n">PA_residual_unringed</span><span class="o">.</span><span class="n">mif</span>
+
+<span class="n">mrview</span> <span class="n">AP_den_unr</span><span class="o">.</span><span class="n">mif</span> <span class="n">AP_residual_unringed</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrview</span> <span class="n">PA_den_unr</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA_residual_unringed</span><span class="o">.</span><span class="n">mif</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/AP_den_unr.png"><img alt="_images/AP_den_unr.png" src="_images/AP_den_unr.png" style="width: 400px;" /></a>
+<a class="reference internal image-reference" href="_images/AP_residual_unringed.png"><img alt="_images/AP_residual_unringed.png" src="_images/AP_residual_unringed.png" style="width: 400px;" /></a>
+<a class="reference internal image-reference" href="_images/PA_den_unr.png"><img alt="_images/PA_den_unr.png" src="_images/PA_den_unr.png" style="width: 400px;" /></a>
+<a class="reference internal image-reference" href="_images/PA_residual_unringed.png"><img alt="_images/PA_residual_unringed.png" src="_images/PA_residual_unringed.png" style="width: 400px;" /></a>
+</section>
+<section id="motion-and-distortion-correction">
+<h5>Motion and distortion correction<a class="headerlink" href="#motion-and-distortion-correction" title="Link to this heading"></a></h5>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that slice-to-volume motion correction is only available for CUDA version of eddy. Suggest running on GRID workstation at CHeBA where eddy_cuda is already configured.</p>
+</div>
+<p>For EPI distortion correction, a pair of B0 images, one in AP and one in PA PE directions, will be used. Several B0 images were acquired in both PE directions for VCI and MAS2 data, both within the DWI blocks and as separate sequences (refer to <a class="reference internal" href="#vci-and-mas2-dwi-data-description">VCI and MAS2 DWI data description</a>). The purpose of this is to get a cleaner B0 for either direction by taking the mean. Here our strategy is to use the separately acquired opposing PE direction B0’s to generate fieldmap to correct for EPI distortion. We first calculate the mean B0 in each PE direction:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mrmath</span> <span class="n">AP_B0</span><span class="o">.</span><span class="n">mif</span> <span class="n">mean</span> <span class="n">AP_B0_mean</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">axis</span> <span class="mi">3</span>    <span class="c1"># &#39;-axis 3&#39;: The average will be calculated along the third axis.</span>
+<span class="n">mrmath</span> <span class="n">PA_B0</span><span class="o">.</span><span class="n">mif</span> <span class="n">mean</span> <span class="n">PA_B0_mean</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">axis</span> <span class="mi">3</span>
+</pre></div>
+</div>
+<p>Next, we concatenate the two mean B0 images into a single file. Note that <strong>order matters</strong> here - MRtrix requires the first image to be the B0 in the PE direction of DWI data, and the last B0 is in reversed PE direction. Since DWI data in VCI and MAS2 have 2 DWI blocks acquired in AP, and another 2 DWI blocks acquired in PA, we concatenate B0’s in both ways, generating two B0 pairs for both senarios.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mrcat</span> <span class="n">AP_B0_mean</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA_B0_mean</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">axis</span> <span class="mi">3</span> <span class="n">AP</span><span class="o">-</span><span class="n">then</span><span class="o">-</span><span class="n">PA_B0_pair</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrcat</span> <span class="n">PA_B0_mean</span><span class="o">.</span><span class="n">mif</span> <span class="n">AP_B0_mean</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">axis</span> <span class="mi">3</span> <span class="n">PA</span><span class="o">-</span><span class="n">then</span><span class="o">-</span><span class="n">AP_B0_pair</span><span class="o">.</span><span class="n">mif</span>
+</pre></div>
+</div>
+<p>To better visualise and understand the distortion effects of AP and PA PE directions, overlay the two mean B0 images:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mrview</span> <span class="n">AP_B0_mean</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">overlay</span><span class="o">.</span><span class="n">load</span> <span class="n">PA_B0_mean</span><span class="o">.</span><span class="n">mif</span>
+
+<span class="c1"># In the menu bar, click &#39;View&#39; -&gt; &#39;Ortho view&#39;.</span>
+<span class="c1"># In the menu bar, click &#39;Tool&#39; -&gt; &#39;Overlay&#39;. You can change the colour map for overlay,</span>
+<span class="c1"># and adjust opacity to see differences between AP and PA PE effects, and how the following</span>
+<span class="c1"># correction will correct the distortion.</span>
+</pre></div>
+</div>
+<p>Now, we are ready to conduct motion and distortion correction. In MRtrix, both these corrections are carried out by using <em>dwifslpreproc</em> command, which will call FSL’s <em>eddy</em>, <em>topup</em>, and <em>applytopup</em> tools. Refer to <a class="reference external" href="https://mrtrix.readthedocs.io/en/3.0.4/dwi_preprocessing/dwifslpreproc.html">MRtrix dwifslpreproc webpage 1</a> and <a class="reference external" href="https://mrtrix.readthedocs.io/en/dev/reference/commands/dwifslpreproc.html">2</a> for more details.</p>
+<ul>
+<li><p><em>AP_den_unr.mif</em> and <em>PA_den_unr.mif</em> as input.</p></li>
+<li><p><em>-pe_dir</em> to specify PE direction.</p></li>
+<li><p><em>-rpe_pair</em> option to specify that a B0 pair will be provided for EPI inhomogeneity field estimation (i.e., distortion correction). The opposing PE B0 pair will be passed to command by using <em>-se_epi</em> option.</p></li>
+<li><p><em>-se_epi</em> option to pass the opposing PE B0 pair.</p></li>
+<li><p><em>-topup_options</em> to pass topup options. Refer to <a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/topup/TopupUsersGuide">FSL topup webpage</a> for the list of options.</p>
+<ul class="simple">
+<li><p>We use default settings for topup here, without customising any options.</p></li>
+</ul>
+</li>
+<li><p><em>-eddy_options</em> to pass eddy options. eddy options that need to be specified include:</p>
+<ul class="simple">
+<li><p><em>–repol</em>: Remove any slices deemed as outliers and replace them with predictions made by the Gaussian Process. Outlier is defined by <em>–ol_nstd</em>, <em>–ol_nvox</em>, <em>–ol_type</em>, <em>–ol_pos</em>, and <em>–ol_sqr</em>. If defaults are used for those options, outliers are defined as a slice whose average intensity is at least 4 SD lower than the expected intensity, where the expectation is given by the Gaussian Process prediction. FSL group’s experience and tests indicate that it is always a good idea to use <em>–repol</em> (<a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide#A--repol">Reference</a>).</p></li>
+<li><p><em>–niter=8 –fwhm=10,6,4,2,0,0,0,0</em>: Specify 8 iterations with decreasing amounts of smooth to have better chances of convergence. This is <a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/Faq#What_would_a_good_eddy_command_look_like_for_data_with_lots_of_movement.3F">recommended for data with lots of movement</a>. Another, more general, <a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide/#A--niter">recommendation</a> is to have 5 iterations with <em>–fwhm=10,0,0,0,0</em>. It means that the first iteration is run with a FWHM of 10mm, which helps that algorithm to take a big step towards the true solution. The remaining iterations are run with a FWHM of 0mm, which offers high accuracy. This was found to work well in most cases. But on he safe side, we chose the previous, more time-consuming but more accurate, option.</p></li>
+<li><p><em>–slspec=my_slspec.txt</em>: slspec file should look like <a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide#A--slspec">this</a>, and there is <a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/Faq#How_should_my_--slspec_file_look.3F">a script</a> to automatically generate this file. The same script is copied below. SPM also offers scripts and some good explanations on slice timing info (<a class="reference external" href="https://en.wikibooks.org/w/index.php?title=SPM/Slice_Timing#Slice_Order">link</a>). Other readings include <a class="reference external" href="https://practicalfmri.blogspot.com/2012/07/siemens-slice-ordering.html">this</a>. <strong>Note</strong> that <em>dwifslpreproc</em> requires <em>my_slspec.txt</em> to be passed to command through <em>–eddy_slspec</em>, instead of <em>–eddy_opions “–slspec=…”</em></p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fp</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="s1">&#39;AP_BLOCK_1_DIFFUSION_30DIR_20230721150610_27001.json&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">);</span>
+<span class="n">fcont</span> <span class="o">=</span> <span class="n">fread</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span>
+<span class="n">fclose</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span>
+<span class="n">cfcont</span> <span class="o">=</span> <span class="n">char</span><span class="p">(</span><span class="n">fcont</span><span class="s1">&#39;);</span>
+<span class="n">i1</span> <span class="o">=</span> <span class="n">strfind</span><span class="p">(</span><span class="n">cfcont</span><span class="p">,</span><span class="s1">&#39;SliceTiming&#39;</span><span class="p">);</span>
+<span class="n">i2</span> <span class="o">=</span> <span class="n">strfind</span><span class="p">(</span><span class="n">cfcont</span><span class="p">(</span><span class="n">i1</span><span class="p">:</span><span class="n">end</span><span class="p">),</span><span class="s1">&#39;[&#39;</span><span class="p">);</span>
+<span class="n">i3</span> <span class="o">=</span> <span class="n">strfind</span><span class="p">(</span><span class="n">cfcont</span><span class="p">((</span><span class="n">i1</span><span class="o">+</span><span class="n">i2</span><span class="p">):</span><span class="n">end</span><span class="p">),</span><span class="s1">&#39;]&#39;</span><span class="p">);</span>
+<span class="n">cslicetimes</span> <span class="o">=</span> <span class="n">cfcont</span><span class="p">((</span><span class="n">i1</span><span class="o">+</span><span class="n">i2</span><span class="o">+</span><span class="mi">1</span><span class="p">):(</span><span class="n">i1</span><span class="o">+</span><span class="n">i2</span><span class="o">+</span><span class="n">i3</span><span class="o">-</span><span class="mi">2</span><span class="p">));</span>
+<span class="n">slicetimes</span> <span class="o">=</span> <span class="n">textscan</span><span class="p">(</span><span class="n">cslicetimes</span><span class="p">,</span><span class="s1">&#39;</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;Delimiter&#39;</span><span class="p">,</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
+<span class="p">[</span><span class="n">sortedslicetimes</span><span class="p">,</span><span class="n">sindx</span><span class="p">]</span> <span class="o">=</span> <span class="n">sort</span><span class="p">(</span><span class="n">slicetimes</span><span class="p">{</span><span class="mi">1</span><span class="p">});</span>
+<span class="n">mb</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">sortedslicetimes</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">diff</span><span class="p">(</span><span class="n">sortedslicetimes</span><span class="p">)</span><span class="o">~=</span><span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">slspec</span> <span class="o">=</span> <span class="n">reshape</span><span class="p">(</span><span class="n">sindx</span><span class="p">,[</span><span class="n">mb</span> <span class="n">length</span><span class="p">(</span><span class="n">sindx</span><span class="p">)</span><span class="o">/</span><span class="n">mb</span><span class="p">])</span><span class="s1">&#39;-1;</span>
+<span class="n">dlmwrite</span><span class="p">(</span><span class="s1">&#39;my_slspec.txt&#39;</span><span class="p">,</span><span class="n">slspec</span><span class="p">,</span><span class="s1">&#39;delimiter&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="s1">&#39;precision&#39;</span><span class="p">,</span><span class="s1">&#39;</span><span class="si">%3d</span><span class="s1">&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Although the protocol and the <em>MultibandAccelerationFactor</em> field of json file indicate that a multi-band factor of 2 was applied, <em>SliceTiming</em> recorded in DICOM/json seems to indicate it was an interleaved acquisition without simultaneous multi-slices.</p>
+<p><strong>Current solusion</strong>: We presume the <em>SliceTiming</em> field gives accurate data, i.e., data were acquired in an interleaved manner without simultaneous multi-slices. We still supply the <em>my_slspec.txt</em> file generated by the above code, although it will be a single column indicating slice order (i.e., single band). We also set <em>–ol_type</em> option to <em>both</em>, although there’s only a single multi-band group. In the future, if multi-band is confirmed, simply replace the my_slspec.txt file to reflect this, and other parts do not need to be changed. However, note that <em>–mporder</em> value needs to be changed if multi-band is confirmed.</p>
+</div>
+<ul class="simple">
+<li><p><em>–ol_type=both</em>: This option defines how outliers are assessed. <em>both</em> means that the program will consider an multi-band group as the unit, but additionally looks for slice-wise outliers. This is to find single slices within a group that has been affected by pulsatile movement not affecting the other slices.</p></li>
+<li><p><em>–mporder=19</em>: This option is related to slice-to-volume motion correction. Since this correction is time-consuming, it is <a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide#A--mporder">recommended</a> to set the value in the range of N/4 to N/2, where N is the number of excitations per volume. The number of excitations is equivalent to number of slices for single band data, and should divide by multi-band factor for multi-band data. For example an MB/SMS factor of 3 means that you acquired 3 slices for each excitation. If you for example have 63 slices and an MB/SMS factor of 3 it means that you have 21 excitations (<a class="reference external" href="https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1712&amp;L=FSL&amp;P=R34891">Reference</a>). Since we have 74 slices and assume it is single band (no simultaneous multi-slices), this value is now set to 19.</p></li>
+<li><p><em>–s2v_niter=8</em>: This option defines number of iterations for estimating slice-to-volume movement parameters. 5-10 iterations gives good results, with small advantage of 10 over 5. Slice-to-volume is time-consuming.</p></li>
+<li><p><em>–s2v_lambda=5</em>: This option determines the strength of temporal regularisation of the estimated movement parameters. This is especially important for single-band data with “empty” slices at the top/bottom of the FOV. Values in the range 1–10 give good results.</p></li>
+<li><p><em>–s2v_interp=trilinear</em>: This option determines the interpolation model in the slice-direction for the estimation of the slice-to-volume movement parameters. <em>spline</em> is theoretically a better interpolation method. However, little advantage is observed during tests conducted by FSL group. Therefore, <em>trilinear</em> is recommanded. For the final re-sampling, spline is always used regardless of how –s2v_interp is set.</p></li>
+<li><p><em>–data_is_shelled</em>: By default, <em>eddy</em> will check input data is single- or multi-shell diffusion data, i.e., not diffusion spectrum imaging data. The checking is performed through a set of heuristics such as i) how many shells are there? ii) what are the absolute numbers of directions for each shell? iii) what are the relative numbers of directions for each shell? etc. It will for example be suspicious of too many shells, too few directions for one of the shells etc. It has emerged that some popular schemes get caught in this test. Some groups will for example acquire a “mini shell” with low b-value and few directions and that has failed to pass the “check”, even though it turns out eddy works perfectly well on the data. For VCI and MAS2 data, there are a small number of volumes acquired at B1=1950 or B1=2950. Therefore, to prevent eddy from failing, <em>–data_is_shelled</em> flag is set.</p></li>
+<li><p><em>–flm=quadratic</em>: This option specifies how complicated we believe the eddy current-induced fields may be. Possible inputs include <em>linear</em>, <em>quadratic</em>, and <em>cubic</em>. <em>linear</em> and <em>quadratic</em> were found to be successful in most cases. HCP data requires <em>quadratic</em>. Some more explanations are <a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide#A--flm">here</a>.</p></li>
+<li><p><em>–slm=linear</em>: This second level model (slm) specifies the mathematical form for how the diffusion gradients cause eddy currents. For high quality data with 60 directions, or more, sampled on the whole sphere FSL group did not find any advantage of performing second level modelling. Hence recommendation for such data is to use none, and that is also the default. If the data has quite few directions and/or it has not been sampled on the whole sphere it can be advantageous to specify <em>–slm=linear</em>. Since VCI and MAS2 data did not semple low B1 shells very well (see figure below. The code to generate the figure follows.), we use <em>–slm=linear</em> option.</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/dwi_gradients.png"><img alt="_images/dwi_gradients.png" src="_images/dwi_gradients.png" style="width: 600px;" /></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bvec_AP1</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s1">&#39;AP_BLOCK_1_DIFFUSION_30DIR_20230721150610_27001.bvec&#39;</span><span class="p">);</span>
+<span class="n">bval_AP1</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s1">&#39;AP_BLOCK_1_DIFFUSION_30DIR_20230721150610_27001.bval&#39;</span><span class="p">);</span>
+<span class="n">bvec_AP2</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s1">&#39;AP_BLOCK_2_DIFFUSION_30DIR_20230721150610_35001.bvec&#39;</span><span class="p">);</span>
+<span class="n">bval_AP2</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s1">&#39;AP_BLOCK_2_DIFFUSION_30DIR_20230721150610_35001.bval&#39;</span><span class="p">);</span>
+<span class="n">bvec_PA1</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s1">&#39;PA_BLOCK_1_DIFFUSION_30DIR_20230721150610_43001.bvec&#39;</span><span class="p">);</span>
+<span class="n">bval_PA1</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s1">&#39;PA_BLOCK_1_DIFFUSION_30DIR_20230721150610_43001.bval&#39;</span><span class="p">);</span>
+<span class="n">bvec_PA2</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s1">&#39;PA_BLOCK_2_DIFFUSION_30DIR_20230721150610_51001.bvec&#39;</span><span class="p">);</span>
+<span class="n">bval_PA2</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s1">&#39;PA_BLOCK_2_DIFFUSION_30DIR_20230721150610_51001.bval&#39;</span><span class="p">);</span>
+
+<span class="n">bvecs</span> <span class="o">=</span> <span class="p">[</span><span class="n">bvec_AP1</span> <span class="n">bvec_AP2</span> <span class="n">bvec_PA1</span> <span class="n">bvec_PA2</span><span class="p">];</span>
+<span class="n">bvals</span> <span class="o">=</span> <span class="p">[</span><span class="n">bval_AP1</span> <span class="n">bval_AP2</span> <span class="n">bval_PA1</span> <span class="n">bval_PA2</span><span class="p">];</span>
+<span class="n">bvecs_bvals</span> <span class="o">=</span> <span class="p">[</span><span class="n">bvecs</span><span class="p">;</span><span class="n">bvals</span><span class="p">];</span>
+
+<span class="n">bvecs_B1000</span> <span class="o">=</span> <span class="n">bvecs_bvals</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="n">bvecs_bvals</span><span class="p">(</span><span class="mi">4</span><span class="p">,:)</span><span class="o">==</span><span class="mi">1000</span><span class="p">);</span>
+<span class="n">bvecs_B2000</span> <span class="o">=</span> <span class="n">bvecs_bvals</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="n">bvecs_bvals</span><span class="p">(</span><span class="mi">4</span><span class="p">,:)</span><span class="o">==</span><span class="mi">2000</span> <span class="o">|</span> <span class="n">bvecs_bvals</span><span class="p">(</span><span class="mi">4</span><span class="p">,:)</span><span class="o">==</span><span class="mi">1950</span><span class="p">);</span>
+<span class="n">bvecs_B3000</span> <span class="o">=</span> <span class="n">bvecs_bvals</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="n">bvecs_bvals</span><span class="p">(</span><span class="mi">4</span><span class="p">,:)</span><span class="o">==</span><span class="mi">3000</span> <span class="o">|</span> <span class="n">bvecs_bvals</span><span class="p">(</span><span class="mi">4</span><span class="p">,:)</span><span class="o">==</span><span class="mi">2950</span><span class="p">);</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="n">tiledlayout</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+<span class="n">nexttile</span>
+<span class="n">plot3</span><span class="p">(</span><span class="n">bvecs_B1000</span><span class="p">(</span><span class="mi">1</span><span class="p">,:),</span><span class="n">bvecs_B1000</span><span class="p">(</span><span class="mi">2</span><span class="p">,:),</span><span class="n">bvecs_B1000</span><span class="p">(</span><span class="mi">3</span><span class="p">,:),</span><span class="s1">&#39;*r&#39;</span><span class="p">);</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;B1000&#39;</span><span class="p">);</span>
+<span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span><span class="p">]);</span>
+<span class="n">axis</span> <span class="n">vis3d</span><span class="p">;</span>
+<span class="n">rotate3d</span><span class="p">;</span>
+
+<span class="n">nexttile</span>
+<span class="n">plot3</span><span class="p">(</span><span class="n">bvecs_B2000</span><span class="p">(</span><span class="mi">1</span><span class="p">,:),</span><span class="n">bvecs_B2000</span><span class="p">(</span><span class="mi">2</span><span class="p">,:),</span><span class="n">bvecs_B2000</span><span class="p">(</span><span class="mi">3</span><span class="p">,:),</span><span class="s1">&#39;*r&#39;</span><span class="p">);</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;B2000&#39;</span><span class="p">);</span>
+<span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span><span class="p">]);</span>
+<span class="n">axis</span> <span class="n">vis3d</span><span class="p">;</span>
+<span class="n">rotate3d</span><span class="p">;</span>
+
+<span class="n">nexttile</span>
+<span class="n">plot3</span><span class="p">(</span><span class="n">bvecs_B3000</span><span class="p">(</span><span class="mi">1</span><span class="p">,:),</span><span class="n">bvecs_B3000</span><span class="p">(</span><span class="mi">2</span><span class="p">,:),</span><span class="n">bvecs_B3000</span><span class="p">(</span><span class="mi">3</span><span class="p">,:),</span><span class="s1">&#39;*r&#39;</span><span class="p">);</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;B3000&#39;</span><span class="p">);</span>
+<span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span><span class="p">]);</span>
+<span class="n">axis</span> <span class="n">vis3d</span><span class="p">;</span>
+<span class="n">rotate3d</span><span class="p">;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><em>–estimate_move_by_susceptibility</em>: Specifies that eddy shall attempt to estimate how the susceptibility-induced field changes when the subject moves in the scanner. FSL recommends it is used when scanning populations that move “more than average”, such as babies, children or other subjects that have difficulty remaining still. It can also be needed for studies with long total scan times, such that even in corporative subjects the total range of movement can become big.</p></li>
+<li><p><em>–cnr_maps</em>: This will generate <em>my_eddy_output.eddy_cnr_maps</em>. This is a 4D image file with N+1 volumes where N is the number of non-zero b-value shells. The first volume contains the voxelwise SNR for the b=0 shell and the remaining volumes contain the voxelwise CNR (Contrast to Noise Ratio) for the non-zero b-shells in order of ascending b-value. For example if your data consists of 5 b=0, 48 b=1000 and 64 b=2000 volumes, my_eddy_output.eddy_cnr_maps will have three volumes where the first is the SNR for the b=0 volumes, followed by CNR maps for b=1000 and b=2000. The SNR for the b=0 shell is defined as mean(b0)/std(b0). The CNR for the DWI shells is defined as std(GP)/std(res) where std is the standard deviation of the Gaussian Process (GP) predictions and std(res) is the standard deviation of the residuals (the difference between the observations and the GP predictions). The my_eddy_output.eddy_cnr_maps can be useful for assessing the overall quality of the data.</p></li>
+</ul>
+</li>
+<li><p><em>-readout_time 0.052</em>: This option provides total time required for the EPI readout train (<a class="reference external" href="https://mrtrix.readthedocs.io/en/dev/concepts/pe_scheme.html?highlight=readout%20time">Reference</a>). Specifically the time between the centre of the 1st echo, and centre of the last echo, in the train. This is sometimes referred to as the “FSL definition”. It should be defined in seconds. <em>This corresponds to the fourth number in acqparam.txt</em> (see <a class="reference external" href="https://mrtrix.readthedocs.io/en/dev/concepts/pe_scheme.html?highlight=readout%20time">Variable phase encoding section of this link</a>. The calculation of this readout time is detailed in <a class="reference external" href="https://lcni.uoregon.edu/wiki/tags/fmri/">Effection echo spacing and total readout time section of this website</a>. 0.052 seconds is the total readout time for VCI and MAS2 data (see <a class="reference internal" href="#generating-acqparam">Generating acqparam</a> for the calculation). Note that the calculation was based on SPM definition which should be very close to FSL definition. <a class="reference external" href="https://idoimaging.com/programs/214">MRConvert</a> can report values from both definitions.</p></li>
+<li><p>Note that <em>-align_seepi</em> option is advocated, to ensure the 1st volume in the series provided to top up is also the 1st volume in series provided to eddy, guaranteeing alignment. However, this requires the image contrast of the opposing PE B0’s provided to -se_epi option matching B0 volumes in the input DWI series, meaning equivalent TR, TE, and flip angle (also note that multi-band factors between two images may lead to differences in TR). However, this is not the case in VCI/MAS2. Therefore, discarding <em>-align_seepi</em>.</p></li>
+<li><p><em>-nocleanup</em> option will keep all intermediate files for examination. This is optional.</p></li>
+<li><p><em>-force</em> to overwrite previous results.</p></li>
+<li><p>The final <em>dwifslpreproc</em> reads as follow:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">AP_eddy_QC</span> <span class="n">PA_eddy_QC</span>
+
+<span class="n">dwifslpreproc</span> <span class="n">AP_den_unr</span><span class="o">.</span><span class="n">mif</span> <span class="n">AP_den_unr_preproc</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">rpe_pair</span> <span class="o">-</span><span class="n">se_epi</span> <span class="n">AP</span><span class="o">-</span><span class="n">then</span><span class="o">-</span><span class="n">PA_B0_pair</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">pe_dir</span> <span class="n">AP</span> <span class="o">-</span><span class="n">eddy_options</span> <span class="s2">&quot; --repol --niter=8 --fwhm==10,6,4,2,0,0,0,0 --ol_type=both --mporder=19 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --data_is_shelled --flm=quadratic --slm=linear --estimate_move_by_susceptibility --cnr_maps&quot;</span> <span class="o">-</span><span class="n">eddy_slspec</span> <span class="n">my_slspec</span><span class="o">.</span><span class="n">txt</span> <span class="o">-</span><span class="n">eddyqc_all</span> <span class="n">AP_eddy_QC</span> <span class="o">-</span><span class="n">nocleanup</span> <span class="o">-</span><span class="n">readout_time</span> <span class="mf">0.052</span> <span class="o">-</span><span class="n">force</span>
+
+<span class="n">dwifslpreproc</span> <span class="n">PA_den_unr</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA_den_unr_preproc</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">rpe_pair</span> <span class="o">-</span><span class="n">se_epi</span> <span class="n">PA</span><span class="o">-</span><span class="n">then</span><span class="o">-</span><span class="n">AP_B0_pair</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">pe_dir</span> <span class="n">PA</span> <span class="o">-</span><span class="n">eddy_options</span> <span class="s2">&quot; --repol --niter=8 --fwhm==10,6,4,2,0,0,0,0 --ol_type=both --mporder=19 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --data_is_shelled --flm=quadratic --slm=linear --estimate_move_by_susceptibility --cnr_maps&quot;</span> <span class="o">-</span><span class="n">eddy_slspec</span> <span class="n">my_slspec</span><span class="o">.</span><span class="n">txt</span> <span class="o">-</span><span class="n">eddyqc_all</span> <span class="n">PA_eddy_QC</span> <span class="o">-</span><span class="n">nocleanup</span> <span class="o">-</span><span class="n">readout_time</span> <span class="mf">0.052</span> <span class="o">-</span><span class="n">force</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Here, we run topup and eddy correction on DWI data acquired in AP and PA PE directions separately. Theoretically, the next step is to merge AP and PA parts into a single DWI data file for further analyses. However, I found this step was challenging, because 1) there may be subject movement between AP and PA parts, and 2) I am not sure how to rotate bvecs after coregistering the AP and PA datasets (see <a class="reference internal" href="#to-dos">To_dos</a>).</p>
+</section>
+</section>
+<section id="use-this-combining-data-of-all-pe-s-and-process-in-one-go">
+<h4>[USE THIS] Combining data of all PE’s and process in one go<a class="headerlink" href="#use-this-combining-data-of-all-pe-s-and-process-in-one-go" title="Link to this heading"></a></h4>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Inspired by <a class="reference external" href="https://community.mrtrix.org/t/rotating-bvecs-after-correction-for-susceptibility-induced-distortions-using-t1/2718/2">this MRtrix thread</a> (this is a very relevant example to our data), and slightly by <a class="reference external" href="https://community.mrtrix.org/t/beginner-combining-two-hardi-acquisitions/1023/5">this thread</a>, we now switch to combining all DWI data, no matter it was acquired in AP or PA PE, and let MRtrix’s <em>dwifslpreproc</em> to figure out everything.</p>
+</div>
+<section id="option-1-preprocessing-convert-dicom-data">
+<h5>[OPTION 1] Preprocessing - Convert DICOM data<a class="headerlink" href="#option-1-preprocessing-convert-dicom-data" title="Link to this heading"></a></h5>
+<div class="admonition warning" id="slice-location-error-of-mrtrix">
+<p class="admonition-title">Warning</p>
+<p>Note that it seems DWI data transferred from scanner to Flywheel will lose some info, and are not compatible with MRtrix. Some observed issues include: 1) error of “slice position information missing from DICOM header!” when using mrconvert/mrinfo/mrcat to convert/view DICOM data downloaded from Flywheel, and 2) mif converted from data downloaded from Flywheel has more than 4 dimentions, and gives error of “contains more than 4 dimensions” when concatenate with other mif. By using mrinfo to view the header, dimension is 122 x 122 x 1 x 74 x 9, while 122 x 122 x 74 x 31 is expected. These errors led me to work around it using the following methods and data copied from scanner to a portable hard drive.</p>
+<dl class="simple">
+<dt><strong>Update 02/08/2023:</strong></dt><dd><ul class="simple">
+<li><p><em>Email 1 from Ralf</em>: The files were accidentally exported using DICOM version 2 to portable hard drive. The data exported to Flywheel are DICOM verison 3, which will be consistently exported in the future.</p></li>
+<li><p><em>Email 2 from Ralf</em>: The field “SliceLocation” (0020,1041) (i.e., the field that is missing in data from Flywheel which was the reason for the error of missing slice position information when running mrconvert.) is an older field, and not supported anymore in new DICOM versions (David Clunie, the DICOM guru/boss discourages its use). It is not – and never was – well defined. Siemens used it in the past but with the introduction of ‘moving table’ they ran into trouble of it’s use. You should always calculate the position from (0020,0032). The information, however, is not lost. Siemens couldn’t quite let go of it. You can get it from the private tag: (0021,1188).</p></li>
+<li><p>Need to confirm with MRtrix people. Ralf suggested siting <a class="reference external" href="https://discourse.itk.org/t/whats-the-meaning-of-slice-location-0020-1041/4277">this</a> TKL/ITK discussion where David Clunie chimed in.</p></li>
+</ul>
+</dd>
+</dl>
+</div>
+<p>Use <em>3D Slicer</em> to extract series with the following series description to a specific folder, e.g., <em>3DslicerExtractedDWI</em>.</p>
+<ul class="simple">
+<li><p>PA_FMAP_for DIFFUSION</p></li>
+<li><p>AP_FMAP_for DIFFUSION</p></li>
+<li><p>AP_BLOCK_1_DIFFUSION_30DIR</p></li>
+<li><p>AP_BLOCK_2_DIFFUSION_30DIR</p></li>
+<li><p>PA_BLOCK_1_DIFFUSION_30DIR</p></li>
+<li><p>PA_BLOCK_2_DIFFUSION_30DIR</p></li>
+</ul>
+<p>Use the following commands to convert DICOM to MIF:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mrconvert</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="mi">3</span><span class="n">DslicerExtractedDWI</span> <span class="n">PA_B0</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrconvert</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="mi">3</span><span class="n">DslicerExtractedDWI</span> <span class="n">AP_B0</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrconvert</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="mi">3</span><span class="n">DslicerExtractedDWI</span> <span class="n">AP_1</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrconvert</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="mi">3</span><span class="n">DslicerExtractedDWI</span> <span class="n">AP_2</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrconvert</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="mi">3</span><span class="n">DslicerExtractedDWI</span> <span class="n">PA_1</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrconvert</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="mi">3</span><span class="n">DslicerExtractedDWI</span> <span class="n">PA_2</span><span class="o">.</span><span class="n">mif</span>
+</pre></div>
+</div>
+<p>Each <em>mrconvert</em> command will generate the following output in the shell:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>mrconvert: [.   ] scanning DICOM folder &quot;/srv/scrat...2pilot/3DslicerExtractedDWI&quot;...
+mrconvert: [WARNING] mismatched series number and UID - this may cause problems with series grouping
+mrconvert: [done] scanning DICOM folder &quot;/srv/scrat...2pilot/3DslicerExtractedDWI&quot;
+Select series (&#39;q&#39; to abort):
+   0 -  240 MR images 15:50:05 PA_FMAP_for DIFFUSION (*epse2d1_86) [25001] ORIGINAL PRIMARY M ND NORM MFSPLIT
+   1 -  240 MR images 15:50:42 AP_FMAP_for DIFFUSION (*epse2d1_86) [26001] ORIGINAL PRIMARY M ND NORM MFSPLIT
+   2 - 2294 MR images 15:51:51 AP_BLOCK_1_DIFFUSION_30DIR (*ep_b0) [27001] ORIGINAL PRIMARY DIFFUSION NONE ND NORM MFSPLIT
+   3 - 2294 MR images 15:54:44 AP_BLOCK_2_DIFFUSION_30DIR (*ep_b0) [35001] ORIGINAL PRIMARY DIFFUSION NONE ND NORM MFSPLIT
+   4 - 2294 MR images 15:57:37 PA_BLOCK_1_DIFFUSION_30DIR (*ep_b0) [43001] ORIGINAL PRIMARY DIFFUSION NONE ND NORM MFSPLIT
+   5 - 2294 MR images 16:00:29 PA_BLOCK_2_DIFFUSION_30DIR (*ep_b0) [51001] ORIGINAL PRIMARY DIFFUSION NONE ND NORM MFSPLIT
+?
+</pre></div>
+</div>
+<p>Select corresponding series number for the mrconvert call. For example, when converting PA_B0.mif, select 0. When converting AP_B0, select 1, and so on.</p>
+<p>Then, concatenate all DWI data into a single file, and all additionally acquired B0’s into a single file:</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>When dwicat B0’s in different PE, an error of no gradient table with B0’s will raise. B0 DICOM’s do not have gradient table stored. We manually add this info, i.e., all zeros. In addition, phase encoding tables are missing from mif header for both B0’s and DWI. We’ll also add those. For reasons why “0 -1 0 0.052” for AP and “0 1 0 0.052” for PA were set, refer to <a class="reference internal" href="#generating-acqparam">Generating acqparam</a>.</p>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># merge DWI datasets</span>
+<span class="n">dwicat</span> <span class="n">AP_1</span><span class="o">.</span><span class="n">mif</span> <span class="n">AP_2</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA_1</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA_2</span><span class="o">.</span><span class="n">mif</span> <span class="n">dwi_noPEtab</span><span class="o">.</span><span class="n">mif</span>
+
+<span class="c1"># Gradient table and PE table for B0&#39;s</span>
+<span class="n">echo</span> <span class="s2">&quot;0 0 0 0&quot;</span> <span class="o">&gt;</span> <span class="n">tempGradTab</span><span class="o">.</span><span class="n">bvec</span>
+<span class="n">echo</span> <span class="s2">&quot;0 0 0 0&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">tempGradTab</span><span class="o">.</span><span class="n">bvec</span>
+<span class="n">echo</span> <span class="s2">&quot;0 0 0 0&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">tempGradTab</span><span class="o">.</span><span class="n">bvec</span>
+
+<span class="n">echo</span> <span class="s2">&quot;0 0 0 0&quot;</span> <span class="o">&gt;</span> <span class="n">tempGradTab</span><span class="o">.</span><span class="n">bval</span>
+
+<span class="p">[</span> <span class="o">-</span><span class="n">f</span> <span class="s2">&quot;AP_pe_table_B0&quot;</span> <span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="n">AP_pe_table_B0</span><span class="p">;</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">{</span><span class="mf">1..4</span><span class="p">};</span><span class="n">do</span> <span class="n">echo</span> <span class="s2">&quot;0 -1 0 0.052&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">AP_pe_table_B0</span><span class="p">;</span><span class="n">done</span>
+<span class="p">[</span> <span class="o">-</span><span class="n">f</span> <span class="s2">&quot;PA_pe_table_B0&quot;</span> <span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="n">PA_pe_table_B0</span><span class="p">;</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">{</span><span class="mf">1..4</span><span class="p">};</span><span class="n">do</span> <span class="n">echo</span> <span class="s2">&quot;0 1 0 0.052&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">PA_pe_table_B0</span><span class="p">;</span><span class="n">done</span>
+
+<span class="n">mrconvert</span> <span class="o">-</span><span class="n">fslgrad</span> <span class="n">tempGradTab</span><span class="o">.</span><span class="n">bvec</span> <span class="n">tempGradTab</span><span class="o">.</span><span class="n">bval</span> <span class="o">-</span><span class="n">import_pe_table</span> <span class="n">AP_pe_table_B0</span> <span class="n">AP_B0</span><span class="o">.</span><span class="n">mif</span> <span class="n">AP_B0_wGradTab_wPEtab</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrconvert</span> <span class="o">-</span><span class="n">fslgrad</span> <span class="n">tempGradTab</span><span class="o">.</span><span class="n">bvec</span> <span class="n">tempGradTab</span><span class="o">.</span><span class="n">bval</span> <span class="o">-</span><span class="n">import_pe_table</span> <span class="n">PA_pe_table_B0</span> <span class="n">PA_B0</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA_B0_wGradTab_wPEtab</span><span class="o">.</span><span class="n">mif</span>
+
+<span class="n">dwicat</span> <span class="n">AP_B0_wGradTab_wPEtab</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA_B0_wGradTab_wPEtab</span><span class="o">.</span><span class="n">mif</span> <span class="n">b0</span><span class="o">.</span><span class="n">mif</span>
+
+<span class="c1"># PE table for DWI</span>
+<span class="p">[</span> <span class="o">-</span><span class="n">f</span> <span class="s2">&quot;AP_pe_table&quot;</span> <span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="n">AP_pe_table</span><span class="p">;</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">{</span><span class="mf">1..62</span><span class="p">};</span><span class="n">do</span> <span class="n">echo</span> <span class="s2">&quot;0 -1 0 0.052&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">AP_pe_table</span><span class="p">;</span><span class="n">done</span>
+<span class="p">[</span> <span class="o">-</span><span class="n">f</span> <span class="s2">&quot;PA_pe_table&quot;</span> <span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="n">PA_pe_table</span><span class="p">;</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">{</span><span class="mf">1..62</span><span class="p">};</span><span class="n">do</span> <span class="n">echo</span> <span class="s2">&quot;0 1 0 0.052&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">PA_pe_table</span><span class="p">;</span><span class="n">done</span>
+
+<span class="n">cat</span> <span class="n">AP_pe_table</span> <span class="o">&gt;</span> <span class="n">pe_table</span>
+<span class="n">cat</span> <span class="n">PA_pe_table</span> <span class="o">&gt;&gt;</span> <span class="n">pe_table</span>
+
+<span class="n">mrconvert</span> <span class="o">-</span><span class="n">import_pe_table</span> <span class="n">pe_table</span> <span class="n">dwi_noPEtab</span><span class="o">.</span><span class="n">mif</span> <span class="n">dwi</span><span class="o">.</span><span class="n">mif</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="https://mrtrix.readthedocs.io/en/dev/reference/commands/dwicat.html">dwicat</a> is used to automatically adjust for differences in intensity scaling. This is now preperred approach to concatenate data over <em>mrcat</em>.</p>
+</section>
+<section id="option-2-preprocessing-convert-dicom-data">
+<h5>[OPTION 2] Preprocessing - Convert DICOM data<a class="headerlink" href="#option-2-preprocessing-convert-dicom-data" title="Link to this heading"></a></h5>
+<p>I noticed the JSON files associated with NIFTI files that had been automatically exported to Flywheel, and stored in the same folder as the DOCIM files, have correct slice timing information. Therefore, the current strategy is to assemble the MIF file using those NIFTI and associated JSON files. Note that all <a href="#id8"><span class="problematic" id="id9">*</span></a>.nii.gz, <a href="#id10"><span class="problematic" id="id11">*</span></a>.bval, <a href="#id12"><span class="problematic" id="id13">*</span></a>.bvec, and <a href="#id14"><span class="problematic" id="id15">*</span></a>.json are copied from DICOM folders.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># convert DWI data</span>
+<span class="n">mrconvert</span> <span class="o">-</span><span class="n">json_import</span> <span class="n">AP_1</span><span class="o">.</span><span class="n">json</span> <span class="o">-</span><span class="n">fslgrad</span> <span class="n">AP_1</span><span class="o">.</span><span class="n">bvec</span> <span class="n">AP_1</span><span class="o">.</span><span class="n">bval</span> <span class="n">AP_1</span><span class="o">.</span><span class="n">nii</span><span class="o">.</span><span class="n">gz</span> <span class="n">AP_1</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrconvert</span> <span class="o">-</span><span class="n">json_import</span> <span class="n">AP_2</span><span class="o">.</span><span class="n">json</span> <span class="o">-</span><span class="n">fslgrad</span> <span class="n">AP_2</span><span class="o">.</span><span class="n">bvec</span> <span class="n">AP_2</span><span class="o">.</span><span class="n">bval</span> <span class="n">AP_2</span><span class="o">.</span><span class="n">nii</span><span class="o">.</span><span class="n">gz</span> <span class="n">AP_2</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrconvert</span> <span class="o">-</span><span class="n">json_import</span> <span class="n">PA_1</span><span class="o">.</span><span class="n">json</span> <span class="o">-</span><span class="n">fslgrad</span> <span class="n">PA_1</span><span class="o">.</span><span class="n">bvec</span> <span class="n">PA_1</span><span class="o">.</span><span class="n">bval</span> <span class="n">PA_1</span><span class="o">.</span><span class="n">nii</span><span class="o">.</span><span class="n">gz</span> <span class="n">PA_1</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrconvert</span> <span class="o">-</span><span class="n">json_import</span> <span class="n">PA_2</span><span class="o">.</span><span class="n">json</span> <span class="o">-</span><span class="n">fslgrad</span> <span class="n">PA_2</span><span class="o">.</span><span class="n">bvec</span> <span class="n">PA_2</span><span class="o">.</span><span class="n">bval</span> <span class="n">PA_2</span><span class="o">.</span><span class="n">nii</span><span class="o">.</span><span class="n">gz</span> <span class="n">PA_2</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">dwicat</span> <span class="n">AP_1</span><span class="o">.</span><span class="n">mif</span> <span class="n">AP_2</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA_1</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA_2</span><span class="o">.</span><span class="n">mif</span> <span class="n">dwi</span><span class="o">.</span><span class="n">mif</span>
+
+<span class="c1"># convert B0</span>
+<span class="n">echo</span> <span class="s2">&quot;0 0 0 0&quot;</span> <span class="o">&gt;</span> <span class="n">tempGradTab</span><span class="o">.</span><span class="n">bvec</span>
+<span class="n">echo</span> <span class="s2">&quot;0 0 0 0&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">tempGradTab</span><span class="o">.</span><span class="n">bvec</span>
+<span class="n">echo</span> <span class="s2">&quot;0 0 0 0&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">tempGradTab</span><span class="o">.</span><span class="n">bvec</span>
+<span class="n">echo</span> <span class="s2">&quot;0 0 0 0&quot;</span> <span class="o">&gt;</span> <span class="n">tempGradTab</span><span class="o">.</span><span class="n">bval</span>
+<span class="n">mrconvert</span> <span class="o">-</span><span class="n">fslgrad</span> <span class="n">tempGradTab</span><span class="o">.</span><span class="n">bvec</span> <span class="n">tempGradTab</span><span class="o">.</span><span class="n">bval</span> <span class="o">-</span><span class="n">json_import</span> <span class="n">AP_B0</span><span class="o">.</span><span class="n">json</span> <span class="n">AP_B0</span><span class="o">.</span><span class="n">nii</span><span class="o">.</span><span class="n">gz</span> <span class="n">AP_B0</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">mrconvert</span> <span class="o">-</span><span class="n">fslgrad</span> <span class="n">tempGradTab</span><span class="o">.</span><span class="n">bvec</span> <span class="n">tempGradTab</span><span class="o">.</span><span class="n">bval</span> <span class="o">-</span><span class="n">json_import</span> <span class="n">PA_B0</span><span class="o">.</span><span class="n">json</span> <span class="n">PA_B0</span><span class="o">.</span><span class="n">nii</span><span class="o">.</span><span class="n">gz</span> <span class="n">PA_B0</span><span class="o">.</span><span class="n">mif</span>
+<span class="n">dwicat</span> <span class="n">AP_B0</span><span class="o">.</span><span class="n">mif</span> <span class="n">PA_B0</span><span class="o">.</span><span class="n">mif</span> <span class="n">b0</span><span class="o">.</span><span class="n">mif</span>
+</pre></div>
+</div>
+</section>
+<section id="preprocessing-denoising">
+<h5>Preprocessing - Denoising<a class="headerlink" href="#preprocessing-denoising" title="Link to this heading"></a></h5>
+<p>To estimate the spatially varying noise map.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dwidenoise</span> <span class="o">-</span><span class="n">nthreads</span> <span class="mi">8</span> <span class="o">-</span><span class="n">force</span> <span class="n">dwi</span><span class="o">.</span><span class="n">mif</span> <span class="n">dwi_den</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">noise</span> <span class="n">noise</span><span class="o">.</span><span class="n">mif</span>
+
+<span class="n">mrcalc</span> <span class="n">dwi</span><span class="o">.</span><span class="n">mif</span> <span class="n">dwi_den</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">subtract</span> <span class="n">residual</span><span class="o">.</span><span class="n">mif</span>   <span class="c1"># calculate difference btw raw and denoised iamges</span>
+<span class="n">mrview</span> <span class="n">noise</span><span class="o">.</span><span class="n">mif</span> <span class="n">residual</span><span class="o">.</span><span class="n">mif</span>
+</pre></div>
+</div>
+<p>Using MRView, we can visualise the noise and difference maps. Use <em>page up/done</em> key to change between the displayed images.</p>
+<a class="reference internal image-reference" href="_images/noise.png"><img alt="_images/noise.png" src="_images/noise.png" style="width: 400px;" /></a>
+<a class="reference internal image-reference" href="_images/residual.png"><img alt="_images/residual.png" src="_images/residual.png" style="width: 400px;" /></a>
+</section>
+<section id="preprocessing-unringing">
+<h5>Preprocessing - Unringing<a class="headerlink" href="#preprocessing-unringing" title="Link to this heading"></a></h5>
+<p>To remove Gibb’s ringing artefacts.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mrdegibbs</span> <span class="n">dwi_den</span><span class="o">.</span><span class="n">mif</span> <span class="n">dwi_den_unr</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">axes</span> <span class="mi">0</span><span class="p">,</span><span class="mi">1</span>
+
+<span class="c1"># -axes is used to inform the plane the data were acquired.</span>
+<span class="c1"># -axes 0,1 refers to axial slices. This is VCI/MAS2 slice direction.</span>
+<span class="c1"># -axes 0,2 refers to coronal slices.</span>
+<span class="c1"># -axes 1,2 refers to sagittal slices.</span>
+</pre></div>
+</div>
+<p>We can then calculate the difference between the denoised image and the unringed image, and visualise the images.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mrcalc</span> <span class="n">dwi_den</span><span class="o">.</span><span class="n">mif</span> <span class="n">dwi_den_unr</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">subtract</span> <span class="n">residual_unringed</span><span class="o">.</span><span class="n">mif</span>
+
+<span class="n">mrview</span> <span class="n">dwi_den_unr</span><span class="o">.</span><span class="n">mif</span> <span class="n">residual_unringed</span><span class="o">.</span><span class="n">mif</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/dwi_den_unr.png"><img alt="_images/dwi_den_unr.png" src="_images/dwi_den_unr.png" style="width: 400px;" /></a>
+<a class="reference internal image-reference" href="_images/residual_unringed.png"><img alt="_images/residual_unringed.png" src="_images/residual_unringed.png" style="width: 400px;" /></a>
+</section>
+<section id="preprocessing-motion-and-distortion-correction">
+<h5>Preprocessing - Motion and distortion correction<a class="headerlink" href="#preprocessing-motion-and-distortion-correction" title="Link to this heading"></a></h5>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that slice-to-volume motion correction is only available for CUDA version of eddy. Suggest running on GRID workstation at CHeBA where eddy_cuda is already configured.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>BATMAN tutorial said that order matters here - MRtrix requires the first image to be the B0 in the PE direction of DWI data, and the last B0 is in reversed PE direction. However, in our case where we plan to ask MRtrix to read image header, I am not sure if we still have to follow this. To be safe, both B0 and DWI mif are organised in AP then PA order.</p>
+</div>
+<p>Several B0 images were acquired in both PE directions for VCI and MAS2 data, both within the DWI blocks and as separate sequences (refer to <a class="reference internal" href="#vci-and-mas2-dwi-data-description">VCI and MAS2 DWI data description</a>). Here our strategy is to use the separately acquired opposing PE direction B0’s to generate fieldmap to correct for EPI distortion. In MRtrix, both motion and EPI distortion corrections are carried out by using <em>dwifslpreproc</em> command, which will call FSL’s <em>eddy</em>, <em>topup</em>, and <em>applytopup</em> tools. Refer to <a class="reference external" href="https://mrtrix.readthedocs.io/en/3.0.4/dwi_preprocessing/dwifslpreproc.html">MRtrix dwifslpreproc webpage 1</a> and <a class="reference external" href="https://mrtrix.readthedocs.io/en/dev/reference/commands/dwifslpreproc.html">2</a> for more details. We include all information (gradient table, PE table) in mif header and ask dwifslpreproc to figure out everything. This essentially follows <a class="reference external" href="https://mrtrix.readthedocs.io/en/dev/reference/commands/dwifslpreproc.html#example-usages">the 3rd example in this link</a>.</p>
+<ul>
+<li><p><em>dwi_den_unr.mif</em> as input, and <em>dwi_den_unr_preproc.mif</em> as output.</p></li>
+<li><p><em>-rpe_header</em> option to specify that the PE information can be found in the image headers, and that this is the info that the script should use.</p></li>
+<li><p><em>-se_epi b0.mif</em>: This option provides an additional image series consisting of spin-echo EPI images, which is to be used exclusively by topup for estimating the inhomogeneity field (i.e. it will not form part of the output image series)</p></li>
+<li><p><em>-nocleanup</em> option will keep all intermediate files for examination. This is optional.</p></li>
+<li><p><em>-force</em> to overwrite previous results.</p></li>
+<li><p><em>-topup_options</em> to pass topup options. Refer to <a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/topup/TopupUsersGuide">FSL topup webpage</a> for the list of options.</p>
+<ul class="simple">
+<li><p>We use default settings for topup here, without customising any options.</p></li>
+</ul>
+</li>
+<li><p><em>-eddy_options</em> to pass eddy options. eddy options that need to be specified include:</p>
+<ul class="simple">
+<li><p><em>–repol</em>: Remove any slices deemed as outliers and replace them with predictions made by the Gaussian Process. Outlier is defined by <em>–ol_nstd</em>, <em>–ol_nvox</em>, <em>–ol_type</em>, <em>–ol_pos</em>, and <em>–ol_sqr</em>. If defaults are used for those options, outliers are defined as a slice whose average intensity is at least 4 SD lower than the expected intensity, where the expectation is given by the Gaussian Process prediction. FSL group’s experience and tests indicate that it is always a good idea to use <em>–repol</em> (<a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide#A--repol">Reference</a>).</p></li>
+<li><p><em>–niter=8 –fwhm=10,6,4,2,0,0,0,0</em>: Specify 8 iterations with decreasing amounts of smooth to have better chances of convergence. This is <a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/Faq#What_would_a_good_eddy_command_look_like_for_data_with_lots_of_movement.3F">recommended for data with lots of movement</a>. Another, more general, <a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide/#A--niter">recommendation</a> is to have 5 iterations with <em>–fwhm=10,0,0,0,0</em>. It means that the first iteration is run with a FWHM of 10mm, which helps that algorithm to take a big step towards the true solution. The remaining iterations are run with a FWHM of 0mm, which offers high accuracy. This was found to work well in most cases. But on he safe side, we chose the previous, more time-consuming but more accurate, option.</p></li>
+<li><p><em>–slspec=my_slspec.txt</em>: slspec file should look like <a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide#A--slspec">this</a>, and there is <a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/Faq#How_should_my_--slspec_file_look.3F">a script</a> to automatically generate this file. The same script is copied below. SPM also offers scripts and some good explanations on slice timing info (<a class="reference external" href="https://en.wikibooks.org/w/index.php?title=SPM/Slice_Timing#Slice_Order">link</a>). Other readings include <a class="reference external" href="https://practicalfmri.blogspot.com/2012/07/siemens-slice-ordering.html">this</a>. <strong>Note</strong> that <em>dwifslpreproc</em> requires <em>my_slspec.txt</em> to be passed to command through <em>–eddy_slspec</em>, instead of <em>–eddy_opions “–slspec=…”</em></p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fp</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="s1">&#39;AP_1.json&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">);</span>
+<span class="n">fcont</span> <span class="o">=</span> <span class="n">fread</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span>
+<span class="n">fclose</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span>
+<span class="n">cfcont</span> <span class="o">=</span> <span class="n">char</span><span class="p">(</span><span class="n">fcont</span><span class="s1">&#39;);</span>
+<span class="n">i1</span> <span class="o">=</span> <span class="n">strfind</span><span class="p">(</span><span class="n">cfcont</span><span class="p">,</span><span class="s1">&#39;SliceTiming&#39;</span><span class="p">);</span>
+<span class="n">i2</span> <span class="o">=</span> <span class="n">strfind</span><span class="p">(</span><span class="n">cfcont</span><span class="p">(</span><span class="n">i1</span><span class="p">:</span><span class="n">end</span><span class="p">),</span><span class="s1">&#39;[&#39;</span><span class="p">);</span>
+<span class="n">i3</span> <span class="o">=</span> <span class="n">strfind</span><span class="p">(</span><span class="n">cfcont</span><span class="p">((</span><span class="n">i1</span><span class="o">+</span><span class="n">i2</span><span class="p">):</span><span class="n">end</span><span class="p">),</span><span class="s1">&#39;]&#39;</span><span class="p">);</span>
+<span class="n">cslicetimes</span> <span class="o">=</span> <span class="n">cfcont</span><span class="p">((</span><span class="n">i1</span><span class="o">+</span><span class="n">i2</span><span class="o">+</span><span class="mi">1</span><span class="p">):(</span><span class="n">i1</span><span class="o">+</span><span class="n">i2</span><span class="o">+</span><span class="n">i3</span><span class="o">-</span><span class="mi">2</span><span class="p">));</span>
+<span class="n">slicetimes</span> <span class="o">=</span> <span class="n">textscan</span><span class="p">(</span><span class="n">cslicetimes</span><span class="p">,</span><span class="s1">&#39;</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;Delimiter&#39;</span><span class="p">,</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
+<span class="p">[</span><span class="n">sortedslicetimes</span><span class="p">,</span><span class="n">sindx</span><span class="p">]</span> <span class="o">=</span> <span class="n">sort</span><span class="p">(</span><span class="n">slicetimes</span><span class="p">{</span><span class="mi">1</span><span class="p">});</span>
+<span class="n">mb</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">sortedslicetimes</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">diff</span><span class="p">(</span><span class="n">sortedslicetimes</span><span class="p">)</span><span class="o">~=</span><span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">slspec</span> <span class="o">=</span> <span class="n">reshape</span><span class="p">(</span><span class="n">sindx</span><span class="p">,[</span><span class="n">mb</span> <span class="n">length</span><span class="p">(</span><span class="n">sindx</span><span class="p">)</span><span class="o">/</span><span class="n">mb</span><span class="p">])</span><span class="s1">&#39;-1;</span>
+<span class="n">dlmwrite</span><span class="p">(</span><span class="s1">&#39;my_slspec.txt&#39;</span><span class="p">,</span><span class="n">slspec</span><span class="p">,</span><span class="s1">&#39;delimiter&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="s1">&#39;precision&#39;</span><span class="p">,</span><span class="s1">&#39;</span><span class="si">%3d</span><span class="s1">&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The resultant slice order should look like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span>  <span class="mi">37</span>
+<span class="mi">2</span>  <span class="mi">39</span>
+<span class="mi">4</span>  <span class="mi">41</span>
+<span class="mi">6</span>  <span class="mi">43</span>
+<span class="mi">8</span>  <span class="mi">45</span>
+<span class="mi">10</span>  <span class="mi">47</span>
+<span class="mi">12</span>  <span class="mi">49</span>
+<span class="mi">14</span>  <span class="mi">51</span>
+<span class="mi">16</span>  <span class="mi">53</span>
+<span class="mi">18</span>  <span class="mi">55</span>
+<span class="mi">20</span>  <span class="mi">57</span>
+<span class="mi">22</span>  <span class="mi">59</span>
+<span class="mi">24</span>  <span class="mi">61</span>
+<span class="mi">26</span>  <span class="mi">63</span>
+<span class="mi">28</span>  <span class="mi">65</span>
+<span class="mi">30</span>  <span class="mi">67</span>
+<span class="mi">32</span>  <span class="mi">69</span>
+<span class="mi">34</span>  <span class="mi">71</span>
+<span class="mi">36</span>  <span class="mi">73</span>
+<span class="mi">1</span>  <span class="mi">38</span>
+<span class="mi">3</span>  <span class="mi">40</span>
+<span class="mi">5</span>  <span class="mi">42</span>
+<span class="mi">7</span>  <span class="mi">44</span>
+<span class="mi">9</span>  <span class="mi">46</span>
+<span class="mi">11</span>  <span class="mi">48</span>
+<span class="mi">13</span>  <span class="mi">50</span>
+<span class="mi">15</span>  <span class="mi">52</span>
+<span class="mi">17</span>  <span class="mi">54</span>
+<span class="mi">19</span>  <span class="mi">56</span>
+<span class="mi">21</span>  <span class="mi">58</span>
+<span class="mi">23</span>  <span class="mi">60</span>
+<span class="mi">25</span>  <span class="mi">62</span>
+<span class="mi">27</span>  <span class="mi">64</span>
+<span class="mi">29</span>  <span class="mi">66</span>
+<span class="mi">31</span>  <span class="mi">68</span>
+<span class="mi">33</span>  <span class="mi">70</span>
+<span class="mi">35</span>  <span class="mi">72</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Although the protocol and the <em>MultibandAccelerationFactor</em> field of json file indicate that a multi-band factor of 2 was applied, <em>SliceTiming</em> recorded in DICOM/json seems to indicate it was an interleaved acquisition without simultaneous multi-slices.</p>
+<p><strong>Old solusion</strong>: We presume the <em>SliceTiming</em> field gives accurate data, i.e., data were acquired in an interleaved manner without simultaneous multi-slices. We still supply the <em>my_slspec.txt</em> file generated by the above code, although it will be a single column indicating slice order (i.e., single band). We also set <em>–ol_type</em> option to <em>both</em>, although there’s only a single multi-band group. In the future, if multi-band is confirmed, simply replace the my_slspec.txt file to reflect this, and other parts do not need to be changed. However, note that <em>–mporder</em> value needs to be changed if multi-band is confirmed.</p>
+<p><strong>13/08/2023 update</strong>: I noticed that the NIFTI data automatically converted when exporting from scanner to Flywheel, and stored in the same folder as DICOM files contains the correct slice timing (multi-band factor = 2). See <em>my_slspec.txt</em> generated above.</p>
+</div>
+<ul class="simple">
+<li><p><em>–ol_type=both</em>: This option defines how outliers are assessed. <em>both</em> means that the program will consider an multi-band group as the unit, but additionally looks for slice-wise outliers. This is to find single slices within a group that has been affected by pulsatile movement not affecting the other slices.</p></li>
+<li><p><em>–mporder=10</em>: This option is related to slice-to-volume motion correction. Since this correction is time-consuming, it is <a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide#A--mporder">recommended</a> to set the value in the range of N/4 to N/2, where N is the number of excitations per volume. The number of excitations is equivalent to number of slices for single band data, and should divide by multi-band factor for multi-band data. For example an MB/SMS factor of 3 means that you acquired 3 slices for each excitation. If you for example have 63 slices and an MB/SMS factor of 3 it means that you have 21 excitations (<a class="reference external" href="https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1712&amp;L=FSL&amp;P=R34891">Reference</a>). Since we have 74 slices and multiband factor of 2, this value is now set to 10.</p></li>
+<li><p><em>–s2v_niter=8</em>: This option defines number of iterations for estimating slice-to-volume movement parameters. 5-10 iterations gives good results, with small advantage of 10 over 5. Slice-to-volume is time-consuming.</p></li>
+<li><p><em>–s2v_lambda=5</em>: This option determines the strength of temporal regularisation of the estimated movement parameters. This is especially important for single-band data with “empty” slices at the top/bottom of the FOV. Values in the range 1–10 give good results.</p></li>
+<li><p><em>–s2v_interp=trilinear</em>: This option determines the interpolation model in the slice-direction for the estimation of the slice-to-volume movement parameters. <em>spline</em> is theoretically a better interpolation method. However, little advantage is observed during tests conducted by FSL group. Therefore, <em>trilinear</em> is recommanded. For the final re-sampling, spline is always used regardless of how –s2v_interp is set.</p></li>
+<li><p><em>–data_is_shelled</em>: By default, <em>eddy</em> will check input data is single- or multi-shell diffusion data, i.e., not diffusion spectrum imaging data. The checking is performed through a set of heuristics such as i) how many shells are there? ii) what are the absolute numbers of directions for each shell? iii) what are the relative numbers of directions for each shell? etc. It will for example be suspicious of too many shells, too few directions for one of the shells etc. It has emerged that some popular schemes get caught in this test. Some groups will for example acquire a “mini shell” with low b-value and few directions and that has failed to pass the “check”, even though it turns out eddy works perfectly well on the data. For VCI and MAS2 data, there are a small number of volumes acquired at B1=1950 or B1=2950. Therefore, to prevent eddy from failing, <em>–data_is_shelled</em> flag is set.</p></li>
+<li><p><em>–flm=quadratic</em>: This option specifies how complicated we believe the eddy current-induced fields may be. Possible inputs include <em>linear</em>, <em>quadratic</em>, and <em>cubic</em>. <em>linear</em> and <em>quadratic</em> were found to be successful in most cases. HCP data requires <em>quadratic</em>. Some more explanations are <a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide#A--flm">here</a>.</p></li>
+<li><p><em>–slm=linear</em>: This second level model (slm) specifies the mathematical form for how the diffusion gradients cause eddy currents. For high quality data with 60 directions, or more, sampled on the whole sphere FSL group did not find any advantage of performing second level modelling. Hence recommendation for such data is to use none, and that is also the default. If the data has quite few directions and/or it has not been sampled on the whole sphere it can be advantageous to specify <em>–slm=linear</em>. Since VCI and MAS2 data did not semple low B1 shells very well (see figure below. The code to generate the figure follows.), we use <em>–slm=linear</em> option.</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/dwi_gradients.png"><img alt="_images/dwi_gradients.png" src="_images/dwi_gradients.png" style="width: 600px;" /></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bvec_AP1</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s1">&#39;AP_1.bvec&#39;</span><span class="p">);</span>
+<span class="n">bval_AP1</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s1">&#39;AP_1.bval&#39;</span><span class="p">);</span>
+<span class="n">bvec_AP2</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s1">&#39;AP_2.bvec&#39;</span><span class="p">);</span>
+<span class="n">bval_AP2</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s1">&#39;AP_2.bval&#39;</span><span class="p">);</span>
+<span class="n">bvec_PA1</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s1">&#39;PA_1.bvec&#39;</span><span class="p">);</span>
+<span class="n">bval_PA1</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s1">&#39;PA_1.bval&#39;</span><span class="p">);</span>
+<span class="n">bvec_PA2</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s1">&#39;PA_2.bvec&#39;</span><span class="p">);</span>
+<span class="n">bval_PA2</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s1">&#39;PA_2.bval&#39;</span><span class="p">);</span>
+
+<span class="n">bvecs</span> <span class="o">=</span> <span class="p">[</span><span class="n">bvec_AP1</span> <span class="n">bvec_AP2</span> <span class="n">bvec_PA1</span> <span class="n">bvec_PA2</span><span class="p">];</span>
+<span class="n">bvals</span> <span class="o">=</span> <span class="p">[</span><span class="n">bval_AP1</span> <span class="n">bval_AP2</span> <span class="n">bval_PA1</span> <span class="n">bval_PA2</span><span class="p">];</span>
+<span class="n">bvecs_bvals</span> <span class="o">=</span> <span class="p">[</span><span class="n">bvecs</span><span class="p">;</span><span class="n">bvals</span><span class="p">];</span>
+
+<span class="n">bvecs_B1000</span> <span class="o">=</span> <span class="n">bvecs_bvals</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="n">bvecs_bvals</span><span class="p">(</span><span class="mi">4</span><span class="p">,:)</span><span class="o">==</span><span class="mi">1000</span><span class="p">);</span>
+<span class="n">bvecs_B2000</span> <span class="o">=</span> <span class="n">bvecs_bvals</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="n">bvecs_bvals</span><span class="p">(</span><span class="mi">4</span><span class="p">,:)</span><span class="o">==</span><span class="mi">2000</span> <span class="o">|</span> <span class="n">bvecs_bvals</span><span class="p">(</span><span class="mi">4</span><span class="p">,:)</span><span class="o">==</span><span class="mi">1950</span><span class="p">);</span>
+<span class="n">bvecs_B3000</span> <span class="o">=</span> <span class="n">bvecs_bvals</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="n">bvecs_bvals</span><span class="p">(</span><span class="mi">4</span><span class="p">,:)</span><span class="o">==</span><span class="mi">3000</span> <span class="o">|</span> <span class="n">bvecs_bvals</span><span class="p">(</span><span class="mi">4</span><span class="p">,:)</span><span class="o">==</span><span class="mi">2950</span><span class="p">);</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="n">tiledlayout</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+<span class="n">nexttile</span>
+<span class="n">plot3</span><span class="p">(</span><span class="n">bvecs_B1000</span><span class="p">(</span><span class="mi">1</span><span class="p">,:),</span><span class="n">bvecs_B1000</span><span class="p">(</span><span class="mi">2</span><span class="p">,:),</span><span class="n">bvecs_B1000</span><span class="p">(</span><span class="mi">3</span><span class="p">,:),</span><span class="s1">&#39;*r&#39;</span><span class="p">);</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;B1000&#39;</span><span class="p">);</span>
+<span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span><span class="p">]);</span>
+<span class="n">axis</span> <span class="n">vis3d</span><span class="p">;</span>
+<span class="n">rotate3d</span><span class="p">;</span>
+
+<span class="n">nexttile</span>
+<span class="n">plot3</span><span class="p">(</span><span class="n">bvecs_B2000</span><span class="p">(</span><span class="mi">1</span><span class="p">,:),</span><span class="n">bvecs_B2000</span><span class="p">(</span><span class="mi">2</span><span class="p">,:),</span><span class="n">bvecs_B2000</span><span class="p">(</span><span class="mi">3</span><span class="p">,:),</span><span class="s1">&#39;*r&#39;</span><span class="p">);</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;B2000&#39;</span><span class="p">);</span>
+<span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span><span class="p">]);</span>
+<span class="n">axis</span> <span class="n">vis3d</span><span class="p">;</span>
+<span class="n">rotate3d</span><span class="p">;</span>
+
+<span class="n">nexttile</span>
+<span class="n">plot3</span><span class="p">(</span><span class="n">bvecs_B3000</span><span class="p">(</span><span class="mi">1</span><span class="p">,:),</span><span class="n">bvecs_B3000</span><span class="p">(</span><span class="mi">2</span><span class="p">,:),</span><span class="n">bvecs_B3000</span><span class="p">(</span><span class="mi">3</span><span class="p">,:),</span><span class="s1">&#39;*r&#39;</span><span class="p">);</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;B3000&#39;</span><span class="p">);</span>
+<span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span><span class="p">]);</span>
+<span class="n">axis</span> <span class="n">vis3d</span><span class="p">;</span>
+<span class="n">rotate3d</span><span class="p">;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><em>–estimate_move_by_susceptibility</em>: Specifies that eddy shall attempt to estimate how the susceptibility-induced field changes when the subject moves in the scanner. FSL recommends it is used when scanning populations that move “more than average”, such as babies, children or other subjects that have difficulty remaining still. It can also be needed for studies with long total scan times, such that even in corporative subjects the total range of movement can become big.</p></li>
+<li><p><em>–cnr_maps</em>: This will generate <em>my_eddy_output.eddy_cnr_maps</em>. This is a 4D image file with N+1 volumes where N is the number of non-zero b-value shells. The first volume contains the voxelwise SNR for the b=0 shell and the remaining volumes contain the voxelwise CNR (Contrast to Noise Ratio) for the non-zero b-shells in order of ascending b-value. For example if your data consists of 5 b=0, 48 b=1000 and 64 b=2000 volumes, my_eddy_output.eddy_cnr_maps will have three volumes where the first is the SNR for the b=0 volumes, followed by CNR maps for b=1000 and b=2000. The SNR for the b=0 shell is defined as mean(b0)/std(b0). The CNR for the DWI shells is defined as std(GP)/std(res) where std is the standard deviation of the Gaussian Process (GP) predictions and std(res) is the standard deviation of the residuals (the difference between the observations and the GP predictions). The my_eddy_output.eddy_cnr_maps can be useful for assessing the overall quality of the data.</p></li>
+</ul>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that <em>-align_seepi</em> option is advocated, to ensure the 1st volume in the series provided to top up is also the 1st volume in series provided to eddy, guaranteeing alignment. However, this requires the image contrast of the opposing PE B0’s provided to -se_epi option matching B0 volumes in the input DWI series, meaning equivalent TR, TE, and flip angle (also note that multi-band factors between two images may lead to differences in TR). However, this is not the case in VCI/MAS2. Therefore, discarding <em>-align_seepi</em>.</p>
+</div>
+<ul>
+<li><p>The final <em>dwifslpreproc</em> reads as follow:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">eddy_QC</span>
+
+<span class="n">dwifslpreproc</span> <span class="n">dwi_den_unr</span><span class="o">.</span><span class="n">mif</span> <span class="n">dwi_den_unr_preproc</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">nthreads</span> <span class="mi">40</span> <span class="o">-</span><span class="n">force</span> <span class="o">-</span><span class="n">rpe_header</span> <span class="o">-</span><span class="n">se_epi</span> <span class="n">b0</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">eddyqc_all</span> <span class="n">eddy_QC</span> <span class="o">-</span><span class="n">nocleanup</span> <span class="o">-</span><span class="n">eddy_slspec</span> <span class="n">my_slspec</span><span class="o">.</span><span class="n">txt</span> <span class="o">-</span><span class="n">eddy_options</span> <span class="s2">&quot; --repol --niter=8 --fwhm==10,6,4,2,0,0,0,0 --ol_type=both --mporder=10 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --data_is_shelled --flm=quadratic --slm=linear --estimate_move_by_susceptibility --cnr_maps&quot;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<figure class="align-default" id="id33">
+<a class="reference internal image-reference" href="_images/AP_before_dwifslpreproc.png"><img alt="_images/AP_before_dwifslpreproc.png" src="_images/AP_before_dwifslpreproc.png" style="width: 400px;" /></a>
+<figcaption>
+<p><span class="caption-text"><em>AP before dwifslpreproc</em></span><a class="headerlink" href="#id33" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id34">
+<a class="reference internal image-reference" href="_images/AP_after_dwifslpreproc.png"><img alt="_images/AP_after_dwifslpreproc.png" src="_images/AP_after_dwifslpreproc.png" style="width: 400px;" /></a>
+<figcaption>
+<p><span class="caption-text"><em>AP after dwifslpreproc</em></span><a class="headerlink" href="#id34" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id35">
+<a class="reference internal image-reference" href="_images/PA_before_dwifslpreproc.png"><img alt="_images/PA_before_dwifslpreproc.png" src="_images/PA_before_dwifslpreproc.png" style="width: 400px;" /></a>
+<figcaption>
+<p><span class="caption-text"><em>PA before dwifslpreproc</em></span><a class="headerlink" href="#id35" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id36">
+<a class="reference internal image-reference" href="_images/PA_after_dwifslpreproc.png"><img alt="_images/PA_after_dwifslpreproc.png" src="_images/PA_after_dwifslpreproc.png" style="width: 400px;" /></a>
+<figcaption>
+<p><span class="caption-text"><em>PA after dwifslpreproc</em></span><a class="headerlink" href="#id36" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="preprocessing-bias-field-correction">
+<h5>Preprocessing - Bias field correction<a class="headerlink" href="#preprocessing-bias-field-correction" title="Link to this heading"></a></h5>
+<p>This step performed bias field correction, aiming at improving the following brain mask estimation. However, if no strong bias fields are present in data, running this step will deteriorate brain mask estimation and result in inferior brain mask estimation. <em>Brain masks should be checked to decide whether this step should be included in the pipeline</em>. Note that the <em>ants</em> option is recommended by BATMAN tutorial for <em>dwibiascorrect</em>, and for this, ANTs needs to be installed.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dwibiascorrect</span> <span class="n">ants</span> <span class="n">dwi_den_unr_preproc</span><span class="o">.</span><span class="n">mif</span> <span class="n">dwi_den_unr_preproc_unbiased</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">bias</span> <span class="n">bias</span><span class="o">.</span><span class="n">mif</span>
+</pre></div>
+</div>
+</section>
+<section id="preprocessing-brain-mask-estimation">
+<h5>Preprocessing - Brain mask estimation<a class="headerlink" href="#preprocessing-brain-mask-estimation" title="Link to this heading"></a></h5>
+<p>This step will create a binary mask of brain. Downstream analyses will be performed within the mask to improve biological plausibility of streamlines and reduce computation time. Here, we also compare masks derived from <em>bias-corrected</em> and <em>non-bias-corrected</em> data.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dwi2mask</span> <span class="n">dwi_den_unr_preproc_unbiased</span><span class="o">.</span><span class="n">mif</span> <span class="n">mask_den_unr_preproc_unb</span><span class="o">.</span><span class="n">mif</span>  <span class="c1"># mask from bias-corrected.</span>
+<span class="n">dwi2mask</span> <span class="n">dwi_den_unr_preproc</span><span class="o">.</span><span class="n">mif</span> <span class="n">mask_den_unr_preproc</span><span class="o">.</span><span class="n">mif</span>               <span class="c1"># mask from non-bias-corrected.</span>
+
+<span class="n">mrview</span> <span class="n">dwi_den_unr_preproc</span><span class="o">.</span><span class="n">mif</span> <span class="o">-</span><span class="n">overlay</span><span class="o">.</span><span class="n">load</span> <span class="n">mask_den_unr_preproc_unb</span><span class="o">.</span><span class="n">mif</span>
+</pre></div>
+</div>
+<figure class="align-default" id="id37">
+<a class="reference internal image-reference" href="_images/dwi_for_displaying_mask.png"><img alt="_images/dwi_for_displaying_mask.png" src="_images/dwi_for_displaying_mask.png" style="width: 400px;" /></a>
+<figcaption>
+<p><span class="caption-text"><em>DWI data.</em></span><a class="headerlink" href="#id37" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id38">
+<a class="reference internal image-reference" href="_images/mask_unbiased.png"><img alt="_images/mask_unbiased.png" src="_images/mask_unbiased.png" style="width: 400px;" /></a>
+<figcaption>
+<p><span class="caption-text"><em>Mask after bias correction (mask in red superimposed onto DWI).</em></span><a class="headerlink" href="#id38" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id39">
+<a class="reference internal image-reference" href="_images/mask_non-unbiased.png"><img alt="_images/mask_non-unbiased.png" src="_images/mask_non-unbiased.png" style="width: 400px;" /></a>
+<figcaption>
+<p><span class="caption-text"><em>Mask without running bais correction (mask in red superimposed onto DWI).</em></span><a class="headerlink" href="#id39" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>We can see that the mask with bias-correction looks better. It is always a good idea to visualise the genrated mask.</p>
+<p>Now, we finish preprocessing steps, and are ready for post-processing, e.g., creating streamlines.</p>
+</section>
+<section id="fod-response-function-estimation">
+<h5>FOD - Response function estimation<a class="headerlink" href="#fod-response-function-estimation" title="Link to this heading"></a></h5>
+<p><strong>[[[[[ TO BE CONTINUED (BATMAN page 11) ]]]]]</strong></p>
+</section>
+</section>
+</section>
+<section id="troubleshooting">
+<h3>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h3>
+<ul class="simple" id="issue-with-eddy-quad">
+<li><p><em>eddy_quad</em> for eddy QC will fail in <em>dwifslpreproc</em>, and throw a warning of <code class="docutils literal notranslate"><span class="pre">dwifslpreproc:</span> <span class="pre">[WARNING]</span> <span class="pre">Error</span> <span class="pre">running</span> <span class="pre">automated</span> <span class="pre">EddyQC</span> <span class="pre">tool</span> <span class="pre">'eddy_quad';</span> <span class="pre">QC</span> <span class="pre">data</span> <span class="pre">written</span> <span class="pre">to</span> <span class="pre">&quot;/home/jiyang/Work/temp/AP_eddy_QC&quot;</span> <span class="pre">will</span> <span class="pre">be</span> <span class="pre">files</span> <span class="pre">from</span> <span class="pre">&quot;eddy&quot;</span> <span class="pre">only</span></code>. FSL version 6.0.5.2:dc6f4207.</p>
+<ul>
+<li><p><strong>Debugging:</strong> After adding <em>-nocleanup</em> option to <em>dwifslpreproc</em> command to keep all intermediate files, and running the command <code class="docutils literal notranslate"><span class="pre">eddy_quad</span> <span class="pre">dwi_post_eddy</span> <span class="pre">-idx</span> <span class="pre">eddy_indices.txt</span> <span class="pre">-par</span> <span class="pre">eddy_config.txt</span> <span class="pre">-b</span> <span class="pre">bvals</span> <span class="pre">-m</span> <span class="pre">eddy_mask.nii</span> <span class="pre">-f</span> <span class="pre">field_map.nii.gz</span> <span class="pre">-s</span> <span class="pre">slspec.txt</span></code> separately after <em>dwifslpreproc</em> finishes. It seems there is an error regarding nibabel version from what FSL wants.</p></li>
+<li><p><strong>Explain:</strong> FSL installation will create a second conda if you already have a conda installation, e.g., through installing miniconda. If you, for some other software, installed nibabel to ‘base’ environment (which by itself is a bad idea - try to start a new environment to install a new software), this may be conflicting to the Nibabel FSL wants.</p></li>
+<li><p><strong>Solution:</strong> I found deactivate ‘base’ (or any environment) of miniconda installation (leave shell without any conda env) will allow the program to run successfully. Alternatively, activating FSL’s conda should get it to work - see how you can do this in ‘Further info’ below.</p></li>
+<li><p><strong>Further info:</strong> To activate FSL’s conda, run <code class="docutils literal notranslate"><span class="pre">$FSLDIR/condabin/conda</span> <span class="pre">init</span> <span class="pre">bash</span></code>, start a new terminal and you will be in FSL’s conda. To activate miniconda’s conda, run <code class="docutils literal notranslate"><span class="pre">/path/to/miniconda3/condabin/conda</span> <span class="pre">init</span> <span class="pre">bash</span></code>, and start a new terminal. You can determine which conda you are in by looking at where the ‘base’ environment is pointing to (i.e., path to FSL or miniconda3) when running <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">env</span> <span class="pre">list</span></code>.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="to-do-list">
+<span id="to-dos"></span><h3>To-do list<a class="headerlink" href="#to-do-list" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>To interpret eddy QC metrics, and determine whether results are good/bad. Probably need to run <em>eddy_squad</em> on cohort level.</p></li>
+<li><p>Confirm with MRtrix people regarding <a class="reference internal" href="#slice-location-error-of-mrtrix">slice location error of MRtrix</a>.</p></li>
+<li><p>SMS factor = 2, but SliceTiming in DICOM header indicates an interleaved acquisition without simultaneous multi-slices.</p></li>
+<li><p>Ask why B0’s have different spatial dimension as DWI dataset.</p></li>
+<li><p>Generating MIF file from NIFTI (including bvec and bval) and JSON automatically converted whene exporting from scanner to Flywheel, and stored in the same folder as DICOM files. This is inspired by the fact that slice timing info is correct in these data, but not in data converted with dcm2niix.</p></li>
+</ul>
+</section>
+<section id="references-and-further-readings">
+<h3>References and further readings<a class="headerlink" href="#references-and-further-readings" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://osf.io/fkyht/">BATMAN tutorial for MRtrix</a> (Further readings in the appendix of BATMAN tutorial document are worth reading.)</p></li>
+<li><p><a class="reference external" href="https://bookdown.org/u0243256/tbicc/preprocessing-diffusion-images.html">University of Utah TBICC Neuroimaging Protocols</a></p></li>
+</ul>
+</section>
+<section id="appendices">
+<h3>Appendices<a class="headerlink" href="#appendices" title="Link to this heading"></a></h3>
+<section id="acqparam-txt-and-total-readout-time">
+<span id="generating-acqparam"></span><h4>acqparam.txt and total readout time<a class="headerlink" href="#acqparam-txt-and-total-readout-time" title="Link to this heading"></a></h4>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>NOTE THAT ACQPARAMS.TXT IS AUTOMATICALLY GENERATED IF YOU RUN DWIFSLPREPRROC. YOU DO NOT NEED TO PREPARE THIS BY YOURSELF. THIS PART IF FOR YOUR REFERENCE IF YOU RUN THE ORIGINAL FSL TOPUP COMMAND.</p>
+<p>To prepare <em>acqparams.txt</em> for topup correction, we need to know two things: 1) the order of PE directions in the opposing PE B0 pair, and 2) <em>BandwidthPerPixelPhaseEncode</em> field in json file or DICOM header.</p>
+<ul class="simple">
+<li><p>PE directions.</p>
+<ul>
+<li><p>For a AP PE, the <em>PhaseEncodingDirection</em> field in json file or DICOM header should be “j-”, and the first 3 digits in acqparam.txt should be “0 -1 0”.</p></li>
+<li><p>For a PA PE, the <em>PhaseEncodingDirection</em> field in json file or DICOM header should be “j”, and the first 3 digits in acqparam.txt should be “0 1 0”.</p></li>
+<li><p>The lines in acqparam.txt should reflect the order of PE directions in the opposing PE B0 pair.</p></li>
+</ul>
+</li>
+<li><p>BandwidthPerPixelPhaseEncode</p>
+<ul>
+<li><p>For VCI and MAS2 data, <em>BandwidthPerPixelPhaseEncode</em> field in json file of B0 has a value of 19.3799992. The fourth number in acqaram.txt should be 1 / 19.3799992 = 0.052. Note that this is referred to as “total readout time” in MRtrix which is total time required for the EPI readout train (<a class="reference external" href="https://mrtrix.readthedocs.io/en/dev/concepts/pe_scheme.html?highlight=readout%20time">Reference</a>). Specifically the time between the centre of the 1st echo, and centre of the last echo, in the train. This is sometimes referred to as the “FSL definition”. It should be defined in seconds. This corresponds to the fourth number in acqparam.txt (see <a class="reference external" href="https://mrtrix.readthedocs.io/en/dev/concepts/pe_scheme.html?highlight=readout%20time">Variable phase encoding section of this link</a>. The calculation of this readout time is detailed in <a class="reference external" href="https://lcni.uoregon.edu/wiki/tags/fmri/">Effection echo spacing and total readout time section of this website</a>. 0.052 seconds is the total readout time for VCI and MAS2 data (see <a class="reference internal" href="#generating-acqparam">Generating acqparam</a> for the calculation). Note that the calculation was based on SPM definition which should be very close to FSL definition. <a class="reference external" href="https://idoimaging.com/programs/214">MRConvert</a> can report values from both definitions.</p></li>
+</ul>
+</li>
+</ul>
+<p>Therefore, acqparam.txt file for VCI and MAS2 DWI data should read as:</p>
+<div class="line-block">
+<div class="line">0 -1 0 0.052</div>
+<div class="line">0 1 0 0.052</div>
+</div>
+<p>for <em>AP-then-PA_B0_pair.mif</em>, and</p>
+<div class="line-block">
+<div class="line">0 1 0 0.052</div>
+<div class="line">0 -1 0 0.052</div>
+</div>
+<p>for <em>PA-then-AP_B0_pair.mif</em>.</p>
+<p>Reference: <a class="reference external" href="https://bookdown.org/u0243256/tbicc/preprocessing-diffusion-images.html#set-acqparams.txt">https://bookdown.org/u0243256/tbicc/preprocessing-diffusion-images.html#set-acqparams.txt</a></p>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="asl_multiPLD_ExploreASL.html" class="btn btn-neutral float-left" title="Processing multi PLD ASL data from VCI and MAS2 studies using ExploreASL" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rsfmri.html" class="btn btn-neutral float-right" title="Resting-state BOLD imaging" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Graziella.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

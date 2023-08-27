@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HCP data processing &mdash; BrainMRIpipelines 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=2709fde1"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BrainMRIpipelines
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="bmp.html">Welcome to BrainMRIpipelines documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svdd.html">Cerebral Small Vessel Disease Lesion Detectors (SVD Detector)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BrainMRIpipelines</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">HCP data processing</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/hcp.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hcp-data-processing">
+<h1>HCP data processing<a class="headerlink" href="#hcp-data-processing" title="Link to this heading"></a></h1>
+<p>Note that HCP data processing was conducted on Katana. Therefore, some settings are specific to the platform. All the content can be found on <a class="reference external" href="https://github.com/Washington-University/HCPpipelines/wiki/Installation-and-Usage-Instructions">HCP Pipelines</a>, and <a class="reference external" href="https://github.com/physimals/hcp-asl">HCP ASL pipeline</a> webpages. This webpage is meant to record what I have done, what problems I encountered, and how I resolved them, for future replication and educating new students.</p>
+<section id="software-installation">
+<h2>Software installation<a class="headerlink" href="#software-installation" title="Link to this heading"></a></h2>
+<p>Our first task in HCP-Aging data is to process ASL data. The <a class="reference external" href="https://github.com/physimals/hcp-asl">ASL pipeline</a> requires prerequisites of FSL (version &gt;= 6.0.5.1), HCP workbench (version &gt;= 1.5.0), HCP pipelines, and FreeSurfer (Note that version 6.0 and 5.3.0-HCP are compatible in <a class="reference external" href="https://github.com/Washington-University/HCPpipelines/wiki/Installation-and-Usage-Instructions#prerequisites">HCP pipeline prerequisites</a>). The installation of FSL, HCP workbench, and FreeSurfer are relatively straightforward.</p>
+<p>The installation of <a class="reference external" href="https://github.com/Washington-University/HCPpipelines/wiki/Installation-and-Usage-Instructions#prerequisites">HCP pipeline requires a few prerequisites</a>. In these prerequisites, the installation of gradunwarp can follow <a class="reference external" href="https://github.com/Washington-University/gradunwarp">this page</a>. Note that <em>openblas</em> may need to be available. On Katana, this can be done by <code class="docutils literal notranslate"><span class="pre">module</span> <span class="pre">load</span> <span class="pre">openblass/0.3.21</span></code>. The installation of FSL FIX can follow <a class="reference external" href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FIX/UserGuide">this webpage</a>. In particular, R packages required by FIX can be installed by following the subsection below.</p>
+<section id="r-packages-for-fsl-fix">
+<h3>R packages for FSL FIX<a class="headerlink" href="#r-packages-for-fsl-fix" title="Link to this heading"></a></h3>
+<p>Followed instruction in the end of <a class="reference external" href="https://github.com/Washington-University/HCPpipelines/blob/master/ICAFIX/README.md">this webpage</a>. It took me a full day to get this work!!!</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>module load r/4.2.2
+export R_LIBS=/srv/scratch/cheba/Imaging/software/R_libs
+
+# Temporarily rename FSL, otherwise it will interfere with installation
+mv /srv/scratch/cheba/NiL/Software/fsl/6.0.6.5 /srv/scratch/cheba/NiL/Software/fsl/6.0.6.5_bak
+
+R
+install.packages(&#39;devtools&#39;, dependencies=TRUE)
+require (&#39;devtools&#39;)
+quit()
+
+PACKAGES=&quot;lattice_0.20-38 Matrix_1.2-15 survival_2.43-3 MASS_7.3-51.1 class_7.3-14 codetools_0.2-16 KernSmooth_2.23-15 mvtnorm_1.0-8 modeltools_0.2-22 zoo_1.8-4 sandwich_2.5-0 strucchange_1.5-1 TH.data_1.0-9 multcomp_1.4-8 coin_1.2-2 bitops_1.0-6 gtools_3.8.1 gdata_2.18.0 caTools_1.17.1.1 gplots_3.0.1 kernlab_0.9-24 ROCR_1.0-7 party_1.0-25 e1071_1.6-7 randomForest_4.6-12&quot;
+
+MIRROR=&quot;http://cloud.r-project.org&quot;
+
+for package in $PACKAGES
+do
+    wget &quot;$MIRROR&quot;/src/contrib/Archive/$(echo &quot;$package&quot; | cut -f1 -d_)/&quot;$package&quot;.tar.gz || \
+        wget &quot;$MIRROR&quot;/src/contrib/&quot;$package&quot;.tar.gz
+    R CMD INSTALL &quot;$package&quot;.tar.gz
+done
+</pre></div>
+</div>
+<p>An alternative approach is to follow the instructions in the README file in the downloaded fix.tar.gz. I haven’t tried this myself.</p>
+</section>
+</section>
+<section id="setting-environment-variables">
+<h2>Setting environment variables<a class="headerlink" href="#setting-environment-variables" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># HCP workbench
+export PATH=$PATH:/srv/scratch/cheba/Imaging/software/workbench/bin_rh_linux
+
+# HCP version of gredunwarp
+conda activate gradunwarp
+export PATH=$PATH:/srv/scratch/cheba/Imaging/software/gradunwarp-1.2.1/build/scripts.linux-x86_64-3.7
+
+# MSM_HOCR
+module load openblas/0.3.21
+export PATH=$PATH:/srv/scratch/cheba/Imaging/software
+
+# HCP pipelines
+export HCPPIPEDIR=/srv/scratch/cheba/Imaging/software/HCPpipelines-4.7.0
+
+# R for FSL FIX
+module load r/4.2.2 matlab/R2019a
+export R_LIBS=/srv/scratch/cheba/Imaging/software/R_libs
+export FSL_FIX_R_CMD=$(which R)
+
+# configure FSL FIX
+export FSL_FIX_MATLAB_MODE=1
+export FSL_FIX_WBC=/srv/scratch/cheba/Imaging/software/workbench/bin_rh_linux64/wb_command
+
+cd /srv/scratch/cheba/Imaging/software
+git clone https://github.com/Washington-University/cifti-matlab.git # clone cifti-matlab library from github.
+                                                                    # I am not sure if this will be the same as
+                                                                    # /srv/scratch/cheba/Imaging/software/HCPpipelines-4.7.0/global/matlab/cifti-matlab
+                                                                    # But to be safe, and also recommended in this link
+                                                                    # (https://wiki.humanconnectome.org/display/PublicData/HCP+Users+FAQ#HCPUsersFAQ-2.HowdoyougetCIFTIfilesintoMATLAB?),
+                                                                    # this library is cloned from GitHub.
+export FSL_FIX_CIFTIRW=/srv/scratch/cheba/Imaging/software/cifti-matlab
+
+cd /srv/scratch/cheba/Imaging/software/fix-v1.06.15
+./setting.sh
+</pre></div>
+</div>
+</section>
+<section id="to-do-list">
+<h2>TO-DO list<a class="headerlink" href="#to-do-list" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Go-through from <em>Usage</em> onwards on <a class="reference external" href="https://github.com/physimals/hcp-asl#installation">HCP ASL webpage</a>.</p></li>
+<li><p>Go-through from <em>Getting example data</em> onwards on <a class="reference external" href="https://github.com/Washington-University/HCPpipelines/wiki/Installation-and-Usage-Instructions#getting-example-data">HCP pipelines webpage</a>.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Graziella.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

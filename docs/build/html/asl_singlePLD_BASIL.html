@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Processing single PLD ASL data from OATS 4 Sydney and SCS using BASIL GUI &mdash; BrainMRIpipelines 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=2709fde1"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Processing multi PLD ASL data from VCI and MAS2 studies using BASIL GUI" href="asl_multiPLD_BASIL.html" />
+    <link rel="prev" title="Arterial spin labelling (ASL)" href="asl.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BrainMRIpipelines
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="bmp.html">Welcome to BrainMRIpipelines documentation!</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="bmp.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="io.html">Input/output module</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="asl.html">Arterial spin labelling (ASL)</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Processing single PLD ASL data from OATS 4 Sydney and SCS using BASIL GUI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="asl_multiPLD_BASIL.html">Processing multi PLD ASL data from VCI and MAS2 studies using BASIL GUI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="asl_multiPLD_ExploreASL.html">Processing multi PLD ASL data from VCI and MAS2 studies using ExploreASL</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dwi.html">Diffusion-weighted imaging (DWI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rsfmri.html">Resting-state BOLD imaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc.html">Miscellaneous tips</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="svdd.html">Cerebral Small Vessel Disease Lesion Detectors (SVD Detector)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BrainMRIpipelines</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="bmp.html">Welcome to BrainMRIpipelines documentation!</a></li>
+          <li class="breadcrumb-item"><a href="asl.html">Arterial spin labelling (ASL)</a></li>
+      <li class="breadcrumb-item active">Processing single PLD ASL data from OATS 4 Sydney and SCS using BASIL GUI</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/asl_singlePLD_BASIL.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="processing-single-pld-asl-data-from-oats-4-sydney-and-scs-using-basil-gui">
+<h1>Processing single PLD ASL data from OATS 4 Sydney and SCS using BASIL GUI<a class="headerlink" href="#processing-single-pld-asl-data-from-oats-4-sydney-and-scs-using-basil-gui" title="Link to this heading"></a></h1>
+<p>Older Australian Twins Study (OATS) and Sydney Centenarians Study (SCS) have acquired pulsed and pseudo-continuous ASL data. This section details the settings on BASIL GUI for processing these data.</p>
+<p>Refer to <a class="reference external" href="https://asl-docs.readthedocs.io/en/latest/">BASIL website</a> for full content.</p>
+<section id="before-we-go-to-basil-gui">
+<h2>Before we go to BASIL GUI<a class="headerlink" href="#before-we-go-to-basil-gui" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Run fsl_anat on T1 images</strong>: For example, <code class="docutils literal notranslate"><span class="pre">for_each</span> <span class="pre">-nthreads</span> <span class="pre">8</span> <span class="pre">/srv/scratch/cheba/Imaging/ow4sydAndScsAsl/1*</span> <span class="pre">:</span> <span class="pre">fsl_anat</span> <span class="pre">-i</span> <span class="pre">IN/t1</span> <span class="pre">-o</span> <span class="pre">IN/t1</span></code>. <em>for_each</em> is <a class="reference external" href="https://mrtrix.readthedocs.io/en/latest/tips_and_tricks/batch_processing_with_foreach.html">a MRtrix command for parallel computing</a>. It is useful to run commands parallelly on local computer/workstation.</p></li>
+<li><p>For OATS Wave 3 Melbourne and Brisbane data (i.e., pulsed ASL from Siemens), the first of the 101 PASL volumes should be extracted and used as M0 image, and the rest should be considered as tag/control pairs. <em>fslroi</em> can be used for this.</p></li>
+<li><p><strong>Segment lateral ventricles</strong>: Run &lt;code&gt;/path/to/BrainMRIpipelines/misc/bmp_misc_getLatVent.m&lt;/code&gt; to extract lateral ventricular mask for calibration. For example</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create &#39;ventricle&#39; folder to keep intermediate files</span>
+<span class="n">for_each</span> <span class="o">-</span><span class="n">nthreads</span> <span class="mi">8</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">cheba</span><span class="o">/</span><span class="n">Imaging</span><span class="o">/</span><span class="n">ow4sydAndScsAsl</span><span class="o">/</span><span class="mi">1</span><span class="o">*</span> <span class="p">:</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="n">IN</span><span class="o">/</span><span class="n">ventricle</span>
+
+<span class="c1"># Extract lateral ventricles</span>
+<span class="n">for_each</span> <span class="o">-</span><span class="n">nthreads</span> <span class="mi">8</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">cheba</span><span class="o">/</span><span class="n">Imaging</span><span class="o">/</span><span class="n">ow4sydAndScsAsl</span><span class="o">/</span><span class="mi">1</span><span class="o">*</span> <span class="p">:</span> <span class="n">matlab</span> <span class="o">-</span><span class="n">nodesktop</span> <span class="o">-</span><span class="n">nodisplay</span> <span class="o">-</span><span class="n">r</span> \<span class="s2">&quot;addpath\(fullfile\(getenv\(</span><span class="se">\&#39;</span><span class="s2">BMP_PATH</span><span class="se">\&#39;</span><span class="s2">\),</span><span class="se">\&#39;</span><span class="s2">misc</span><span class="se">\&#39;</span><span class="s2">\)\)\;bmp_misc_getLatVent\(</span><span class="se">\&#39;</span><span class="s2">IN/m0.nii</span><span class="se">\&#39;</span><span class="s2">,</span><span class="se">\&#39;</span><span class="s2">IN/t1.nii</span><span class="se">\&#39;</span><span class="s2">,</span><span class="se">\&#39;</span><span class="s2">IN/ventricle</span><span class="se">\&#39;</span><span class="s2">\)\;exit</span><span class="se">\&quot;</span>
+
+<span class="c1"># Copy ventricular mask to the same folder as asl/m0/t1</span>
+<span class="n">for_each</span> <span class="o">-</span><span class="n">nthreads</span> <span class="mi">8</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">cheba</span><span class="o">/</span><span class="n">Imaging</span><span class="o">/</span><span class="n">ow4sydAndScsAsl</span><span class="o">/</span><span class="mi">1</span><span class="o">*</span> <span class="p">:</span> <span class="n">cp</span> <span class="n">IN</span><span class="o">/</span><span class="n">ventricle</span><span class="o">/</span><span class="n">rventricular_mask</span><span class="o">.</span><span class="n">nii</span> <span class="n">IN</span><span class="o">/</span><span class="n">vent</span><span class="o">.</span><span class="n">nii</span>
+
+<span class="c1"># Erode ventricular masks - ventricular reference masks should be conservative</span>
+<span class="n">for_each</span> <span class="o">-</span><span class="n">nthreads</span> <span class="mi">8</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">cheba</span><span class="o">/</span><span class="n">Imaging</span><span class="o">/</span><span class="n">ow4sydAndScsAsl</span><span class="o">/</span><span class="mi">1</span><span class="o">*</span> <span class="p">:</span> <span class="n">fslmaths</span> <span class="n">IN</span><span class="o">/</span><span class="n">vent</span> <span class="o">-</span><span class="n">kernel</span> <span class="n">boxv</span> <span class="mi">2</span> <span class="o">-</span><span class="n">ero</span> <span class="n">IN</span><span class="o">/</span><span class="n">vent_ero</span>
+</pre></div>
+</div>
+</section>
+<section id="input-data-tab">
+<h2>“Input Data” tab<a class="headerlink" href="#input-data-tab" title="Link to this heading"></a></h2>
+<section id="data-contents-section">
+<h3>“Data contents” section<a class="headerlink" href="#data-contents-section" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Input Image</strong> is the image containing tag-control pairs, or subtracted images between each tag-control pair, in the 4th dimension.</p></li>
+<li><p><strong>Number of PLDs</strong>: set to 1, because OATS and SCS acquired single-PLD ASL data.</p></li>
+<li><p><strong>Repeats</strong>: leave as Fixed.</p></li>
+</ul>
+</section>
+<section id="data-order-section">
+<h3>“Data order” section<a class="headerlink" href="#data-order-section" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Volumes grouped by</strong> option is to specify how data were acquired in <em>multi-PLD</em> data. For single-PLD data, select Repeats.</p></li>
+<li><p><strong>Label/Control Pairing</strong> specifies the order of label/control (i.e., label then control, or control then label). See <a class="reference internal" href="#asl-parameter-table">ASL parameter table</a>.</p></li>
+</ul>
+</section>
+<section id="acquisition-parameters-section">
+<h3>“Acquisition parameters” section<a class="headerlink" href="#acquisition-parameters-section" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Labelling</strong>: choose corresponding ASL flavour according to <a class="reference internal" href="#asl-parameter-table">ASL parameter table</a>.</p></li>
+<li><p><strong>Bolus duration (s)</strong>: use the numbers in the <a class="reference internal" href="#asl-parameter-table">ASL parameter table</a>.</p></li>
+<li><p><strong>PLDs</strong>: use the numbers in the <a class="reference internal" href="#asl-parameter-table">ASL parameter table</a>. PLD = TI - bolus duration.</p></li>
+<li><p><strong>Readout</strong>: OATS and SCS used 2D readouts. Therefore, select <em>2D multi-slice (eg EPI)</em>.</p></li>
+<li><p><strong>Time per slice (ms)</strong>: Use numbers in the <a class="reference internal" href="#asl-parameter-table">ASL parameter table</a>.</p></li>
+<li><p><strong>Multi-band</strong>: Untick as OATS and SCS didn’t use multiband.</p></li>
+</ul>
+</section>
+</section>
+<section id="structure-tab">
+<h2>“Structure” tab<a class="headerlink" href="#structure-tab" title="Link to this heading"></a></h2>
+<section id="structure-section">
+<h3>“Structure” section<a class="headerlink" href="#structure-section" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Structural data from</strong>: Choose <em>Existing FSL_ANAT output</em>.</p></li>
+<li><p><strong>Existing FSL_ANAT directory</strong>: Use <em>Browse</em> to specify <em>/path/to/fsl_anat/output</em>.</p></li>
+</ul>
+</section>
+<section id="registration-section">
+<h3>“Registration” section<a class="headerlink" href="#registration-section" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Transform to standard space</strong>: Tick, and select <em>Use FSL_ANAT</em>. This can be useful for applying templates and extracting regional CBF.</p></li>
+</ul>
+</section>
+</section>
+<section id="calibration-tab">
+<h2>“Calibration” tab<a class="headerlink" href="#calibration-tab" title="Link to this heading"></a></h2>
+<section id="enable-calibration-section">
+<h3>“Enable Calibration” section<a class="headerlink" href="#enable-calibration-section" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Enable calibration</strong>: <em>Tick</em> to enable calibration.</p></li>
+<li><p><strong>Calibration image</strong>: Select the corresponding M0 map.</p></li>
+<li><p><strong>M0 Type</strong>: <em>Proton Density (long TR)</em>. See <a class="reference internal" href="#references">references</a>.</p></li>
+<li><p><strong>Sequence TR (s)</strong>: Refer to <em>TR of M0</em> in the <a class="reference internal" href="#asl-parameter-table">ASL parameter table</a>.</p></li>
+<li><p><strong>Calibration Gain</strong>: Set to 1. A few FSL email threads suggest calibration gain of 10 is a good number to start with for ASL tag/control pairs acquired with background suppression (see <a class="reference internal" href="#references">references</a>). However, this leads to abnormally low CBF (~ 2-3) in examples if OATS Wave 4 Sydney data. After experiments, it seems setting the gain to 1 gives reasonable CBF estimates.</p></li>
+<li><p><strong>Calibration mode</strong>: Choose <em>Reference Region</em> (Note this is not compliant with White paper, but in many casese voxelwise and reference mask methods are equivalent).</p></li>
+</ul>
+</section>
+<section id="reference-tissue-section">
+<h3>“Reference tissue” section<a class="headerlink" href="#reference-tissue-section" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Type</strong>: Choose <em>CSF</em>.</p></li>
+<li><p><strong>Mask</strong>: <em>Tick</em>, and select the ventricular mask generated in “Before we go to GUI” section. Try both full and eroded ventricular masks. In theory, reference masks should be conservative. The only concern may be an empty mask after erosion. So it is a good idea to visualise eroded masks.</p></li>
+<li><p><strong>Sequence TE (ms)</strong>: Refer to <em>TE of both M0 and tag/control</em> in the <a class="reference internal" href="#asl-parameter-table">ASL parameter table</a>.</p></li>
+<li><p><strong>Reference T1 (s), Reference T2 (ms), and Blood T2 (ms)</strong>: Leave them as default values.</p></li>
+<li><p><strong>Reference image for sensitiviey correction</strong>: untick.</p></li>
+</ul>
+</section>
+</section>
+<section id="distortion-correction-tab">
+<h2>“Distortion Correction” tab<a class="headerlink" href="#distortion-correction-tab" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><em>untick</em> ‘Apply distortion correction’, as no additional images for distortion correction of ASL/M0 were acquired in OATS or SCS.</p></li>
+<li><p>Click <em>Next</em> to ignore distortion correction for now. Also see <a class="reference internal" href="#future-work">Future work</a> below.</p></li>
+</ul>
+</section>
+<section id="analysis-tab">
+<h2>“Analysis” tab<a class="headerlink" href="#analysis-tab" title="Link to this heading"></a></h2>
+<section id="basic-analysis-options-section">
+<h3>“Basic analysis options” section<a class="headerlink" href="#basic-analysis-options-section" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Output Derectory</strong>: Path to save output.</p></li>
+<li><p><strong>User-specified brain mask</strong>: <em>Untick</em> to let BASIL create brain mask. Also see <a class="reference internal" href="#future-work">Future work</a> below.</p></li>
+</ul>
+</section>
+<section id="initial-parameter-values-section">
+<h3>“Initial parameter values” section<a class="headerlink" href="#initial-parameter-values-section" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Arterial Transit Time (s)</strong>: For pulsed ASL data (OATS Wave 3 Melbourne and Brisbane), set Arterial Transit Time to 0.7 sec. For pseudo-continuous ASL data (OATS Wave 4 Sydney and SCS), set Arterial Transit Time to 1.3 sec. Note that <em>white paper mode</em> will reset this Arterial Transit Time to 0.</p></li>
+<li><p><strong>T1 (s)</strong>: T1 for tissue. Use default 1.3 sec. Note that <em>white paper mode</em> will set this T1 for tissue to 1.65 sec.</p></li>
+<li><p><strong>T1b (s)</strong>: T1 for blood. Use default 1.65 sec. <em>white paper mode</em> will also set this T1 for blood to 1.3 sec.</p></li>
+<li><p><strong>Inversion Efficiency</strong>: 0.85 for pseudo-continuous ASL (OATS Wave 4 Sydney and SCS), and 0.98 for pulsed ASL (OATS Wave 3 Melbourne and Brisbane). These values were taken from white paper.</p></li>
+</ul>
+</section>
+<section id="analysis-options-section">
+<h3>“Analysis options” section<a class="headerlink" href="#analysis-options-section" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Adaptive spatial regularisation on perfusion</strong>: <em>tick</em>. This option applies a spatial prior to the perfusion image during estimation, thus making use of neighbourhood information. This is strongly recommended.</p></li>
+<li><p><strong>Incorporate T1 uncertainty</strong>: <em>untick</em>. This option permits voxelwise variability in the T1 values, this will primiarly be reflected in the variance images for the estimated parameters, don’t expect accurate T1 maps from conventional ASL data.</p></li>
+<li><p><strong>Include macro vascular component</strong>: <em>untick</em>. This option corrects for arterial or macrovascular contamination, and it suits where the data have multi-PLD (even where flow suppresion has been applied). Untick because OATS and SCS ASL data are single PLD.</p></li>
+<li><p><strong>Fix label duration</strong>: <em>tick</em> for psudo-continuous ASL data (OATS Wave 4 Sydney and SCS). <em>untick</em> for pulsed ASL data (OATS Wave 3 Melbourne and Brisbane). This option takes the value for the label duration from the Input Data tab as fixed, turn off to estimate this from the data (the value on the data tab will be used as prior information in that case). You are most likely to want to deselect the option for pASL data, particularly where QUIPSSII/Q2TIPS has not been used to fix the label duration.</p></li>
+<li><p><strong>Partial Volume Correction</strong>: <em>tick</em>. This option correct for the different contributions from GM, WM and CSF to the perfusion image. This will produce separate grey and white matter perfusion maps.</p></li>
+<li><p><strong>Motion Correction</strong>: <em>tick</em>. This option uses <em>mcflirt</em> to perform motion correction of ASL data (and the calibration image).</p></li>
+<li><p><strong>Exchange/Dispersion model</strong>: Leave as default.</p></li>
+</ul>
+</section>
+<section id="white-paper-mode-section">
+<h3>“White paper mode” section<a class="headerlink" href="#white-paper-mode-section" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Check compatibility</strong>: <em>untick</em> to run with the options/parameters set above. Can then <em>tick</em>, <em>View issues</em>, and <em>Make compatible</em> to run in white paper mode and compare with previous results.</p></li>
+</ul>
+</section>
+</section>
+<section id="command-line">
+<h2>Command line<a class="headerlink" href="#command-line" title="Link to this heading"></a></h2>
+<p>The above settings translate to below command for an OATS Wave 4 Sydney (pseudo-continuous ASL) example. This can be used to prepare scripts for batch processing.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">oxford_asl</span> <span class="o">-</span><span class="n">i</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">cheba</span><span class="o">/</span><span class="n">Imaging</span><span class="o">/</span><span class="n">ow4sydAndScsAsl</span><span class="o">/</span><span class="n">test</span><span class="o">/</span><span class="mi">12301</span><span class="o">/</span><span class="n">asl</span><span class="o">.</span><span class="n">nii</span> <span class="o">--</span><span class="n">iaf</span> <span class="n">ct</span> <span class="o">--</span><span class="n">ibf</span> <span class="n">rpt</span> <span class="o">--</span><span class="n">casl</span> <span class="o">--</span><span class="n">bolus</span> <span class="mf">1.8</span> <span class="o">--</span><span class="n">rpts</span> <span class="mi">30</span> <span class="o">--</span><span class="n">slicedt</span> <span class="mf">0.03531</span> <span class="o">--</span><span class="n">tis</span> <span class="mf">3.8</span> <span class="o">--</span><span class="n">fslanat</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">cheba</span><span class="o">/</span><span class="n">Imaging</span><span class="o">/</span><span class="n">ow4sydAndScsAsl</span><span class="o">/</span><span class="n">test</span><span class="o">/</span><span class="mi">12301</span><span class="o">/</span><span class="n">t1</span><span class="o">.</span><span class="n">anat</span> <span class="o">-</span><span class="n">c</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">cheba</span><span class="o">/</span><span class="n">Imaging</span><span class="o">/</span><span class="n">ow4sydAndScsAsl</span><span class="o">/</span><span class="n">test</span><span class="o">/</span><span class="mi">12301</span><span class="o">/</span><span class="n">m0</span><span class="o">.</span><span class="n">nii</span> <span class="o">--</span><span class="n">cmethod</span> <span class="n">single</span> <span class="o">--</span><span class="n">tr</span> <span class="mi">6</span> <span class="o">--</span><span class="n">cgain</span> <span class="mi">1</span> <span class="o">--</span><span class="n">tissref</span> <span class="n">csf</span> <span class="o">--</span><span class="n">csf</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">cheba</span><span class="o">/</span><span class="n">Imaging</span><span class="o">/</span><span class="n">ow4sydAndScsAsl</span><span class="o">/</span><span class="n">test</span><span class="o">/</span><span class="mi">12301</span><span class="o">/</span><span class="n">vent</span><span class="o">.</span><span class="n">nii</span> <span class="o">--</span><span class="n">t1csf</span> <span class="mf">4.3</span> <span class="o">--</span><span class="n">t2csf</span> <span class="mi">750</span> <span class="o">--</span><span class="n">t2bl</span> <span class="mi">150</span> <span class="o">--</span><span class="n">te</span> <span class="mi">12</span> <span class="o">-</span><span class="n">o</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">cheba</span><span class="o">/</span><span class="n">Imaging</span><span class="o">/</span><span class="n">ow4sydAndScsAsl</span><span class="o">/</span><span class="n">test</span><span class="o">/</span><span class="mi">12301</span><span class="o">/</span><span class="n">basil_output</span> <span class="o">--</span><span class="n">bat</span> <span class="mf">1.3</span> <span class="o">--</span><span class="n">t1</span> <span class="mf">1.3</span> <span class="o">--</span><span class="n">t1b</span> <span class="mf">1.65</span> <span class="o">--</span><span class="n">alpha</span> <span class="mf">0.85</span> <span class="o">--</span><span class="n">spatial</span> <span class="o">--</span><span class="n">fixbolus</span> <span class="o">--</span><span class="n">mc</span> <span class="o">--</span><span class="n">pvcorr</span> <span class="o">--</span><span class="n">artoff</span>
+</pre></div>
+</div>
+</section>
+<section id="expected-outputs">
+<h2>Expected outputs<a class="headerlink" href="#expected-outputs" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><em>perfusion.nii.gz</em>: Perfusion image providing blood flow in relative (scanner) units.</p></li>
+<li><p><em>perfusion_calib.nii.gz</em>: Calibrated perfusion image providing blood flow in absolute units (ml/100g/min).</p></li>
+<li><p>Results in <em>native ASL</em>, <em>structural</em>, and <em>standard space</em> will appear in the output directory within separate subdirectories.</p></li>
+<li><p>Summary measures of perfusion will be available in <em>native_space</em> subdirectory.</p></li>
+<li><p><em>M0.txt</em> in <em>calib</em> subdirectory: The estimated M0 value from arterial blood.</p></li>
+<li><p><em>refmask.nii.gz</em> in <em>calib</em> subdirectory: Reference tissue mask for calibration.</p></li>
+</ul>
+</section>
+<section id="quality-control">
+<h2>Quality control<a class="headerlink" href="#quality-control" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>In the BASIL GUI, after loading ASL tag/control pairs and clicking <em>Update</em> in the data preview, you should see a pattern of higher intensities in GM than WM, corresponding to higher perfusion in GM than WM.</p></li>
+<li><p>Whole brain average CBF is normally lower than 60, typically 30-40 (<a class="reference external" href="https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1408&amp;L=FSL&amp;P=R86444">ref</a>).</p></li>
+<li><p>Whole brain GM CBF (if you are looking at native_space subdirectory at perfusion_calib_gm_mean.txt) should be in the range of 30-50. If you are looking at partial volume corrected results the equivalent value should be a bit higher, reflecting the correction that has been done. (<a class="reference external" href="https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2004&amp;L=FSL&amp;P=R91652">ref</a>). White paper advises that GM CBF should be anywhere between 40-100 for healthy adult controls (not elderly).</p></li>
+<li><p>Whole brain WM CBF (perfusion_calib_wm_mean.txt in native_space subdirectory) should be in the range of 10-20 (<a class="reference external" href="https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2004&amp;L=FSL&amp;P=R91652">ref</a>).</p></li>
+<li><p>If you are examining images, then WM CBF should be of clearly lower intensity than GM CBF.</p></li>
+<li><p>Refernce tissue mask (<em>refmask.nii.gz</em> in <em>calib</em> subdirectory) should be a conservative lateral ventricular CSF mask of M0 image.</p></li>
+</ul>
+</section>
+<section id="asl-parameters">
+<span id="asl-parameter-table"></span><h2>ASL parameters<a class="headerlink" href="#asl-parameters" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>Study</strong></p></td>
+<td><p><strong>OATS Wave 3 Melbourne &amp; Brisbane</strong></p></td>
+<td><p><strong>OATS Wave 4 Sydney &amp; SCS</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>ASL flavour</strong></p></td>
+<td><p>2D pulsed ASL</p></td>
+<td><p>2D pseudo-continuous ASL</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>TI</strong></p></td>
+<td><p>1.8 sec</p></td>
+<td><p>3.8 sec</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Bolus duration</strong></p></td>
+<td><p>0.7 sec</p></td>
+<td><p>1.8 sec</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Post-labelling delay (TI - bolus duration)</strong></p></td>
+<td><p>1.1 sec</p></td>
+<td><p>2.0 sec</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Bolus arrival time</strong></p></td>
+<td><p>0.7 sec</p></td>
+<td><p>1.3 sec</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Time per slice (slicedt)</strong></p></td>
+<td><p>46.67 msec</p></td>
+<td><p>35.31 msec</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Multi-band</strong></p></td>
+<td><p>No</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>TR of tag/control pairs</strong></p></td>
+<td><p>2.5 sec</p></td>
+<td><p>4.5 sec</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>TR of M0</strong></p></td>
+<td><p>2.5 sec</p></td>
+<td><p>6 sec</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>TE of both M0 and tag/control</strong></p></td>
+<td><p>11 msec</p></td>
+<td><p>12 msec</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>tag/control order</strong></p></td>
+<td><p>tag then control</p></td>
+<td><p>control then tag</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>M0 type</strong></p></td>
+<td><p>Proton Density (long TR)</p></td>
+<td><p>Proton Density (long TR)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Calibration gain</strong></p></td>
+<td><p>1?</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+<p>Other imaging parameters described in <a class="reference external" href="https://www.frontiersin.org/articles/10.3389/fnagi.2019.00169/full">a previous publication</a>. Note that SCS has identical parameters as OATS New South Wales site.</p>
+<blockquote>
+<div><p><em>New South Wales Site</em>: PCASL scans were acquired using a Philips 3T Achieva Quasar Dual scanner (Philips Medical Systems, Netherlands). The acquisition parameters were TR/TE = 4,500/12 ms, label duration = 1,800 ms, post label delay = 2,000 ms, flip angle = 90°, imaging matrix = 128 × 128, and FOV = 240 × 240 × 95 mm3. Sixteen slices with slice thickness of 5 mm and 1 mm gap between adjacent slices were acquired. Thirty control-tag pairs (i.e., 60 volumes) were scanned, with background suppression enabled. A separate M0 image without background suppression was also acquired with TR/TE = 6,000/12 ms and the same spatial resolution as the 30 control-tag pairs. T1-weighted scans were also acquired for the postprocessing. The scanning parameters were TR/TE = 6.5/3.0 ms, flip angle = 8°, FOV = 250 × 250 × 190 mm3, spatial resolution = 1 mm isotrophic, and matrix size = 256 × 256.</p>
+<p><em>Victoria and Queensland Sites</em>: Both Victoria and Queensland study centers have used the same scanner model and identical scanning parameters for ASL and T1. At both sites, PASL scans were acquired from 3T Siemens Magnetom Trio scanners, using the PICORE Q2T perfusion mode. The acquisition parameters were TR/TE = 2,500/11 ms, TI1/TI2 = 700/1,800 ms, flip angle = 90°, phase partial Fourier factor = 7/8, bandwidth = 2232 Hz/pix, imaging matrix = 64 × 64, and FOV = 192 mm. Eleven sequential 6-mm thick slices with a distance factor (i.e., gap) of 25% between adjacent slices were acquired for each volume. The first of the 101 PASL volumes was used as the M0 image. T1-weighted images were acquired in Victoria and Queensland sites with TR/TE/TI = 2,300/2.98/900 ms, flip angle = 9°, 208 sagittal slices, within plane FOV = 256 × 240 mm2, voxel size = 1 × 1 × 1 mm3, and bandwidth = 240 Hz/pix.</p>
+</div></blockquote>
+</section>
+<section id="future-work">
+<span id="id3"></span><h2>Future work<a class="headerlink" href="#future-work" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>To confirm whether OATS Wave 4 Melbourne has the same parameters as OATS Wave 3 Melbourne and Brisbane.</p></li>
+<li><p>To confirm calibration gain of 1 for OATS Wave 3 Melbourne and Brisbane (i.e., no background suppression).</p></li>
+<li><p>“Distortion correction” tab: Can Synb0-DISCO be used to correct for distortion?</p></li>
+<li><p>“Analysis” tab: Compare BASIL-generated brain mask with MRtrix’s dwi2mask and T1 brain mask from fsl_anat.</p></li>
+</ul>
+</section>
+<section id="known-issues">
+<h2>Known issues<a class="headerlink" href="#known-issues" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>It seems when running <em>asl_calib</em> to calibrate with CSF as reference, a warning of “<em>WARNING:: Inconsistent orientations for individual images in pipeline. Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!</em>” will appear. Have had a look at ventricular mask superimposed on M0 map, and found no issue.</p></li>
+<li><p>Notice that since automated cropping was conducted in <em>fsl_anat</em>, all BASIL results in structural space are not in the original T1 space, but cropped T1 space. If, for ROI analyses, ROIs are defined in original T1 space, <em>flirt</em> registration may be needed, or see if the same cropping can be applied to the ROI template in original T1 space. fsl_anat cropping can be avoided by including <em>–nocrop</em> flag.</p></li>
+</ul>
+</section>
+<section id="references">
+<span id="id4"></span><h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>M0 type normally set to long TR:</dt><dd><ul>
+<li><p><a class="reference external" href="https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2002&amp;L=FSL&amp;P=R60377">https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2002&amp;L=FSL&amp;P=R60377</a></p></li>
+<li><p><a class="reference external" href="https://asl-docs.readthedocs.io/en/latest/gui_userguide.html#calibration">https://asl-docs.readthedocs.io/en/latest/gui_userguide.html#calibration</a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Initial calibration gain set to 10:</dt><dd><ul>
+<li><p><a class="reference external" href="https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1905&amp;L=FSL&amp;P=R86460">https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1905&amp;L=FSL&amp;P=R86460</a></p></li>
+<li><p><a class="reference external" href="https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2004&amp;L=FSL&amp;P=R91652">https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2004&amp;L=FSL&amp;P=R91652</a></p></li>
+<li><p><a class="reference external" href="https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1904&amp;L=FSL&amp;P=R57828">https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1904&amp;L=FSL&amp;P=R57828</a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="asl.html" class="btn btn-neutral float-left" title="Arterial spin labelling (ASL)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="asl_multiPLD_BASIL.html" class="btn btn-neutral float-right" title="Processing multi PLD ASL data from VCI and MAS2 studies using BASIL GUI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Graziella.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

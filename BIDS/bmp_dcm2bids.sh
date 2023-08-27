@@ -237,6 +237,9 @@ case $is_first_run in
 		;;
 
 
+!!! NOTE THAT THE ABOVE CODE NEEDS TESTING !!!
+
+
 
 	# no)
 
