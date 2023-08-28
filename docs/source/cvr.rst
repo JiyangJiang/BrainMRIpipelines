@@ -8,6 +8,22 @@ Existing resources for data processing
 * ?? `repidtide for time lag correlation analysis <https://github.com/bbfrederick/rapidtide>`_
 * Data analysis in CVR MRI section of Liu et al.'s `CVR technical review <https://pubmed.ncbi.nlm.nih.gov/29574034/>`_
 
+Quantiphyse CVR analysis
+-------------------------
+error message: ModuleNotFoundError: No module named 'pandas._libs.interval'
+
+solution:
+pip uninstall pandas
+pip install pandas
+pip3 install --upgrade pandas
+
+module load qt/5.15.5 gcc/12.2.0
+
+conda install -c conda-forge gsettings-desktop-schemas
+cd /srv/scratch/cheba/NiL/Software/miniconda3/envs/quantiphyse/share/glib-2.0/schemas
+glib-compile-schemas $(pwd)
+GSETTINGS_SCHEMA_DIR=$(pwd) quantiphyse
+
 Visualise etCO2 trace
 ---------------------
 
@@ -48,5 +64,5 @@ Figure below shows a typical CO2 trace recording (copied from `the CVR technical
 	:align: center
 
 
-
+**---=== TO BE CONTINUED ===---**
 
