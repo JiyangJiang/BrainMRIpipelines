@@ -9,5 +9,6 @@ Katana on-demand
 ----------------
 `Katana on demand <https://kod.restech.unsw.edu.au/pun/sys/dashboard>`_ allows for requesting resources from webpage, and access the desktop graphic interface of your requested resource. It can be useful if there's any issue with graphics via ssh login.
 
-
-
+optiBET.sh error - [[: not found
+--------------------------------
+[[ is a bash-builtin. Add ``#!/bin/bash`` at the top of optiBET.sh file.
