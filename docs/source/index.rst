@@ -22,6 +22,6 @@ Public datasets
 ---------------
 
 .. toctree::
-   :maxdepth:1
+   :maxdepth: 1
 
    hcp/hcp_main
