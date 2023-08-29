@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cerebrovascular reactivity (CVR) &mdash; BrainMRIpipelines 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=2709fde1"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Miscellaneous tips" href="misc.html" />
+    <link rel="prev" title="Resting-state BOLD imaging" href="rsfmri.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BrainMRIpipelines
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="bmp.html">Brain MRI pipelines</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="bmp.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="io.html">Input/output module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="asl.html">Arterial spin labelling (ASL)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dwi.html">Diffusion-weighted imaging (DWI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rsfmri.html">Resting-state BOLD imaging</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Cerebrovascular reactivity (CVR)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#existing-resources-for-data-processing">Existing resources for data processing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#quantiphyse-cvr-analysis">Quantiphyse CVR analysis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#extract-etco2">Extract EtCO2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#settings-in-acquisition-options-tab">Settings in ‘Acquisition Options’ tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#visualise-etco2-trace">Visualise etCO2 trace</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="misc.html">Miscellaneous tips</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="svdd.html">Cerebral Small Vessel Disease Lesion Detectors</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BrainMRIpipelines</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="bmp.html">Brain MRI pipelines</a></li>
+      <li class="breadcrumb-item active">Cerebrovascular reactivity (CVR)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/cvr.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cerebrovascular-reactivity-cvr">
+<h1>Cerebrovascular reactivity (CVR)<a class="headerlink" href="#cerebrovascular-reactivity-cvr" title="Link to this heading"></a></h1>
+<section id="existing-resources-for-data-processing">
+<h2>Existing resources for data processing<a class="headerlink" href="#existing-resources-for-data-processing" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/smoia/phys2cvr">phys2cvr GitHub</a>.</p></li>
+<li><p><a class="reference external" href="https://quantiphyse.readthedocs.io/en/latest/cvr/tutorial.html">Quantiphyse CVR analysis tutorial</a>.</p></li>
+<li><p>?? <a class="reference external" href="https://github.com/bbfrederick/rapidtide">repidtide for time lag correlation analysis</a></p></li>
+<li><p>Data analysis in CVR MRI section of Liu et al.’s <a class="reference external" href="https://pubmed.ncbi.nlm.nih.gov/29574034/">CVR technical review</a></p></li>
+</ul>
+</section>
+<section id="quantiphyse-cvr-analysis">
+<h2>Quantiphyse CVR analysis<a class="headerlink" href="#quantiphyse-cvr-analysis" title="Link to this heading"></a></h2>
+<p>Here, I followed <a class="reference external" href="https://quantiphyse.readthedocs.io/en/latest/cvr/tutorial.html">quantiphyse CVR tutorial</a>, and recorded alterations I made below. The content on the tutorial webpage is not repeated.</p>
+<section id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h3>
+<p>Note that I installed this on local Ubuntu machine.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>[ERROR] : gcc: fatal error: cannot execute ‘cc1plus’: execvp: No such file or directory</p>
+<p>[SOLUTION] : sudo apt-get install g++</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The “Installing plugins” section on the documentation website does not include CVR widget. To install, <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">quantiphyse-cvr</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>[ERROR] : missing libraries, ‘libnvinfer.so.7’, ‘libnvinfer_plugin.so.7’</p>
+<p>[SOLUTION] :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>pip install tentorRT
+
+ln -s /software/miniconda3/envs/quantiphyse/lib/python3.7/site-packages/tensorrt_libs/libnvinfer.so.8 /software/miniconda3/envs/quantiphyse/lib/python3.7/site-packages/tensorrt_libs/libnvinfer.so.7
+
+ln -s /software/miniconda3/envs/quantiphyse/lib/python3.7/site-packages/tensorrt_libs/libnvinfer_plugin.so.8 /software/miniconda3/envs/quantiphyse/lib/python3.7/site-packages/tensorrt_libs/libnvinfer_plugin.so.7
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/software/miniconda3/envs/quantiphyse/lib/python3.7/site-packages/tensorrt_libs/
+</pre></div>
+</div>
+</div>
+</section>
+<section id="fsl-feat-to-preprocess-bold-data">
+<h3>FSL FEAT to preprocess BOLD data<a class="headerlink" href="#fsl-feat-to-preprocess-bold-data" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Open FSL GUI -&gt; FEAT FMRI analysis</p>
+<ul>
+<li><p>Optional : unclick “Progress watcher” in “Misc”.</p></li>
+</ul>
+</li>
+<li><p>First-level analysis -&gt; Preprocessing</p></li>
+<li><p>Data tag :</p>
+<ul>
+<li><p>Number of inputs -&gt; Select 4D data (Note : give full path)</p>
+<ul>
+<li><p>input the actual number of fMRI images</p></li>
+<li><p>use “ls -1” to list all fMRI images, and “Paste” to the GUI.</p></li>
+<li><p>use absolute path, e.g. “ls -1 /path/to/BOLD/images.nii*”</p></li>
+</ul>
+</li>
+<li><p>Output directory: Create a folder, and give the path here.</p></li>
+<li><p>Delete volumes -&gt; 0. We don’t delete any volumes, to make calculation of time easier.</p></li>
+<li><p>High pass threshold -&gt; 90 (<strong>This value follows quantiphyse tutorial. May need to change.</strong>)</p></li>
+</ul>
+</li>
+<li><p>Pre-stats tag :</p>
+<ul>
+<li><p>Alternative reference image: untick.</p></li>
+<li><p>Motion correction: MCFLIRT</p></li>
+<li><p>B0 unwarping: untick (<strong>implement distortion correction in the future.</strong>)</p></li>
+<li><p>Slice timing correction: Interleaved (<strong>get from PDF protocol. Need to confirm as JSON said sequential.</strong>)</p></li>
+<li><p>BET brain extraction: tick.</p></li>
+<li><p>Spatial smoothing FWHM (mm): 6.</p></li>
+<li><p>intensity normalization = untick</p></li>
+<li><p>Temporal filtering: tick “Highpass”, untick “Perfusion subtraction”.</p></li>
+<li><p>MELODIC ICA data exploration: untick.</p></li>
+</ul>
+</li>
+<li><p>Registration tag :</p>
+<ul>
+<li><p>Main structural image: tick</p>
+<ul>
+<li><p>Select main struct imgs = BRAIN EXTRACTED structural image. Brain extraction can be done by, e.g., optiBET.sh. Remember that the whole head image should have the same filename as brain extracted but without ‘_brain’. For example, T1w.nii.gz and T1w_brain.nii.gz.</p></li>
+<li><p>Linear - Normal search - BBR</p></li>
+</ul>
+</li>
+<li><p>Standard space: tick</p>
+<ul>
+<li><p>Use default MNI 2mm brain.</p></li>
+<li><p>Linear - Normal search - 12 DOF</p></li>
+<li><p>Nonlinear: tick</p></li>
+<li><p>Warp resolution (mm): 10. Increasing this will get a smoother warp field.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Click ‘Save’ to save config files to a folder.</p></li>
+<li><p>${FSLDIR}/bin/feat /path/to/saved/<a href="#id1"><span class="problematic" id="id2">*</span></a>.fsf</p></li>
+</ul>
+</section>
+</section>
+<section id="extract-etco2">
+<h2>Extract EtCO2<a class="headerlink" href="#extract-etco2" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>When input EtCO2 trace, a single column of EtCO2 reading without heading is needed. This can be extracted by <code class="docutils literal notranslate"><span class="pre">awk</span> <span class="pre">-F','</span> <span class="pre">'{print</span> <span class="pre">$3}'</span> <span class="pre">0004_2023_08_24_15_57_02_cw.csv</span> <span class="pre">|</span> <span class="pre">tail</span> <span class="pre">-n</span> <span class="pre">+2</span> <span class="pre">&gt;</span> <span class="pre">etCO2_only.txt</span></code>. If you want to crop to the useful sectoin, <code class="docutils literal notranslate"><span class="pre">awk</span> <span class="pre">-F','</span> <span class="pre">'{print</span> <span class="pre">$3}'</span> <span class="pre">0004_2023_08_24_15_57_02_cw.csv</span> <span class="pre">|</span> <span class="pre">tail</span> <span class="pre">-n</span> <span class="pre">+2800</span> <span class="pre">|</span> <span class="pre">head</span> <span class="pre">-n</span> <span class="pre">2700</span> <span class="pre">&gt;</span> <span class="pre">etCO2_only.txt</span></code> (from line 2800 to end, then the first 2700 lines).</p></li>
+</ul>
+</section>
+<section id="settings-in-acquisition-options-tab">
+<h2>Settings in ‘Acquisition Options’ tab<a class="headerlink" href="#settings-in-acquisition-options-tab" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>TR is 1.5 second.</p></li>
+<li><p>Baseline period (s): 77. This is the duration of baseline used in the pilot scan. Since the total length of scan is 7 min 17 sec, the first switch to CO2 happened at 1 min 17 sec.</p></li>
+</ul>
+</section>
+<section id="visualise-etco2-trace">
+<h2>Visualise etCO2 trace<a class="headerlink" href="#visualise-etco2-trace" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">This</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">MATLAB</span> <span class="n">script</span>
+
+<span class="n">setenv</span> <span class="p">(</span><span class="s1">&#39;TZ&#39;</span><span class="p">,</span> <span class="s1">&#39;Australia/Sydney&#39;</span><span class="p">);</span>  <span class="o">%</span> <span class="n">otherwise</span> <span class="n">a</span> <span class="n">warning</span> <span class="n">of</span> <span class="n">system</span> <span class="n">time</span> <span class="n">zone</span> <span class="n">setting</span> <span class="n">will</span> <span class="n">araise</span><span class="o">.</span>
+<span class="n">cw</span> <span class="o">=</span> <span class="n">radtable</span> <span class="p">(</span><span class="s1">&#39;0004_2023_08_24_15_57_02_cw.csv&#39;</span><span class="p">,</span> <span class="s2">&quot;Delimiter&quot;</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;ReadVariableNames&quot;</span><span class="p">,</span> <span class="n">true</span><span class="p">);</span>
+<span class="n">cw</span><span class="o">.</span><span class="n">Time</span> <span class="o">=</span> <span class="n">datetime</span> <span class="p">(</span><span class="n">string</span> <span class="p">(</span><span class="n">cw</span><span class="o">.</span><span class="n">Time</span><span class="p">,</span> <span class="s1">&#39;hh:mm:ss.SSS&#39;</span><span class="p">),</span> <span class="s1">&#39;Format&#39;</span><span class="p">,</span> <span class="s1">&#39;HH:mm:ss.SSS&#39;</span><span class="p">);</span> <span class="o">%</span> <span class="n">convert</span> <span class="n">duration</span> <span class="n">to</span> <span class="n">datetime</span>
+
+<span class="o">%</span> <span class="n">zoom</span><span class="o">-</span><span class="ow">in</span> <span class="n">to</span> <span class="n">useful</span> <span class="n">duration</span> <span class="p">(</span><span class="n">need</span> <span class="n">to</span> <span class="n">change</span> <span class="n">accordingly</span><span class="p">)</span>
+<span class="n">experiment_start</span> <span class="o">=</span> <span class="s1">&#39;16:12:00.000&#39;</span><span class="p">;</span>
+<span class="n">experiment_end</span>   <span class="o">=</span> <span class="s1">&#39;16:20:00.000&#39;</span><span class="p">;</span>
+
+<span class="n">cw_new</span> <span class="o">=</span> <span class="n">cw</span> <span class="p">(</span><span class="n">cw</span><span class="o">.</span><span class="n">Time</span> <span class="o">&gt;</span> <span class="n">datetime</span> <span class="p">(</span><span class="n">experiment_start</span><span class="p">,</span> <span class="s1">&#39;InputFormat&#39;</span><span class="p">,</span> <span class="s1">&#39;HH:mm:ss.SSS&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">...</span>
+                         <span class="n">cw</span><span class="o">.</span><span class="n">Time</span> <span class="o">&lt;</span> <span class="n">datetime</span> <span class="p">(</span><span class="n">experiment_end</span><span class="p">,</span> <span class="s1">&#39;InputFormat&#39;</span><span class="p">,</span> <span class="s1">&#39;HH:mm:ss.SSS&#39;</span><span class="p">),</span> <span class="p">:);</span>
+
+<span class="n">plot</span> <span class="p">(</span><span class="n">cw_new</span><span class="o">.</span><span class="n">Time</span><span class="p">,</span> <span class="n">cw_new</span><span class="o">.</span><span class="n">CO2_mmHg_</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Figure below shows what I get from pilot scan:</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/CVR_pilotScan_etCO2trace.jpg"><img alt="_images/CVR_pilotScan_etCO2trace.jpg" src="_images/CVR_pilotScan_etCO2trace.jpg" style="width: 1000px;" /></a>
+</figure>
+<p>According to <a class="reference external" href="https://pubmed.ncbi.nlm.nih.gov/29574034/">the CVR technical review</a>:</p>
+<ul class="simple">
+<li><p>During <strong>room-air</strong> breathing, the bottom of signal is approximately <strong>zero</strong> because there is virtually no CO2 in the inhaled room-air.</p></li>
+<li><p>During <strong>room-air</strong> breathing, the upper peak of the signal is approximately <strong>40 mmHg</strong>, which is typical of etCO2 for a healthy volunteer.</p></li>
+<li><p>During <strong>hypercapnia</strong> breathing, the bottem of signal is <strong>38 mmHg</strong>, which is consistent with CO2 content in the inhaled air of 5% of atmospheric pressure (760 mmHg).</p></li>
+<li><p>During <strong>hypercapnia</strong> breathing, the upper peak of the signal is typically 8-12 mmHg above the value during room-air breathing, i.e. <strong>48-52 mmHg</strong>.</p></li>
+</ul>
+<p>Figure below shows a typical CO2 trace recording (copied from <a class="reference external" href="https://pubmed.ncbi.nlm.nih.gov/29574034/">the CVR technical review</a>)</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/CVR_technicalReview_etCO2trace.png"><img alt="_images/CVR_technicalReview_etCO2trace.png" src="_images/CVR_technicalReview_etCO2trace.png" style="width: 400px;" /></a>
+</figure>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="rsfmri.html" class="btn btn-neutral float-left" title="Resting-state BOLD imaging" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="misc.html" class="btn btn-neutral float-right" title="Miscellaneous tips" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Graziella.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -15,4 +15,5 @@ Modules
    asl
    dwi
    rsfmri
+   cvr
    misc
