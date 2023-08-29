@@ -1,5 +1,5 @@
-Diffusion-weighted imaging (DWI)
---------------------------------
+Diffusion-weighted imaging
+--------------------------
 
 .. toctree::
    :maxdepth: 1

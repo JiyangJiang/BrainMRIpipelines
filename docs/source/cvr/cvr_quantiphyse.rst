@@ -1,5 +1,5 @@
-Quantiphyse CVR analysis
-========================
+CVR analysis using quantiphyse 
+==============================
 Here, I followed `quantiphyse CVR tutorial <https://quantiphyse.readthedocs.io/en/latest/cvr/tutorial.html>`_, and recorded alterations I made below. The content on the tutorial webpage is not repeated.
 
 Installation

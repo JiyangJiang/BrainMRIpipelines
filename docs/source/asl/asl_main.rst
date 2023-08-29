@@ -1,5 +1,5 @@
-Arterial spin labelling (ASL)
-=============================
+Arterial spin labelling
+=======================
 Choose from below scenarios for details:
 
 .. toctree::
