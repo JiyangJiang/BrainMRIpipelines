@@ -13,8 +13,8 @@ Existing resources for data processing
 .. toctree::
    :maxdepth: 1
 
-   cvr_quantiphyse <CVR processing using quantiphyse>
-   cvr_mricloud <CVR processing using MRIcloud>
-   cvr_others <Other miscellaneous things regarding CVR>
+   CVR processing using quantiphyse <cvr_quantiphyse>
+   CVR processing using MRIcloud <cvr_mricloud>
+   Other miscellaneous things regarding CVR <cvr_others>
 
 

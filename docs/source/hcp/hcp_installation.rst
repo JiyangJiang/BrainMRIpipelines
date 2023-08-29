@@ -1,7 +1,3 @@
-HCP data processing
-===================
-Note that HCP data processing was conducted on Katana. Therefore, some settings are specific to the platform. All the content can be found on `HCP Pipelines <https://github.com/Washington-University/HCPpipelines/wiki/Installation-and-Usage-Instructions>`_, and `HCP ASL pipeline <https://github.com/physimals/hcp-asl>`_ webpages. This webpage is meant to record what I have done, what problems I encountered, and how I resolved them, for future replication and educating new students.
-
 Software installation
 ---------------------
 Our first task in HCP-Aging data is to process ASL data. The `ASL pipeline <https://github.com/physimals/hcp-asl>`_ requires prerequisites of FSL (version >= 6.0.5.1), HCP workbench (version >= 1.5.0), HCP pipelines, and FreeSurfer (Note that version 6.0 and 5.3.0-HCP are compatible in `HCP pipeline prerequisites <https://github.com/Washington-University/HCPpipelines/wiki/Installation-and-Usage-Instructions#prerequisites>`_). The installation of FSL, HCP workbench, and FreeSurfer are relatively straightforward.
@@ -77,8 +73,3 @@ Setting environment variables
 
 	cd /srv/scratch/cheba/Imaging/software/fix-v1.06.15
 	./setting.sh
-
-TO-DO list
-----------
-* Go-through from *Usage* onwards on `HCP ASL webpage <https://github.com/physimals/hcp-asl#installation>`_.
-* Go-through from *Getting example data* onwards on `HCP pipelines webpage <https://github.com/Washington-University/HCPpipelines/wiki/Installation-and-Usage-Instructions#getting-example-data>`_.

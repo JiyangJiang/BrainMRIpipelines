@@ -17,3 +17,11 @@ Modules
    rsfmri/rsfmri_main
    cvr/cvr_main
    others/misc
+
+Public datasets
+---------------
+
+.. toctree::
+   :maxdepth:1
+
+   hcp/hcp_main
