@@ -1,5 +1,5 @@
-[USE THIS] Combining data of all PE's and process in one go
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[USE THIS] Preprocessing (combining PE's) using MRtrix3
+=======================================================
 
 ..  note::
 

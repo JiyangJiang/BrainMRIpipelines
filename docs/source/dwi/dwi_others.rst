@@ -18,7 +18,7 @@ Troubleshooting
 To-do list
 ++++++++++
 * To interpret eddy QC metrics, and determine whether results are good/bad. Probably need to run *eddy_squad* on cohort level.
-* Confirm with MRtrix people regarding `slice location error of MRtrix`_.
+* Confirm with MRtrix people regarding slice location error of MRtrix.
 * SMS factor = 2, but SliceTiming in DICOM header indicates an interleaved acquisition without simultaneous multi-slices.
 * Ask why B0's have different spatial dimension as DWI dataset.
 * Generating MIF file from NIFTI (including bvec and bval) and JSON automatically converted whene exporting from scanner to Flywheel, and stored in the same folder as DICOM files. This is inspired by the fact that slice timing info is correct in these data, but not in data converted with dcm2niix.

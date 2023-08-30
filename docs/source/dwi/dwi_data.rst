@@ -1,5 +1,5 @@
-DWI data in VCI study
-=====================
+DWI data in VCI and MAS2 study
+==============================
 
 Description of dMRI data acquired for VCI and MAS2
 ++++++++++++++++++++++++++++++++++++++++++++++++++

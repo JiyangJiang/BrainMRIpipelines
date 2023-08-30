@@ -1,5 +1,5 @@
-[DISCARD] Processing AP/PA separately with MRtrix3
-==================================================
+[DISCARD] Preprocessing (AP/PA separately) using MRtrix3
+========================================================
 
 Convert DICOM data
 ------------------
