@@ -17,6 +17,7 @@ Modules
    rsfmri/rsfmri_main
    cvr/cvr_main
    others/misc
+   others/eg
 
 Public datasets
 ---------------
