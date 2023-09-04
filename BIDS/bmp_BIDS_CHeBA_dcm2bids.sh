@@ -51,24 +51,24 @@ usage() {
 
 echo -e "$(cat << EOM
 
-$(bmp_convention.sh --script_name)$(basename $0)$(bmp_shellColour.sh --reset)
+$(basename $0)
 
-$(bmp_convention.sh --usage_section_title)DESCRIPTION :$(bmp_shellColour.sh --reset)
+DESCRIPTION :
 
   This script runs Dcm2Bids to convert DICOM files to BIDS format.
 
 
-$(bmp_convention.sh --usage_section_title)WORKFLOW :$(bmp_shellColour.sh --reset)
+WORKFLOW :
 
 
 
 
-$(bmp_convention.sh --usage_section_title)USAGE :$(bmp_shellColour.sh --reset)
+USAGE :
 
   $(basename $0) {-d|--dicom_directory} <DICOM_directory> [{-f|--first_run}]
 
 
-$(bmp_convention.sh --usage_section_title)COMPULSORY :$(bmp_shellColour.sh --reset)
+COMPULSORY :
 
   -d, --dicom_directory        <DICOM_directory>        Path to DICOM directory.
 
@@ -77,7 +77,7 @@ $(bmp_convention.sh --usage_section_title)COMPULSORY :$(bmp_shellColour.sh --res
                                                         folder in the DICOM directory.
 
 
-$(bmp_convention.sh --usage_section_title)OPTIONAL :$(bmp_shellColour.sh --reset)
+OPTIONAL :
 
   -b, --bids_directory         <BIDS_directory>         Path to save BIDS format data in. Default
                                                         is 'BIDS' on the same level as DICOM
@@ -99,7 +99,7 @@ $(bmp_convention.sh --usage_section_title)OPTIONAL :$(bmp_shellColour.sh --reset
   -h, --help                                            Display this message.
 
 
-$(bmp_convention.sh --usage_section_title)DEPENDENCIES :$(bmp_shellColour.sh --reset)
+DEPENDENCIES :
 
   - Dcm2Bids (bmp_install.sh --dcm2bids)
   
@@ -109,63 +109,43 @@ EOM
 
 }
 
-# conda init bash
-# conda activate dcm2bids # activate dcm2bids conda env
-
 is_first_run=no
 use_dcm2bids_helper=no
 use_bmp_prepconfig=yes
 
 for arg in $@
 do
-
 	case $arg in
-
 		-d|--dicom_directory)
-
 			DICOM_directory=$2
 			shift 2
 			;;
-
 		-i|--subject_ID)
-
 			curr_subjID=$2
 			shift 2
 			;;
-
 		-b|--bids_directory)
-
 			BIDS_directory=$2
 			shift 2
 			;;
-
 		-f|--first_run)
-
 			is_first_run=yes
 			shift
 			;;
-
 		-c|--dcm2bids_helper)
-
 			use_dcm2bids_helper=yes
 			use_bmp_prepconfig=no
 			shift
 			;;
-
 		-h|--help)
-
 			usage
 			exit 0
 			;;
-
 		-*)
-
 			usage
 			exit 1
 			;;
-
 	esac
-
 done
 
 
@@ -197,32 +177,7 @@ case $is_first_run in
 
 	yes)
 
-		# =============================================================================
-		#                                   First run
-		# =============================================================================
-
-		echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Running dcm2bids_scaffold to create basic files and directories for BIDS.$(bmp_shellColour.sh --reset)"
-
-		dcm2bids_scaffold --output_dir $BIDS_directory
-
-		echo -n "[$(date)] : $(basename $0) : Copying $DICOM_directory to $BIDS_directory/sourcedata, and renaming it with $curr_subjID ... "
-		cp -r $DICOM_directory $BIDS_directory/sourcedata/$curr_subjID
-		echo "done!"
-
-		case $use_dcm2bids_helper in
-
-			yes)
-
-				echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Running dcm2bids_helper to convert DICOM of the current subject (ID = $curr_subjID) to NIFTI and json, so that configuration file can be prepared.$(bmp_shellColour.sh --reset)"
-
-				cd $BIDS_directory
-				dcm2bids_helper --dicom_dir $BIDS_directory/sourcedata/$curr_subjID \
-								--output_dir $BIDS_directory/tmp_dcm2bids/helper \
-								--log_level DEBUG \
-								--force \
-								> $BIDS_directory/tmp_dcm2bids/dcm2bids_helper.debug_log
-
-				echo -e "$(bmp_convention.sh --text_normal)[$(date)] : $(basename $0) : Investigate json files in $(bmp_convention.sh --text_path)$BIDS_directory/tmp_dcm2bids/sourcedata/$curr_subjID$(bmp_convention.sh --text_normal) to create the configuration file.$(bmp_shellColour.sh --reset)"
+		
 
 				;;
 
