@@ -5,7 +5,7 @@ Note that HCP data processing was conducted on Katana. Therefore, some settings 
 .. toctree::
    :maxdepth: 1
 
-   HCP software installation <hcp_installation>
+   HCP software installation <hcpa_installation>
 
 TO-DO list
 ----------

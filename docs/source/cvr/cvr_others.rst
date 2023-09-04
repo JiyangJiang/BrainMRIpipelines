@@ -1,4 +1,4 @@
-Visualise etCO2 trace
+Visualise EtCO2 trace
 ---------------------
 
 ..  code-block::
@@ -6,7 +6,7 @@ Visualise etCO2 trace
 	% This is a MATLAB script
 
 	setenv ('TZ', 'Australia/Sydney');  % otherwise a warning of system time zone setting will araise.
-	cw = radtable ('0004_2023_08_24_15_57_02_cw.csv', "Delimiter", ",", "ReadVariableNames", true);
+	cw = readtable ('0004_2023_08_24_15_57_02_cw.csv', "Delimiter", ",", "ReadVariableNames", true);
 	cw.Time = datetime (string (cw.Time, 'hh:mm:ss.SSS'), 'Format', 'HH:mm:ss.SSS'); % convert duration to datetime
 
 	% zoom-in to useful duration (need to change accordingly)
@@ -36,3 +36,27 @@ Figure below shows a typical CO2 trace recording (copied from `the CVR technical
 ..  figure:: figures/CVR_technicalReview_etCO2trace.png
 	:width: 400
 	:align: center
+
+Visualise EtCO2 sampling frequency
+----------------------------------
+
+..  code-block::
+
+	% This is a MATLAB script
+
+	setenv ('TZ', 'Australia/Sydney');  % otherwise a warning of system time zone setting will araise.
+	cw = readtable ('0004_2023_08_24_15_57_02_cw.csv', "Delimiter", ",", "ReadVariableNames", true);
+	cw.Time = datetime (string (cw.Time, 'hh:mm:ss.SSS'), 'Format', 'HH:mm:ss.SSS');
+
+	g = zeros ((length(cw.Time)-1),2);
+
+	for i = 2 : length (cw.Time)
+		g(i-1,1) = i - 1;
+		g(i-1,2) = milliseconds (cw.Time(i) - cw.Time(i-1));
+	end
+
+	figure
+	plot(g(:,1),g(:,2))
+	hold on
+	yline(mean(g(:,2)), '-', sprintf ('Avg interval %.3f milliseconds.', mean(g(:,2))));
+	hold off
