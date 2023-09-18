@@ -206,7 +206,7 @@ The above settings were translated into the following command:
 
 ..  code-block::
 
-    oxford_asl -i /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/asl.nii --iaf tc --ibf rpt --casl --bolus 0,0,0,0,0,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8 --rpts 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 --tis 0.8,1,1.2,1.4,1.6,1.8,2,2.2,2.4,2.6,2.8,3,3.2,3.4,3.6,3.8 --fslanat /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/t1.anat -c /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/m0.nii --cmethod single --tr 4.14 --cgain 10 --tissref csf --csf /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/vent_ero.nii.gz --t1csf 4.3 --t2csf 750 --t2bl 150 --te 20.4 -o /srv/scratch/cheba/Imaging/mas2/pilot1_Amanda/asl/BASIL_output --bat 1.3 --t1 1.3 --t1b 1.65 --alpha 0.6 --spatial --fixbolus --mc --pvcorr
+    oxford_asl -i=/srv/scratch/cheba/Imaging/mas2/ppt1_20230810_ID10011/dnld_from_flywheel/asl/work/asl.nii --iaf=tc --ibf=rpt --casl --bolus=0.8,1,1.2,1.4,1.6,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8 --rpts=1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 --tis=0.8,1,1.2,1.4,1.6,1.8,2,2.2,2.4,2.6,2.8,3,3.2,3.4,3.6,3.8 --fslanat=/srv/scratch/cheba/Imaging/mas2/ppt1_20230810_ID10011/dnld_from_flywheel/asl/work/t1.anat -c=/srv/scratch/cheba/Imaging/mas2/ppt1_20230810_ID10011/dnld_from_flywheel/asl/work/m0.nii --cmethod=single --tr=4.14 --cgain=10 --tissref=csf --csf=/srv/scratch/cheba/Imaging/mas2/ppt1_20230810_ID10011/dnld_from_flywheel/asl/work/vent_ero.nii.gz --t1csf=4.3 --t2csf=750 --t2bl=150 --te=20.4 -o=/srv/scratch/cheba/Imaging/mas2/ppt1_20230810_ID10011/dnld_from_flywheel/asl/work/BASIL_output_M0-TR-4p14_correctLDPLDgui --bat=1.3 --t1=1.3 --t1b=1.65 --alpha=0.6 --spatial=1 --fixbolus --mc --pvcorr
 
 
 Further work
