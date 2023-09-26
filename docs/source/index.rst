@@ -18,6 +18,7 @@ Modules
    cvr/cvr_main
    others/misc
    others/eg
+   others/siemens.rst
 
 Public datasets
 ---------------
