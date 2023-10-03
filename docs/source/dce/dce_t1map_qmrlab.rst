@@ -9,8 +9,8 @@ Registering B1 ref/map to MP2RAGE UNI
 
 	cd /Users/z3402744/Work/vci/vci_001/flywheel/dce/nii
 
-	B1map="tfl_b1_map_test/B1Map_for_T1_mapping_20230920144854_110_B1map"
-	B1ref="tfl_b1_map_test/B1Map_for_T1_mapping_20230920144854_109_B1ref"
+	B1map="tfl_b1_map_test/Results/B1Map_for_T1_mapping_20230920144854_110_B1map"
+	B1ref="tfl_b1_map_test/Results/B1Map_for_T1_mapping_20230920144854_109_B1ref"
 	UNI="t1_mp2rage_sag_0.8x0.8x2_BW240_UNI_Images_20230920144854_107"
 
 	flirt -in $B1ref -ref $UNI -omat B1ref_to_UNI.mat -dof 7 -out B1ref_reg2UNI
@@ -108,7 +108,7 @@ Followed instructions in `this page <https://qmrlab.readthedocs.io/en/master/mp2
 	% for B1 map. See the B1 map using hMRI section.
 
 	% To show the output
-	qMRshowOutput(FitResults,data,Model);
+	% qMRshowOutput(FitResults,data,Model);
 
 	% Save as nii
 	FitResultsSave_nii (FitResults, MP2RAGE_nii, '/Users/z3402744/Work/vci/vci_001/flywheel/dce/nii');
@@ -129,9 +129,24 @@ Get ready for processing dynamic data
 				t1_vibe_sag_DCE_2mm_XL_FOV_40s_temporal_res_20230920144854_112.nii \
 				t1_vibe_sag_DCE_2mm_XL_FOV_40s_temporal_res_20230920144854_120.nii
 
-	mcflirt dynamic
+	T1uncorr="t1_mp2rage_sag_0.8x0.8x2_BW240_T1_Images_20230920144854_105"
+	B1map="tfl_b1_map_test/Results/B1Map_for_T1_mapping_20230920144854_110_B1map"
+	B1ref="tfl_b1_map_test/Results/B1Map_for_T1_mapping_20230920144854_109_B1ref"	
+
+	mcflirt -in dynamic
 
 	fslmaths dynamic_mcf -Tmean dynamic_Tmean
 
-	flirt -in T1 -ref dynamic_Tmean -out T1_reg2dyn
+	flirt -in MP2RAGEcor -ref dynamic_Tmean -omat MP2RAGE_to_dyn.mat
+
+	flirt -in $T1uncorr -ref dynamic_Tmean -init MP2RAGE_to_dyn.mat -applyxfm -out T1uncorr_reg2dyn
+	flirt -in MP2RAGEcor -ref dynamic_Tmean -init MP2RAGE_to_dyn.mat -applyxfm -out MP2RAGEcor_reg2dyn
+
+
+	convert_xfm  -omat B1ref_to_dyn.mat B1ref_to_UNI.mat -concat MP2RAGE_to_dyn.mat  # Note that mat after -concat is the 2nd mat
+	
+	flirt -in $B1map -ref dynamic_Tmean -init B1ref_to_dyn.mat -applyxfm -out B1map_reg2dyn
+	flirt -in $B1ref -ref dynamic_Tmean -init B1ref_to_dyn.mat -applyxfm -out B1ref_reg2dyn
+
+	optiBET.sh -i dynamic_Tmean.nii.gz
 
