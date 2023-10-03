@@ -11,8 +11,9 @@ Choose from below scenarios for details:
    Processing DCE-MRI using ROCKETSHIP <dce_ROCKETSHIP>
    Processing DCE-MRI using SEPAL <dce_SEPAL>
    Processing DCE-MRI using Quantiphyse <dce_Quantiphyse>
+   Miscellaneous tools for MP2RAGE <dce_MP2RAGE_misc>
 
-TO-DO list
+SEPAL workflow:
 
-* `MATLAB code for DCE <https://github.com/mjt320/DCE-functions>`_
-* `MP2RAGE scripts <https://github.com/JosePMarques/MP2RAGE-related-scripts>`_
+#. Generating B1 map using Siemens product TFL sequence with hMRI toolbox <dce_b1map_hmri>
+#. Processing DCE-MRI using SEPAL <dce_SEPAL>

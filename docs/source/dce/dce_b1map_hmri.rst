@@ -30,3 +30,12 @@ Output files
 * ``*_B1map.[nii|json]``: Estimated B1 bias field *fT* map in percent units (p.u.).
 
 * ``*_B1ref.[nii|json]``: Anatomical reference for B1 bias field correction.
+
+Quality checking
+----------------
+Usually, B1 map should have a good rendering with intensity range set to [75 125] p.u. when displaying. This can be potentially used as a criterion for quality checking (?). This will need to apply a mask to focus on values in the brain. E.g.,
+
+..  code-block::
+
+	bet B1Map_for_T1_mapping_20230920144854_109_B1ref B1ref_brain -m -f 0.6
+	fslstats B1Map_for_T1_mapping_20230920144854_110_B1map -k B1ref_brain_mask -r  # output is "80.611900 121.996201" for the first VCI ppt.
