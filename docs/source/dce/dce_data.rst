@@ -23,7 +23,7 @@ The following data are acquired in VasMarker study for DCE-MRI:
 
 * Dynamic T1w images
 
-  * 2 * t1_vibe_sag_DCE_2mm_XL_FOV_40s_temporal_res_*.nii
+  * **2 * t1_vibe_sag_DCE_2mm_XL_FOV_40s_temporal_res_*.nii**:
   * **2 * t1_vibe_sag_DCE_2mm_XL_FOV_40s_temporal_res_ND_*.nii:** *ND* means Non-Distortion-corrected. See :ref:`ND` section in Siemens terminologies.
 
 ..  note::

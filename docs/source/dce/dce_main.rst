@@ -1,5 +1,5 @@
-Dynamic Contrast Enhanced MRI (DCE-MRI)
-=======================================
+Dynamic Contrast Enhanced MRI
+=============================
 Choose from below scenarios for details:
 
 .. toctree::
