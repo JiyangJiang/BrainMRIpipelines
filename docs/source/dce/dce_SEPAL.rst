@@ -47,4 +47,4 @@ Create mask of subcortical GM
 ROI and voxel-wise analyses
 ---------------------------
 
-Refer to the Jupyter Notebook
+Refer to the `Jupyter Notebook <https://github.com/JiyangJiang/BrainMRIpipelines/blob/master/docs/source/dce/dce_SEPAL_notebook.ipynb>`_
