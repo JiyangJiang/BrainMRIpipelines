@@ -15,5 +15,8 @@ Choose from below scenarios for details:
 
 SEPAL workflow:
 
-#. Generating B1 map using Siemens product TFL sequence with hMRI toolbox <dce_b1map_hmri>
-#. Processing DCE-MRI using SEPAL <dce_SEPAL>
+.. toctree::
+   :maxdepth: 1
+
+   Generating B1 map using Siemens product TFL sequence with hMRI toolbox <dce_b1map_hmri>
+   Processing DCE-MRI using SEPAL <dce_SEPAL>
