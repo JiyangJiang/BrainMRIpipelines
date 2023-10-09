@@ -16,8 +16,10 @@ Modules
    dwi/dwi_main
    rsfmri/rsfmri_main
    cvr/cvr_main
+   dce/dce_main
    others/misc
    others/eg
+   others/siemens.rst
 
 Public datasets
 ---------------
