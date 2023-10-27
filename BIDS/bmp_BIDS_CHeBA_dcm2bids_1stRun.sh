@@ -6,22 +6,42 @@ DICOM_zip=$1
 BIDS_dir=$2
 subject_ID=$3
 
-# dcm2bids_scaffold to prepare BIDS folder
-echo "[$(date)] : $(basename $0) : Running dcm2bids_scaffold to create basic files and directories for BIDS."
+read -p "[$(date)] : $(basename $0) : dcm2bids environment activated? Or dcm2bids commands accessible? [Y/N] : " ans_yn
 
-dcm2bids_scaffold --output_dir $BIDS_dir
+case "$ans_yn" in
 
-# extract from Flywheel zip archive
-echo "[$(date)] : $(basename $0) : Calling bmp_BIDS_CHeBA_init.sh to sort out Flywheel zip archive."
+	"Y")
 
-bmp_BIDS_CHeBA_reorganiseFlywheelDicomZip.sh $DICOM_zip $BIDS_dir $subject_ID
+		# dcm2bids_scaffold to prepare BIDS folder
+		echo "[$(date)] : $(basename $0) : Running dcm2bids_scaffold to create basic files and directories for BIDS."
 
-echo "[$(date)] : $(basename $0) : Running dcm2bids_helper to convert DICOM to NIFTI and json, so that configuration file can be prepared."
+		dcm2bids_scaffold --output_dir=$BIDS_dir --force
 
-dcm2bids_helper --dicom_dir $DICOM_dir \
-				--output_dir $BIDS_directory/tmp_dcm2bids/helper \
-				--log_level DEBUG \
-				--force \
-				> $BIDS_directory/tmp_dcm2bids/dcm2bids_helper.debug_log
+		# extract from Flywheel zip archive
+		echo "[$(date)] : $(basename $0) : Calling bmp_BIDS_CHeBA_init.sh to sort out Flywheel zip archive."
 
-echo -e "[$(date)] : $(basename $0) : Investigate json files in $BIDS_directory/tmp_dcm2bids/sourcedata/$curr_subjID to create the configuration file."
+		bmp_BIDS_CHeBA_reorganiseFlywheelDicomZip.sh $DICOM_zip $BIDS_dir $subject_ID
+
+		echo "[$(date)] : $(basename $0) : Running dcm2bids_helper to convert DICOM to NIFTI and json, so that configuration file can be prepared."
+
+		mkdir -p $BIDS_dir/tmp_dcm2bids
+
+		dcm2bids_helper --dicom_dir=$BIDS_dir/sourcedata/$subject_ID --output_dir=$BIDS_dir/tmp_dcm2bids/helper --log_level=DEBUG --force
+
+		echo -e "[$(date)] : $(basename $0) : Investigate json files in $BIDS_dir/tmp_dcm2bids/sourcedata/$curr_subjID to create the configuration file."
+
+		;;
+
+	"N")
+
+		echo "[$(date)] : $(basename $0) : Abort."
+
+		;;
+
+	*)
+
+		echo "[$(date)] : $(basename $0) : Abort."
+
+		;;
+
+esac

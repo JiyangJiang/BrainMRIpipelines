@@ -17,18 +17,28 @@ deal_with_3D(){
 
 	DICOM="flywheel$(unzip -l $DICOM_zip | grep "$zip_path_kword" | grep ".dcm" | awk -F'flywheel' '{print $NF}')"
 
-	echo $DICOM
+	if [ "$DICOM" = "flywheel" ]; then
 
-	# curr_rand_str=$(LC_CTYPE=C tr -dc 'a-zA-Z0-9' </dev/urandom | head -c 13 ; echo '')
-	curr_rand_str=$(head -c 5 /dev/random | openssl base64 | sed 's/\///g')
+		echo "[$(date)] : $(basename $0) : [WARNING] : DICOM with keyword \"$zip_path_kword\" not found in $DICOM_zip. -- Check if keyword has been changed."
 
-	echo "unzip -o -j $DICOM_zip -d $BIDS_dir/sourcedata/$subject_ID/$modality_name $(echo $DICOM | sed 's/ /\\ /g')" > $BMP_TMP_PATH/bmp_${curr_rand_str}.sh
+	else
 
-	mkdir -p $BIDS_dir/sourcedata/$subject_ID/$modality_name
+		# curr_rand_str=$(LC_CTYPE=C tr -dc 'a-zA-Z0-9' </dev/urandom | head -c 13 ; echo '')
+		curr_rand_str=$(head -c 5 /dev/random | openssl base64 | sed 's/\///g')
 
-	bash $BMP_TMP_PATH/bmp_${curr_rand_str}.sh && rm -f $BMP_TMP_PATH/bmp_${curr_rand_str}.sh
+		echo -en "[$(date)] : $(basename $0) : Reorganising $modality_name (3D volume) DICOM folder ... "
 
-	mv "$BIDS_dir/sourcedata/$subject_ID/$modality_name/$(echo $DICOM | awk -F/ '{print $NF}')" "$BIDS_dir/sourcedata/$subject_ID/$modality_name/${modality_name}.dcm"
+		echo "unzip -qq -o -j $DICOM_zip -d $BIDS_dir/sourcedata/$subject_ID/$modality_name $(echo $DICOM | sed 's/ /\\ /g')" > $BMP_TMP_PATH/bmp_${curr_rand_str}.sh
+
+		mkdir -p $BIDS_dir/sourcedata/$subject_ID/$modality_name
+
+		bash $BMP_TMP_PATH/bmp_${curr_rand_str}.sh && rm -f $BMP_TMP_PATH/bmp_${curr_rand_str}.sh
+
+		mv "$BIDS_dir/sourcedata/$subject_ID/$modality_name/$(echo $DICOM | awk -F/ '{print $NF}')" "$BIDS_dir/sourcedata/$subject_ID/$modality_name/${modality_name}.dcm"
+
+		echo "DONE!"
+
+	fi
 }
 
 deal_with_4D(){
@@ -41,20 +51,30 @@ deal_with_4D(){
 
 	DICOM="flywheel$(unzip -l $DICOM_zip | grep "$zip_path_kword" | grep ".dicom.zip" | awk -F'flywheel' '{print $NF}')"
 
-	echo $DICOM
+	if [ "$DICOM" = "flywheel" ]; then
 
-	# curr_rand_str=$(LC_CTYPE=C tr -dc 'a-zA-Z0-9' </dev/urandom | head -c 13 ; echo '')
-	curr_rand_str=$(head -c 5 /dev/random | openssl base64 | sed 's/\///g')
+		echo "[$(date)] : $(basename $0) : [WARNING] : DICOM with keyword \"$zip_path_kword\" not found in $DICOM_zip. -- Check if keyword has been changed."
 
-	echo "unzip -o -j $DICOM_zip -d $BIDS_dir/sourcedata/$subject_ID/$modality_name $(echo $DICOM | sed 's/ /\\ /g')" > $BMP_TMP_PATH/bmp_${curr_rand_str}.sh
+	else
 
-	mkdir -p $BIDS_dir/sourcedata/$subject_ID/$modality_name
+		# curr_rand_str=$(LC_CTYPE=C tr -dc 'a-zA-Z0-9' </dev/urandom | head -c 13 ; echo '')
+		curr_rand_str=$(head -c 5 /dev/random | openssl base64 | sed 's/\///g')
 
-	bash $BMP_TMP_PATH/bmp_${curr_rand_str}.sh && rm -f $BMP_TMP_PATH/bmp_${curr_rand_str}.sh
+		echo -en "[$(date)] : $(basename $0) : Reorganising $modality_name (4D volume) DICOM folder ... "
 
-	mv "$BIDS_dir/sourcedata/$subject_ID/$modality_name/$(echo $DICOM | awk -F/ '{print $NF}')" "$BIDS_dir/sourcedata/$subject_ID/$modality_name/${modality_name}.dicom.zip"
+		echo "unzip -qq -o -j $DICOM_zip -d $BIDS_dir/sourcedata/$subject_ID/$modality_name $(echo $DICOM | sed 's/ /\\ /g')" > $BMP_TMP_PATH/bmp_${curr_rand_str}.sh
 
-	unzip -o -d $BIDS_dir/sourcedata/$subject_ID/$modality_name "$BIDS_dir/sourcedata/$subject_ID/$modality_name/${modality_name}.dicom.zip" && rm -f "$BIDS_dir/sourcedata/$subject_ID/$modality_name/${modality_name}.dicom.zip"
+		mkdir -p $BIDS_dir/sourcedata/$subject_ID/$modality_name
+
+		bash $BMP_TMP_PATH/bmp_${curr_rand_str}.sh && rm -f $BMP_TMP_PATH/bmp_${curr_rand_str}.sh
+
+		mv "$BIDS_dir/sourcedata/$subject_ID/$modality_name/$(echo $DICOM | awk -F/ '{print $NF}')" "$BIDS_dir/sourcedata/$subject_ID/$modality_name/${modality_name}.dicom.zip"
+
+		unzip -qq -o -d $BIDS_dir/sourcedata/$subject_ID/$modality_name "$BIDS_dir/sourcedata/$subject_ID/$modality_name/${modality_name}.dicom.zip" && rm -f "$BIDS_dir/sourcedata/$subject_ID/$modality_name/${modality_name}.dicom.zip"
+
+		echo "DONE!"
+
+	fi
 }
 
 

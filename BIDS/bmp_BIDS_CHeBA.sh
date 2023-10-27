@@ -9,7 +9,7 @@ $(basename $0)
 DESCRIPTION
 
   This script converts DICOM downloaded from Flywheel to BIDS format. It is customised
-  for MAS2 and VCI study run at CHeBA.
+  for VCI study at CHeBA.
 
 
 USAGE
@@ -21,19 +21,27 @@ USAGE
 
 COMPULSORY
 
-  -s, --study                 <MAS2 or VCI>          'MAS2' or 'VCI' study.
+  -s, --study                 <VCI>                  'VCI' study.
 
   -d, --dicom_zip             <DICOM zip archive>    Path to DICOM zip file downloaded
                                                      from Flywheel.
 
   -b, --bids_dir              <BIDS directory>       Path to output BIDS directory.
 
+  -i, --subj_id               <subject ID>           Subject's ID.
+
 
 OPTIONAL
 
+  -1, --is_1st_run            <Y/N>                  Whether is first run. If Y, call
+                                                     'bmp_BIDS_CHeBA_dcm2bids_1stRun.sh'
+                                                     for generating configure json file.
+                                                     Otherwise, call 'bmp_BIDS_CHeBA
+                                                     _dcm2bids_followRuns.sh'. Default 
+                                                     is N.
+
   -j, --json                  <path to JSON file>    Path to config JSON file, if not
-                                                     using default MAS2_config.json
-                                                     and VCI_config.json.
+                                                     using default.
 
   -h, --help                                         Display this message.
 
@@ -42,7 +50,7 @@ EOF
 
 }
 
-
+is_first_run=N
 
 for $arg in $@
 do
@@ -58,6 +66,14 @@ do
         ;;
     -b|--bids_directory)
         BIDS_dir=$2
+        shift 2
+        ;;
+    -i|--subj_id)
+        subject_ID=$2
+        shift 2
+        ;;
+    -1|--is_1st_run)
+        is_first_run=Y
         shift 2
         ;;
     -j|--json)
@@ -77,8 +93,11 @@ do
 done
 
 
-bmp_BIDS_CHeBA_init.sh $DICOM_zip $BIDS_dir
-
-
-
-bmp_BIDS_CHeBA_dcm2bids.sh
+case $is_first_run in
+    Y)
+        bmp_BIDS_CHeBA_dcm2bids_1stRun.sh $DICOM_zip $BIDS_dir $subject_ID
+        ;;
+    N)
+        bmp_BIDS_CHeBA_dcm2bids_followingRuns.sh
+        ;;
+esac
