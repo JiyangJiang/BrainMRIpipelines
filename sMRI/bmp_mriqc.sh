@@ -48,8 +48,8 @@ EOF
 use_singularity=0
 use_docker=0
 
-num_cpu=$(grep -c ^processor /proc/cpuinfo) # num of CPU
-
+# num_cpu=$(grep -c ^processor /proc/cpuinfo) # num of CPU
+num_cpu=2
 additionalOptoins="-vvv --species human --nprocs $num_cpu"
 
 

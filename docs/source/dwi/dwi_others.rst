@@ -52,6 +52,8 @@ acqparam.txt and total readout time
 
 	  * For VCI and MAS2 data, *BandwidthPerPixelPhaseEncode* field in json file of B0 has a value of 19.3799992. The fourth number in acqaram.txt should be 1 / 19.3799992 = 0.052. Note that this is referred to as "total readout time" in MRtrix which is total time required for the EPI readout train (`Reference <https://mrtrix.readthedocs.io/en/dev/concepts/pe_scheme.html?highlight=readout%20time>`_). Specifically the time between the centre of the 1st echo, and centre of the last echo, in the train. This is sometimes referred to as the "FSL definition". It should be defined in seconds. This corresponds to the fourth number in acqparam.txt (see `Variable phase encoding section of this link <https://mrtrix.readthedocs.io/en/dev/concepts/pe_scheme.html?highlight=readout%20time>`_. The calculation of this readout time is detailed in `Effection echo spacing and total readout time section of this website <https://lcni.uoregon.edu/wiki/tags/fmri/>`_. 0.052 seconds is the total readout time for VCI and MAS2 data (see `Generating acqparam`_ for the calculation). Note that the calculation was based on SPM definition which should be very close to FSL definition. `MRConvert <https://idoimaging.com/programs/214>`_ can report values from both definitions.
 
+	  * An alternative way is that 'TotalReadoutTime = EffectiveEchoSpacing * (ReconMatrixPE - 1)' (`Reference <https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/01-magnetic-resonance-imaging-data.html#case-4-multiple-phase-encoded-directions-pepolar>`_), which gives 0.051.
+
 	Therefore, acqparam.txt file for VCI and MAS2 DWI data should read as:
 
 	| 0 -1 0 0.052

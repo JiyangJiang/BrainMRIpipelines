@@ -98,6 +98,6 @@ case $is_first_run in
         bmp_BIDS_CHeBA_dcm2bids_1stRun.sh $DICOM_zip $BIDS_dir $subject_ID
         ;;
     N)
-        bmp_BIDS_CHeBA_dcm2bids_followingRuns.sh
+        bmp_BIDS_CHeBA_dcm2bids_followingRuns.sh $BIDS_dir $subject_ID $study
         ;;
 esac

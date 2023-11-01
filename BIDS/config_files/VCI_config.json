@@ -1,0 +1,115 @@
+{
+  "descriptions": [
+    {
+      "datatype": "anat",
+      "suffix": "T1w",
+      "criteria": {
+        "SeriesDescription": "ABCD_T1w_MPR_vNav_BW740 RMS",
+        "ProtocolName": "ABCD_T1w_MPR_vNav_BW740"
+      },
+      "custom_entities": "rec-RMS"
+    },
+    {
+      "datatype": "anat",
+      "suffix": "FLAIR",
+      "criteria": {
+        "SeriesDescription": "t2_space_DF_BW651"
+      }
+    },
+    {
+      "datatype": "anat",
+      "suffix": "T2w",
+      "criteria": {
+        "SeriesDescription": "ABCD_T2w_SPC_ vNav Iso0.8mm BW744"
+      }
+    },
+    {
+      "datatype": "dwi",
+      "suffix": "dwi",
+      "criteria": {
+        "SeriesDescription": "AP_BLOCK_1_DIFFUSION_30DIR"
+      },
+      "custom_entities": "dir-AP_run-1",
+      "id": "id_dwi_ap1",
+      "sidecar_changes": {
+        "MultipartID": "dwi_1"
+      }
+    },
+    {
+      "datatype": "dwi",
+      "suffix": "dwi",
+      "criteria": {
+        "SeriesDescription": "AP_BLOCK_2_DIFFUSION_30DIR"
+      },
+      "custom_entities": "dir-AP_run-2",
+      "id": "id_dwi_ap2",
+      "sidecar_changes": {
+        "MultipartID": "dwi_1"
+      }
+    },
+    {
+      "datatype": "dwi",
+      "suffix": "dwi",
+      "criteria": {
+        "SeriesDescription": "PA_BLOCK_1_DIFFUSION_30DIR"
+      },
+      "custom_entities": "dir-PA_run-1",
+      "id": "id_dwi_pa1",
+      "sidecar_changes": {
+        "MultipartID": "dwi_1"
+      }
+    },
+    {
+      "datatype": "dwi",
+      "suffix": "dwi",
+      "criteria": {
+        "SeriesDescription": "PA_BLOCK_2_DIFFUSION_30DIR"
+      },
+      "custom_entities": "dir-PA_run-2",
+      "id": "id_dwi_pa2",
+      "sidecar_changes": {
+        "MultipartID": "dwi_1"
+      }
+    },
+    {
+      "datatype": "func",
+      "suffix": "bold",
+      "criteria": {
+        "SeriesDescription": "fMRI _RESTING STATE_MB6_PA normalise OFF"
+      },
+      "custom_entities": "task-rest",
+      "id": "id_rsfmri",
+      "sidecar_changes": {
+        "TaskName": "rest"
+      }
+    },
+    {
+      "datatype": "fmap",
+      "suffix": "epi",
+      "criteria": {
+        "SeriesDescription": "AP_FMAP_for resting state fMRI normalise OFF",
+        "PhaseEncodingDirection": "j-"
+      },
+      "custom_entities": "dir-AP",
+      "sidecar_changes": {
+        "PhaseEncodingDirection": "j-",
+        "TotalReadoutTime": 0.051,
+        "IntendedFor": "id_rsfmri"
+      }
+    },
+    {
+      "datatype": "fmap",
+      "suffix": "epi",
+      "criteria": {
+        "SeriesDescription": "PA_FMAP_for resting state fMRI normalise OFF",
+        "PhaseEncodingDirection": "j"
+      },
+      "custom_entities": "dir-PA",
+      "sidecar_changes": {
+        "PhaseEncodingDirection": "j",
+        "TotalReadoutTime": 0.051,
+        "IntendedFor": "id_rsfmri"
+      }
+    }
+  ]
+}
