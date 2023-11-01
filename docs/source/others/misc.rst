@@ -12,3 +12,8 @@ Katana on-demand
 optiBET.sh error - [[: not found
 --------------------------------
 [[ is a bash-builtin. Add ``#!/bin/bash`` at the top of optiBET.sh file.
+
+Building singularity with image on Docker Hub
+---------------------------------------------
+Reference: https://www.nas.nasa.gov/hecc/support/kb/converting-docker-images-to-singularity-for-use-on-pleiades_643.html
+``singularity pull mriqc.sif docker://nipreps/mriqc``
