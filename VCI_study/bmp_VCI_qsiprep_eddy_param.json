@@ -1,0 +1,14 @@
+{
+	"repol": true,
+	"niter": 8,
+	"fwhm": "10,6,4,2,0,0,0,0",
+	"ol_type": "both",
+	"mporder": 10,
+	"s2v_niter": 8,
+	"s2v_lambda": 5,
+	"s2v_interp": "trilinear",
+	"flm": "quadratic",
+	"slm": "linear",
+	"estimate_move_by_susceptibility": true
+}
+

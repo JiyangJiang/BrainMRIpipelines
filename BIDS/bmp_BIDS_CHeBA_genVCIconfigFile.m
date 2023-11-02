@@ -179,32 +179,35 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 
 		% Reference: https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/01-magnetic-resonance-imaging-data.html#case-4-multiple-phase-encoded-directions-pepolar
 
-		for i = 1:2
-			curr_length = length(vci_dcm2bids_config.descriptions);
-			curr_idx = curr_length + 1;
+		curr_length = length(vci_dcm2bids_config.descriptions);
+		curr_idx = curr_length + 1;
 
-			vci_dcm2bids_config.descriptions(curr_idx).datatype = "fmap";
-			vci_dcm2bids_config.descriptions(curr_idx).suffix = "epi";
-			vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "AP_FMAP_for DIFFUSION";
-			vci_dcm2bids_config.descriptions(curr_idx).criteria.PhaseEncodingDirection = "j-";
-			vci_dcm2bids_config.descriptions(curr_idx).custom_entities = ["dir-AP_run-" num2str(i)];
-			vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j-";
-			vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051; % EffectiveEchoSpacing * (ReconMatrixPE - 1)
-			vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor = ["id_dwi_ap" num2str(i)]; % Note that there can only be
-																											% 1 IntededFor, but DWI is acquired
-																											% in 4 blocks. So this actually
-																											% doesn't work for all DWI blocks.
-																											% Create multiple duplicates to resolve.
+		vci_dcm2bids_config.descriptions(curr_idx).datatype = "fmap";
+		vci_dcm2bids_config.descriptions(curr_idx).suffix = "epi";
+		vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "AP_FMAP_for DIFFUSION";
+		vci_dcm2bids_config.descriptions(curr_idx).criteria.PhaseEncodingDirection = "j-";
+		vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "dir-AP";
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j-";
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051; % EffectiveEchoSpacing * (ReconMatrixPE - 1)
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(1) = "id_dwi_ap1";
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(2) = "id_dwi_ap2";
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(3) = "id_dwi_pa1";
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(4) = "id_dwi_pa2";
 
-			vci_dcm2bids_config.descriptions(curr_idx).datatype = "fmap";
-			vci_dcm2bids_config.descriptions(curr_idx).suffix = "epi";
-			vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "PA_FMAP_for DIFFUSION";
-			vci_dcm2bids_config.descriptions(curr_idx).criteria.PhaseEncodingDirection = "j";
-			vci_dcm2bids_config.descriptions(curr_idx).custom_entities = ["dir-PA_run-" num2str(i)];
-			vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j";
-			vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051; % EffectiveEchoSpacing * (ReconMatrixPE - 1)
-			vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor = ["id_dwi_pa" num2str(i)];
-		end
+		curr_length = length(vci_dcm2bids_config.descriptions);
+		curr_idx = curr_length + 1;
+
+		vci_dcm2bids_config.descriptions(curr_idx).datatype = "fmap";
+		vci_dcm2bids_config.descriptions(curr_idx).suffix = "epi";
+		vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "PA_FMAP_for DIFFUSION";
+		vci_dcm2bids_config.descriptions(curr_idx).criteria.PhaseEncodingDirection = "j";
+		vci_dcm2bids_config.descriptions(curr_idx).custom_entities = ["dir-PA_run-" num2str(i)];
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j";
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051; % EffectiveEchoSpacing * (ReconMatrixPE - 1)
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(1) = "id_dwi_ap1";
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(2) = "id_dwi_ap2";
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(3) = "id_dwi_pa1";
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(4) = "id_dwi_pa2";
 
 	end
 

@@ -15,5 +15,10 @@ optiBET.sh error - [[: not found
 
 Building singularity with image on Docker Hub
 ---------------------------------------------
-Reference: https://www.nas.nasa.gov/hecc/support/kb/converting-docker-images-to-singularity-for-use-on-pleiades_643.html
-``singularity pull mriqc.sif docker://nipreps/mriqc``
+`Reference 1 <https://www.nas.nasa.gov/hecc/support/kb/converting-docker-images-to-singularity-for-use-on-pleiades_643.html>`_
+`Reference 2 <https://apptainer.org/user-docs/master/build_env.html>`_
+
+.. code-block::
+
+	export SINGULARITY_CACHEDIR=/srv/scratch/cheba/Imaging/my_tmp
+	singularity pull mriqc.sif docker://nipreps/mriqc
