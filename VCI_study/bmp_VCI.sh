@@ -43,25 +43,35 @@ singularity run --cleanenv --bind ${BIDS_dir}:/data:ro $BMP_3RD_PATH/bids-valida
 # OR
 #
 mkdir -p ${BIDS_dir}/derivatives/mriqc_${mriqc_version}/work
+
 singularity run --cleanenv -B ${BIDS_dir}:/data -B ${BIDS_dir}/derivatives/mriqc_${mriqc_version}:/out -B ${BIDS_dir}/derivatives/mriqc_${mriqc_version}/work:/work $BMP_3RD_PATH/mriqc-${mriqc_version}.sif /data /out participant --work-dir /work --participant_label ${subject_ID} -m {T1w,T2w,bold} --verbose-reports --species human --deoblique --despike --no-sub -v
 
 # Step 4. Pre-processing DWI (qsiprep)
 #
 # References : https://qsiprep.readthedocs.io/en/latest/preprocessing.html#merge-denoise
+mkdir -p ${BIDS_dir}/derivatives/qsiprep_${qsiprep_version}/work
+
 singularity run --containall --writable-tmpfs \
-				-B $HOME/fullds005,$HOME/dockerout,${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
-				$BMP_3RD_PATH/qsiprep-${qsiprep_version}.sif \
-				${BIDS_dir} \
-				${BIDS_dir}/derivatives/qsiprep_${qsiprep_version} \
-				participant 
-				--participant_label ${subject_ID} \
-				--fs-license-file /opt/freesurfer/license.txt \
-				--unringing-method mrdegibbs \
-				--combin-all-dwi \
-				--denoise-after-combining \
-				--output-resolution 1.2 \
-				--anat_modality T1w \
-				--hmc_model eddy \
-				--eddy_config $BMP_PATH/VCI_study/bmp_VCI_qsiprep_eddy_param.json \
-				``TO BE CONTINUED``
-				-v
+                -B ${BIDS_dir},${BIDS_dir}/derivatives/qsiprep_${qsiprep_version},${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
+                $BMP_3RD_PATH/qsiprep-${qsiprep_version}.sif \
+                ${BIDS_dir} \
+                ${BIDS_dir}/derivatives/qsiprep_${qsiprep_version} \
+                participant \
+                --participant_label ${subject_ID} \
+                --fs-license-file /opt/freesurfer/license.txt \
+                --unringing-method mrdegibbs \
+                --denoise-after-combining \
+                --output-resolution 1.2 \
+                --anat_modality T1w \
+                --hmc_model eddy \
+                --pepolar_method TOPUP \
+                --work_dir ${BIDS_dir}/derivatives/qsiprep_${qsiprep_version}/work \
+                -v
+
+# qsiprep issues :
+#
+# 1. eddy_param.json - Cannot set up fwhm with multiple values. 
+#                      Therefore, currently using default eddy settings 
+#                      (https://github.com/PennLINC/qsiprep/blob/master/qsiprep/data/eddy_params.json.
+#
+# 
