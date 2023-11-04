@@ -57,6 +57,7 @@ singularity run --containall --writable-tmpfs \
                 ${BIDS_dir} \
                 ${BIDS_dir}/derivatives/qsiprep_${qsiprep_version} \
                 participant \
+                --skip_bids_validation \
                 --participant_label ${subject_ID} \
                 --fs-license-file /opt/freesurfer/license.txt \
                 --unringing-method mrdegibbs \
