@@ -64,14 +64,10 @@ singularity run --containall --writable-tmpfs \
                 --output-resolution 1.2 \
                 --anat_modality T1w \
                 --hmc_model eddy \
+                --eddy_config $BMP_PATH/VCI_study/bmp_VCI_qsiprep_eddy_param.json \
                 --pepolar_method TOPUP \
                 --work_dir ${BIDS_dir}/derivatives/qsiprep_${qsiprep_version}/work \
                 -v
 
-# qsiprep issues :
-#
-# 1. eddy_param.json - Cannot set up fwhm with multiple values. 
-#                      Therefore, currently using default eddy settings 
-#                      (https://github.com/PennLINC/qsiprep/blob/master/qsiprep/data/eddy_params.json.
-#
-# 
+
+# Step 5. Pre-processing sMRI (smriprep)
