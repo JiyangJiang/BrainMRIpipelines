@@ -1,3 +1,20 @@
 {
-	"args": "--repol --niter=8 --fwhm==10,6,4,2,0,0,0,0 --ol_type=both --mporder=10 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --data_is_shelled --flm=quadratic --slm=linear --estimate_move_by_susceptibility --cnr_maps"
+  "flm": "quadratic",
+  "slm": "linear",
+  "fep": false,
+  "interp": "spline",
+  "nvoxhp": 1000,
+  "fudge_factor": 10,
+  "dont_sep_offs_move": false,
+  "dont_peas": false,
+  "niter": 8,
+  "method": "jac",
+  "repol": true,
+  "num_threads": 16,
+  "is_shelled": true,
+  "use_cuda": false,
+  "cnr_maps": true,
+  "residuals": false,
+  "output_type": "NIFTI_GZ",
+  "args": "--fwhm=10,6,4,2,0,0,0,0 --ol_type=both --mporder=10 --s2v_niter=8 --s2v_lambda=5 --s2v_interp=trilinear --estimate_move_by_susceptibility --slspec=$BMP_PATH/VCI_study/bmp_VCI_slspec.txt"
 }
