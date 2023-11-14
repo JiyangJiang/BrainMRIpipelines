@@ -5,9 +5,13 @@
 #   This script goes through the pipelines to process imaging data
 #   for VCI study.
 
-DICOM_zip=$1
-BIDS_dir=$2
-subject_ID=$3
+export DICOM_zip=/home/brain/Desktop/VCI/vci_003/flywheel_20231113_001000.zip
+export BIDS_dir=/home/brain/Desktop/VCI/BIDS
+export subject_ID=vci003
+
+# DICOM_zip=$1
+# BIDS_dir=$2
+# subject_ID=$3
 
 bids_validator_version=1.13.1
 mriqc_version=23.1.0
@@ -24,6 +28,7 @@ qsiprep_version=0.19.1
 
 # Step 1. dcm2bids for subsequent scans.
 # +++++++++++++++++++++++++++++++++++++++
+conda activate dcm2bids
 bmp_BIDS_CHeBA.sh --study VCI --dicom_zip $DICOM_zip --bids_dir $BIDS_dir --subj_id $subject_ID
 
 # Step 2. validate BIDS

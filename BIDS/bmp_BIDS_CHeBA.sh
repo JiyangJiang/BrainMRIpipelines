@@ -52,7 +52,7 @@ EOF
 
 is_first_run=N
 
-for $arg in $@
+for arg in "$@"
 do
   case $arg in
     -s|--study)
@@ -64,7 +64,7 @@ do
         DICOM_zip=$2
         shift 2
         ;;
-    -b|--bids_directory)
+    -b|--bids_dir)
         BIDS_dir=$2
         shift 2
         ;;
@@ -92,12 +92,15 @@ do
   esac
 done
 
+echo "DICOM zip = ${DICOM_zip}"
+echo "BIDS dir = ${BIDS_dir}"
+echo "Subject ID = ${subject_ID}"
 
 case $is_first_run in
     Y)
         bmp_BIDS_CHeBA_dcm2bids_1stRun.sh $DICOM_zip $BIDS_dir $subject_ID
         ;;
     N)
-        bmp_BIDS_CHeBA_dcm2bids_followingRuns.sh $BIDS_dir $subject_ID $study
+        bmp_BIDS_CHeBA_dcm2bids_followingRuns.sh $DICOM_zip $BIDS_dir $subject_ID $study
         ;;
 esac
