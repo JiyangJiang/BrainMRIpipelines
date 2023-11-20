@@ -16,6 +16,7 @@ export subject_ID=vci003
 bids_validator_version=1.13.1
 mriqc_version=23.1.0
 qsiprep_version=0.19.1
+smriprep_version=0.12.2
 
 # Step 0. Create dcm2bids configuration file.
 # ++++++++++++++++++++++++++++++++++++++++++++
@@ -73,19 +74,18 @@ singularity run --cleanenv \
 # Pre-processing sMRI (smriprep)
 # +++++++++++++++++++++++++++++++++++++++
 #
-# mkdir -p ${BIDS_dir}/derivatives/smriprep/work
-#
-# singularity run --cleanenv \
-#                 $BMP_3RD_PATH/smriprep.sif \
-#                 ${BIDS_dir} ${BIDS_dir}/derivatives/smriprep \
-#                 participant \
-#                 --participant_label vci003 \
-#                 --omp-nthreads 16 \
-#                 --fs-license-file ${FREESURFER_HOME}/license.txt \
-#                 --cifti-output 170k \
-#                 --work-dir ${BIDS_dir}/derivatives/smriprep/work \
-#                 --notrack \
-#                 -v
+mkdir -p ${BIDS_dir}/derivatives/smriprep_${smriprep_version}/work
+
+singularity run --cleanenv \
+                $BMP_3RD_PATH/smriprep-${smriprep_version}.simg \
+                ${BIDS_dir} ${BIDS_dir}/derivatives/smriprep_${smriprep_version} \
+                participant \
+                --participant_label vci003 \
+                --omp-nthreads 16 \
+                --fs-license-file ${FREESURFER_HOME}/license.txt \
+                --work-dir ${BIDS_dir}/derivatives/smriprep_${smriprep_version}/work \
+                --notrack \
+                -v
 
 # Step 4. Pre-processing DWI (qsiprep)
 # +++++++++++++++++++++++++++++++++++++++
@@ -102,7 +102,6 @@ singularity run --containall --writable-tmpfs \
                 --skip_bids_validation \
                 --participant_label ${subject_ID} \
                 --fs-license-file /opt/freesurfer/license.txt \
-                --do-reconall \
                 --unringing-method mrdegibbs \
                 --denoise-after-combining \
                 --output-resolution 1.2 \

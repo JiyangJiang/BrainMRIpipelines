@@ -30,3 +30,6 @@ Building singularity with image on Docker Hub
 	singularity pull mriqc.sif docker://nipreps/mriqc
 
 	singularity run mriqc.sif --version    # check image version
+
+	# If building singularity image on Katana failed,
+	# try build on GRID and copy to Katana.
