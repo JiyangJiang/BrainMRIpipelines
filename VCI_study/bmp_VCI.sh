@@ -43,6 +43,7 @@ bmp_BIDSvalidator.sh --bids_directory $BIDS_dir --docker
 singularity run --cleanenv --bind ${BIDS_dir}:/data:ro $BMP_3RD_PATH/bids-validator-${bids_validator_version}.sif /data
 
 # Step 3. MRIQC (subject level)
+# +++++++++++++++++++++++++++++++++++++++
 # docker run -it --rm -v ${BIDS_dir}:/data:ro -v ${BIDS_dir}/derivatives/mriqc/sub-$subject_ID:/out nipreps/mriqc /data /out participant --modalities {T1w,T2w,bold,dwi} --verbose-reports --species human --deoblique --despike --mem_gb 4  --nprocs 1 --no-sub
 #
 # OR
@@ -52,9 +53,10 @@ mkdir -p ${BIDS_dir}/derivatives/mriqc_${mriqc_version}/work
 singularity run --cleanenv -B ${BIDS_dir}:/data -B ${BIDS_dir}/derivatives/mriqc_${mriqc_version}:/out -B ${BIDS_dir}/derivatives/mriqc_${mriqc_version}/work:/work $BMP_3RD_PATH/mriqc-${mriqc_version}.sif /data /out participant --work-dir /work --participant_label ${subject_ID} -m {T1w,T2w,bold} --verbose-reports --species human --deoblique --despike --no-sub -v
 
 # Step 4. Pre-processing DWI (qsiprep)
+# +++++++++++++++++++++++++++++++++++++++
 #
 # References : https://qsiprep.readthedocs.io/en/latest/preprocessing.html#merge-denoise
-mkdir -p ${BIDS_dir}/derivatives/qsiprep_${qsiprep_version}/work
+mkdir -p ${BIDS_dir}/derivatives/qsiprep_${qsiprep_version}/work/$subject_ID
 
 singularity run --containall --writable-tmpfs \
                 -B ${BIDS_dir},${BIDS_dir}/derivatives/qsiprep_${qsiprep_version},${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
@@ -72,8 +74,29 @@ singularity run --containall --writable-tmpfs \
                 --hmc_model eddy \
                 --eddy_config $BMP_PATH/VCI_study/bmp_VCI_qsiprep_eddy_param.json \
                 --pepolar_method TOPUP \
-                --work_dir ${BIDS_dir}/derivatives/qsiprep_${qsiprep_version}/work \
+                --recon_spec mrtrix_multishell_msmt_ACT-hsvs \
+                --work_dir ${BIDS_dir}/derivatives/qsiprep_${qsiprep_version}/work/$subject_ID \
                 -v
 
 
-# Step 5. Pre-processing sMRI (smriprep)
+# Step 5. Reconstructing DWI measures (qsiprep)
+# +++++++++++++++++++++++++++++++++++++++
+#
+mkdir -p $BIDS_dir/derivatives/qsiprep_${qsiprep_version}/qsiprep_recon
+
+singularity run --containall --writable-tmpfs \
+            -B $BIDS_dir/derivatives/qsiprep_${qsiprep_version}/qsiprep,$BIDS_dir/derivatives/qsiprep_${qsiprep_version}/qsiprep_recon,${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
+            $BIDS_dir/derivatives/qsiprep_${qsiprep_version}/qsiprep \
+            $BIDS_dir/derivatives/qsiprep_${qsiprep_version}/qsiprep_recon \
+            participant \
+            --skip_bids_validation \
+            --participant_label ${subject_ID} \
+            --recon_input $BIDS_dir/derivatives/qsiprep_${qsiprep_version}/qsiprep \
+            --recon_spec mrtrix_multishell_msmt_ACT-hsvs \
+            --fs-license-file /opt/freesurfer/license.txt \
+            -v
+
+# can try other predefined recon specs
+#
+# - amico_noddi
+# - dsi_studio_gpi

@@ -96,17 +96,27 @@ deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_BLOCK_2_DIFFUSION_30DIR/"				
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_FMAP_for DIFFUSION/"									DWI_FMAP_AP
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP_for DIFFUSION/"									DWI_FMAP_PA
 
+# SWI/QSM
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++
+#
+# SWI/QSM has 2 possible senarios so far (20/11/2023)
+#
 deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_Qsm/"								SWI_QSM
 deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_SWI_Combined/"					SWI_SWI
 deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_SWI_mIP_Combined/"				SWI_mIP
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_Mag/"								SWI_mag
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_Pha/"								SWI_pha
+
 deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_RR_Qsm/"							SWI_QSM
 deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_RR_SWI_Combined/"					SWI_SWI
 deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_RR_SWI_mIP_Combined/"				SWI_mIP
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_RR_Mag/"							SWI_mag
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_RR_Pha/"							SWI_pha
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_RR_Pha/"							SWI_pha_filtered
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm/"									SWI_pha
 
+# ASL
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++
+#
 deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/relCBF/"												ASL_relCBF
 deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/BAT/"													ASL_BAT
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/Perfusion_Weighted/"									ASL_PWI
@@ -114,10 +124,16 @@ deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/mTI16_800-3800_tgse_pcasl_3.4x3.
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_FMAP pcasl/"											ASL_FMAP_AP
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP pcasl/"											ASL_FMAP_PA
 
+# CVR
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++
+#
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/CVR_ep2d_bold 3.8mm TR1500 adaptive/"					CVR
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_FMAP cvr/"											CVR_FMAP_AP
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP cvr/"											CVR_FMAP_PA
 
+# DCE
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++
+#
 deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_INV1/"					MP2RAGE_INV1
 deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_INV2/"					MP2RAGE_INV2
 deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_UNI_Images/"				MP2RAGE_UNI
