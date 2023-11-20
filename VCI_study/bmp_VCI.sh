@@ -40,7 +40,10 @@ bmp_BIDSvalidator.sh --bids_directory $BIDS_dir --docker
 # docker run -ti --rm -v ${BIDS_dir}:/data:ro bids/validator /data
 #
 # OR
-singularity run --cleanenv --bind ${BIDS_dir}:/data:ro $BMP_3RD_PATH/bids-validator-${bids_validator_version}.sif /data
+singularity run --cleanenv \
+                --bind ${BIDS_dir}:/data:ro \
+                $BMP_3RD_PATH/bids-validator-${bids_validator_version}.sif \
+                /data
 
 # Step 3. MRIQC (subject level)
 # +++++++++++++++++++++++++++++++++++++++
@@ -50,7 +53,39 @@ singularity run --cleanenv --bind ${BIDS_dir}:/data:ro $BMP_3RD_PATH/bids-valida
 #
 mkdir -p ${BIDS_dir}/derivatives/mriqc_${mriqc_version}/work
 
-singularity run --cleanenv -B ${BIDS_dir}:/data -B ${BIDS_dir}/derivatives/mriqc_${mriqc_version}:/out -B ${BIDS_dir}/derivatives/mriqc_${mriqc_version}/work:/work $BMP_3RD_PATH/mriqc-${mriqc_version}.sif /data /out participant --work-dir /work --participant_label ${subject_ID} -m {T1w,T2w,bold} --verbose-reports --species human --deoblique --despike --no-sub -v
+singularity run --cleanenv \
+                -B ${BIDS_dir}:/data \
+                -B ${BIDS_dir}/derivatives/mriqc_${mriqc_version}:/out \
+                -B ${BIDS_dir}/derivatives/mriqc_${mriqc_version}/work:/work \
+                $BMP_3RD_PATH/mriqc-${mriqc_version}.sif \
+                /data /out \
+                participant \
+                --work-dir /work \
+                --participant_label ${subject_ID} \
+                -m {T1w,T2w,bold} \
+                --verbose-reports \
+                --species human \
+                --deoblique \
+                --despike \
+                --no-sub \
+                -v
+
+# Pre-processing sMRI (smriprep)
+# +++++++++++++++++++++++++++++++++++++++
+#
+mkdir -p ${BIDS_dir}/derivatives/smriprep/work
+
+singularity run --cleanenv \
+                $BMP_3RD_PATH/smriprep.sif \
+                ${BIDS_dir} ${BIDS_dir}/derivatives/smriprep \
+                participant \
+                --participant_label vci003 \
+                --omp-nthreads 16 \
+                --fs-license-file ${FREESURFER_HOME}/license.txt \
+                --cifti-output 170k \
+                --work-dir ${BIDS_dir}/derivatives/smriprep/work \
+                --notrack \
+                -v
 
 # Step 4. Pre-processing DWI (qsiprep)
 # +++++++++++++++++++++++++++++++++++++++

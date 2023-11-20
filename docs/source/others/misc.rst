@@ -21,4 +21,12 @@ Building singularity with image on Docker Hub
 .. code-block::
 
 	export SINGULARITY_CACHEDIR=/srv/scratch/cheba/Imaging/my_tmp
+	export APPTAINER_CACHEDIR=/srv/scratch/cheba/Imaging/my_tmp
+	TEMP=/srv/scratch/cheba/Imaging/my_tmp
+	TMPDIR=$TEMP
+	TMP=$TEMP
+	export TEMP TMP TMPDIR
+
 	singularity pull mriqc.sif docker://nipreps/mriqc
+
+	singularity run mriqc.sif --version    # check image version
