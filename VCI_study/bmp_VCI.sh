@@ -135,24 +135,29 @@ singularity run --containall --writable-tmpfs \
 #
 
 qsiprep_dir=$BIDS_dir/derivatives/qsiprep_${qsiprep_version}/qsiprep
-output_dir=$BIDS_dir/derivatives/qsiprep_${qsiprep_version}/qsirecon/$spec
+# output_dir=$BIDS_dir/derivatives/qsiprep_${qsiprep_version}/qsirecon/$spec
+output_dir=$BIDS_dir/derivatives/qsiprep_${qsiprep_version}
 freesurfer_dir=$BIDS_dir/derivatives/smriprep_${smriprep_version}/freesurfer
 
 for spec in mrtrix_multishell_msmt_pyafq_tractometry amico_noddi dsi_studio_gqi
 
-    mkdir -p $BIDS_dir/derivatives/qsiprep_${qsiprep_version}/qsirecon/$spec
+    # mkdir -p $BIDS_dir/derivatives/qsiprep_${qsiprep_version}/qsirecon/$spec
 
     singularity run --containall --writable-tmpfs \
-                -B $qsiprep_dir,$output_dir,${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
-                $qsiprep_dir \
-                $output_dir \
-                participant \
-                --skip_bids_validation \
-                --participant_label ${subject_ID} \
-                --recon_input $qsiprep_dir \
-                --recon_spec $spec \
-                --freesurfer_input $freesurfer_dir \
-                --fs-license-file /opt/freesurfer/license.txt \
-                -v
+                    -B $qsiprep_dir,$output_dir,${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
+                    $BMP_3RD_PATH/qsiprep-${qsiprep_version}.sif \
+                    $qsiprep_dir \
+                    $output_dir \
+                    participant \
+                    --skip_bids_validation \
+                    --recon_only \
+                    --participant_label ${subject_ID} \
+                    --recon_input $qsiprep_dir \
+                    --recon_spec $spec \
+                    --freesurfer_input $freesurfer_dir \
+                    --fs-license-file /opt/freesurfer/license.txt \
+                    --work_dir $BIDS_dir/derivatives/qsiprep-${qsiprep_version}/work/$subject_ID \
+                    --omp_nthreads $omp \
+                    -v
 end
 
