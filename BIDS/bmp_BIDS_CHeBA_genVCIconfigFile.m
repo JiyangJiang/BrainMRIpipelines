@@ -7,18 +7,20 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 %
 % USAGE :
 %
-%   varargin{1} = "MEMPRAGE_echoes"; % additionally convert MEMPRAGE individual
-%                                    % echoes.
+%   varargin{1} = a cell array of additional modalities to be converted.
 %
-%   varargin{1} = "DWI_pepolar"; % additionally convert individually acquired
-%                                % everse PE B0's.
+%   "MEMPRAGE_echoes" : % additionally convert MEMPRAGE individual
+%                       % echoes.
 %
-%   varargin{1} = "rsfMRI"; % additionally convert rsfMRI and reverse PE EPI's.
-%                           % Note that rsfMRI is not acquired in VCI.
-%                           % Borrowed MAS2 rsfMRI to prepare for AusCADASIL,
-%                           % which will have rsfMRI acquired.
+%   "DWI_pepolar"     : % additionally convert individually acquired
+%                       % everse PE B0's.
 %
-%   varargin{1} = "all"; % additionally convert all mentioned above.
+%   "rsfMRI"          : % additionally convert rsfMRI and reverse PE EPI's.
+%                       % Note that rsfMRI is not acquired in VCI.
+%                       % Borrowed MAS2 rsfMRI to prepare for AusCADASIL,
+%                       % which will have rsfMRI acquired.
+%
+%   "all"             : % additionally convert all mentioned above.
 %
 % FUTURE WORK :
 %
@@ -86,7 +88,74 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 	vci_dcm2bids_config.descriptions(7).sidecar_changes.MultipartID = "dwi_1";
 	vci_dcm2bids_config.descriptions(7).custom_entities = "dir-PA_run-2";
 
+	% ASL
+	% =====================================================
+	%
+	% References :
+	%
+	%   ASL-BIDS         : https://www.nature.com/articles/s41597-022-01615-9
+	%   ASL data scaling : https://bids-standard.github.io/bids-starter-kit/tutorials/asl.html
+	%
+	%
+	% ASL - ASL
+	vci_dcm2bids_config.descriptions(8).id = "id_asl_asl";
+	vci_dcm2bids_config.descriptions(8).datatype = "perf";
+	vci_dcm2bids_config.descriptions(8).suffix = "asl";
+	vci_dcm2bids_config.descriptions(8).criteria.SeriesDescription = "mTI16_800-3800_tgse_pcasl_3.4x3.4x4_14_31_2_24slc";
 
+	vci_dcm2bids_config.descriptions(8).sidecar_changes.M0Type = "Included";
+	vci_dcm2bids_config.descriptions(8).sidecar_changes.TotalAcquiredPairs = 16;
+	vci_dcm2bids_config.descriptions(8).sidecar_changes.AcquisitionVoxelSize = [3.4,3.4,4];
+	vci_dcm2bids_config.descriptions(8).sidecar_changes.LabelingDuration = [0.8,1.0,1.2,1.4,1.6,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8];
+	vci_dcm2bids_config.descriptions(8).sidecar_changes.PostLabelingDelay = [0,0,0,0,0,0,0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6,1.8,2.0];
+	vci_dcm2bids_config.descriptions(8).sidecar_changes.LookLocker = false;
+	vci_dcm2bids_config.descriptions(8).sidecar_changes.LabelingEfficiency = 0.60; 	% From Siemens WIP ASL doc, experimentally, with PCASL
+																					% background suppression gray-white-strong (which was
+																					% used in VCI), labeling efficiency alpha is 60%.
+	vci_dcm2bids_config.descriptions(8).sidecar_changes.BackgroundSuppression = true;																				
+	vci_dcm2bids_config.descriptions(8).sidecar_changes.BackgroundSuppressionNumberPulses = 4; % From Siemens WIP ASL doc, "gray-white-strong"
+																								% background suppression has 4 pulses.
+	% The following sidecar changes are recommended metadata fields by BIDS v1.9.0 spec,
+	% Data come from "WipMemBlock" field of JSON file - it says "wip_Adv3DASL(Mar 28 2023) 
+	% PCASL unbalanced: B1_ave=1.8uT/FA27.6,  G_ave=1mT/m, G_max=8mT/m"
+	vci_dcm2bids_config.descriptions(8).sidecar_changes.LabelingPulseAverageGradient = 1; 	% average labeling gradient switched on during the
+																							% application of the labelling RF pulses, in
+																							% milliteslas per meter.
+	vci_dcm2bids_config.descriptions(8).sidecar_changes.LabelingPulseMaximumGradient = 8;	% max amplitude of gradient switched on during the
+																							% application of the labelling RF pulses, in
+																							% milliteslas per meter.
+	vci_dcm2bids_config.descriptions(8).sidecar_changes.LabelingPulseAverageB1 = 1.8;		% average B1-field strength of the RF labeling pulses
+																							% in microteslas.
+	vci_dcm2bids_config.descriptions(8).sidecar_changes.PCASLType = "unbalanced";
+	vci_dcm2bids_config.descriptions(8).sidecar_changes.LabelingPulseFlipAngle = 27.6; % That's my guess on "FA27.6".
+
+	% ASL - PEPolar FMAP - AP
+	vci_dcm2bids_config.descriptions(9).id = "id_asl_pepolar_fmap_ap";
+	vci_dcm2bids_config.descriptions(9).datatype = "fmap";
+	vci_dcm2bids_config.descriptions(9).suffix = "epi";
+	vci_dcm2bids_config.descriptions(9).criteria.SeriesDescription = "AP_FMAP pcasl";
+	vci_dcm2bids_config.descriptions(9).criteria.ProtocolName = "AP_FMAP pcasl";
+	vci_dcm2bids_config.descriptions(9).criteria.PhaseEncodingDirection = "j-";
+	vci_dcm2bids_config.descriptions(9).custom_entities = "desc-pepolarForAsl_dir-AP";
+	vci_dcm2bids_config.descriptions(9).sidecar_changes.PhaseEncodingDirection = "j-";
+	vci_dcm2bids_config.descriptions(9).sidecar_changes.IntendedFor = "id_asl_asl";
+
+	% ASL - PEPolar FMAP - PA
+	vci_dcm2bids_config.descriptions(10).id = "id_asl_pepolar_fmap_pa";
+	vci_dcm2bids_config.descriptions(10).datatype = "fmap";
+	vci_dcm2bids_config.descriptions(10).suffix = "epi";
+	vci_dcm2bids_config.descriptions(10).criteria.SeriesDescription = "PA_FMAP pcasl";
+	vci_dcm2bids_config.descriptions(10).criteria.ProtocolName = "PA_FMAP pcasl";
+	vci_dcm2bids_config.descriptions(10).criteria.PhaseEncodingDirection = "j";
+	vci_dcm2bids_config.descriptions(10).custom_entities = "desc-pepolarForAsl_dir-PA";
+	vci_dcm2bids_config.descriptions(10).sidecar_changes.PhaseEncodingDirection = "j";
+	vci_dcm2bids_config.descriptions(10).sidecar_changes.IntendedFor = "id_asl_asl";
+
+
+
+
+	% TO-DO's
+	%
 
 	% SWI
 	%
@@ -96,27 +165,34 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 	% 
 	% Reference: https://bids-specification.readthedocs.io/en/stable/appendices/qmri.html
 
+
 	if nargin == 1
 
-		switch varargin{1}
+		additional_mods = varargin{1};
 
-		case "MEMPRAGE_echoes"
+		for i = 1 : length(additional_mods)
 
-			vci_dcm2bids_config = conv_additional_MEMPRAGEechoes (vci_dcm2bids_config);
+			switch additional_mods{i}
 
-		case "DWI_pepolar"
+			case "MEMPRAGE_echoes"
 
-			vci_dcm2bids_config = conv_additional_DWIpepolar (vci_dcm2bids_config);
+				vci_dcm2bids_config = conv_additional_MEMPRAGEechoes (vci_dcm2bids_config);
 
-		case "rsfMRI"
+			case "DWI_pepolar"
 
-			vci_dcm2bids_config = conv_additional_rsfMRI (vci_dcm2bids_config);
+				vci_dcm2bids_config = conv_additional_DWIpepolar (vci_dcm2bids_config);
 
-		case "all"
+			case "rsfMRI"
 
-			vci_dcm2bids_config = conv_additional_MEMPRAGEechoes (vci_dcm2bids_config);
-			vci_dcm2bids_config = conv_additional_DWIpepolar (vci_dcm2bids_config);
-			vci_dcm2bids_config = conv_additional_rsfMRI (vci_dcm2bids_config);
+				vci_dcm2bids_config = conv_additional_rsfMRI (vci_dcm2bids_config);
+
+			case "all"
+
+				vci_dcm2bids_config = conv_additional_MEMPRAGEechoes (vci_dcm2bids_config);
+				vci_dcm2bids_config = conv_additional_DWIpepolar (vci_dcm2bids_config);
+				vci_dcm2bids_config = conv_additional_rsfMRI (vci_dcm2bids_config);
+
+			end
 
 		end
 
@@ -186,9 +262,10 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 		vci_dcm2bids_config.descriptions(curr_idx).suffix = "epi";
 		vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "AP_FMAP_for DIFFUSION";
 		vci_dcm2bids_config.descriptions(curr_idx).criteria.PhaseEncodingDirection = "j-";
-		vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "dir-AP";
+		vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "desc-pepolarForDwi_dir-AP";
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j-";
-		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051; % EffectiveEchoSpacing * (ReconMatrixPE - 1)
+		% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051; 	% EffectiveEchoSpacing * (ReconMatrixPE - 1)
+																								% Original JSON file has this field correctly calculated.
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(1) = "id_dwi_ap1";
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(2) = "id_dwi_ap2";
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(3) = "id_dwi_pa1";
@@ -201,9 +278,9 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 		vci_dcm2bids_config.descriptions(curr_idx).suffix = "epi";
 		vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "PA_FMAP_for DIFFUSION";
 		vci_dcm2bids_config.descriptions(curr_idx).criteria.PhaseEncodingDirection = "j";
-		vci_dcm2bids_config.descriptions(curr_idx).custom_entities = ["dir-PA_run-" num2str(i)];
+		vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "desc-pepolarForDwi_dir-PA";
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j";
-		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051; % EffectiveEchoSpacing * (ReconMatrixPE - 1)
+		% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051; % EffectiveEchoSpacing * (ReconMatrixPE - 1)
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(1) = "id_dwi_ap1";
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(2) = "id_dwi_ap2";
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(3) = "id_dwi_pa1";
@@ -227,25 +304,27 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 		curr_length = length(vci_dcm2bids_config.descriptions);
 		curr_idx = curr_length + 1;
 
+		vci_dcm2bids_config.descriptions(curr_idx).id = "id_rsfmri_pepolar_fmap_ap"
 		vci_dcm2bids_config.descriptions(curr_idx).datatype = "fmap";
 		vci_dcm2bids_config.descriptions(curr_idx).suffix = "epi";
 		vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "AP_FMAP_for resting state fMRI normalise OFF";
 		vci_dcm2bids_config.descriptions(curr_idx).criteria.PhaseEncodingDirection = "j-";
-		vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "dir-AP";
+		vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "desc-pepolarForRsfmri_dir-AP";
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j-";
-		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051;
+		% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051;
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor = "id_rsfmri";
 
 		curr_length = length(vci_dcm2bids_config.descriptions);
 		curr_idx = curr_length + 1;
 
+		vci_dcm2bids_config.descriptions(curr_idx).id = "id_rsfmri_pepolar_fmap_pa"
 		vci_dcm2bids_config.descriptions(curr_idx).datatype = "fmap";
 		vci_dcm2bids_config.descriptions(curr_idx).suffix = "epi";
 		vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "PA_FMAP_for resting state fMRI normalise OFF";
 		vci_dcm2bids_config.descriptions(curr_idx).criteria.PhaseEncodingDirection = "j";
-		vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "dir-PA";
+		vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "desc-pepolarForRsfmri_dir-PA";
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j";
-		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051;
+		% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051;
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor = "id_rsfmri";
 
 	end
