@@ -33,21 +33,32 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 %
 
 	% MEMPRAGE RMS
+	vci_dcm2bids_config.descriptions(1).id = "id_memprage_rms";
 	vci_dcm2bids_config.descriptions(1).datatype = "anat";
 	vci_dcm2bids_config.descriptions(1).suffix = "T1w";
 	vci_dcm2bids_config.descriptions(1).criteria.SeriesDescription = "ABCD_T1w_MPR_vNav_BW740 RMS";
 	vci_dcm2bids_config.descriptions(1).criteria.ProtocolName = "ABCD_T1w_MPR_vNav_BW740";
-	vci_dcm2bids_config.descriptions(1).custom_entities = "rec-RMS";
+	vci_dcm2bids_config.descriptions(1).custom_entities = "rec-RMS_desc-BWmatchedWithvNav";
+	vci_dcm2bids_config.descriptions(1).sidecar_changes.InstitutionName = "RINSW"; 	% this sidecar change works as
+																					% a placeholder, to avoid empty
+																					% []. It does not intend to change
+																					% anything.
 
 	% FLAIR
+	vci_dcm2bids_config.descriptions(2).id = "id_flair";
 	vci_dcm2bids_config.descriptions(2).datatype = "anat";
 	vci_dcm2bids_config.descriptions(2).suffix = "FLAIR";
 	vci_dcm2bids_config.descriptions(2).criteria.SeriesDescription = "t2_space_DF_BW651";
+	vci_dcm2bids_config.descriptions(2).custom_entities = "acq-spaceDarkFluid";
+	vci_dcm2bids_config.descriptions(2).sidecar_changes.InstitutionName = "RINSW";
 
 	% T2w
+	vci_dcm2bids_config.descriptions(3).id = "id_t2w";
 	vci_dcm2bids_config.descriptions(3).datatype = "anat";
 	vci_dcm2bids_config.descriptions(3).suffix = "T2w";
 	vci_dcm2bids_config.descriptions(3).criteria.SeriesDescription = "ABCD_T2w_SPC_ vNav Iso0.8mm BW744";
+	vci_dcm2bids_config.descriptions(3).custom_entities = "acq-space_desc-BWmatchedWithvNav";
+	vci_dcm2bids_config.descriptions(3).sidecar_changes.InstitutionName = "RINSW";
 
 	% Diffusion-weighted imaging
 	% =====================================================
@@ -102,7 +113,7 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 	vci_dcm2bids_config.descriptions(8).datatype = "perf";
 	vci_dcm2bids_config.descriptions(8).suffix = "asl";
 	vci_dcm2bids_config.descriptions(8).criteria.SeriesDescription = "mTI16_800-3800_tgse_pcasl_3.4x3.4x4_14_31_2_24slc";
-
+	vci_dcm2bids_config.descriptions(8).custom_entities = "desc-siemensWIP";
 	vci_dcm2bids_config.descriptions(8).sidecar_changes.M0Type = "Included";
 	vci_dcm2bids_config.descriptions(8).sidecar_changes.TotalAcquiredPairs = 16;
 	vci_dcm2bids_config.descriptions(8).sidecar_changes.AcquisitionVoxelSize = [3.4,3.4,4];
@@ -204,7 +215,7 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 	fprintf(fid,'%s', jsonencode(vci_dcm2bids_config,PrettyPrint=true));
 	fclose(fid);
 
-	fprintf ('Note that any empty fields in VCI_config.json needs to be removed.\n');
+	% fprintf ('Note that any empty fields in VCI_config.json needs to be removed.\n');
 
 
 	function vci_dcm2bids_config = conv_additional_MEMPRAGEechoes (vci_dcm2bids_config)
@@ -304,7 +315,7 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 		curr_length = length(vci_dcm2bids_config.descriptions);
 		curr_idx = curr_length + 1;
 
-		vci_dcm2bids_config.descriptions(curr_idx).id = "id_rsfmri_pepolar_fmap_ap"
+		vci_dcm2bids_config.descriptions(curr_idx).id = "id_rsfmri_pepolar_fmap_ap";
 		vci_dcm2bids_config.descriptions(curr_idx).datatype = "fmap";
 		vci_dcm2bids_config.descriptions(curr_idx).suffix = "epi";
 		vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "AP_FMAP_for resting state fMRI normalise OFF";
@@ -317,7 +328,7 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 		curr_length = length(vci_dcm2bids_config.descriptions);
 		curr_idx = curr_length + 1;
 
-		vci_dcm2bids_config.descriptions(curr_idx).id = "id_rsfmri_pepolar_fmap_pa"
+		vci_dcm2bids_config.descriptions(curr_idx).id = "id_rsfmri_pepolar_fmap_pa";
 		vci_dcm2bids_config.descriptions(curr_idx).datatype = "fmap";
 		vci_dcm2bids_config.descriptions(curr_idx).suffix = "epi";
 		vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "PA_FMAP_for resting state fMRI normalise OFF";

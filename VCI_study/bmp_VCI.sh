@@ -9,6 +9,11 @@ export DICOM_zip=/home/brain/Desktop/VCI/vci_003/flywheel_20231113_001000.zip
 export BIDS_dir=/home/brain/Desktop/VCI/BIDS
 export subject_ID=vci003
 
+# Macbook pro
+export DICOM_zip=/Users/z3402744/Work/vci/vci_002/flywheel_20231004_235232.zip
+export BIDS_dir=/Users/z3402744/Work/vci/vci_002/BIDS
+export subject_ID=vci002
+
 # DICOM_zip=$1
 # BIDS_dir=$2
 # subject_ID=$3

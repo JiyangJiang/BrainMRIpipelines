@@ -1,113 +1,220 @@
 {
   "descriptions": [
     {
+      "id": "id_memprage_rms",
       "datatype": "anat",
       "suffix": "T1w",
       "criteria": {
         "SeriesDescription": "ABCD_T1w_MPR_vNav_BW740 RMS",
         "ProtocolName": "ABCD_T1w_MPR_vNav_BW740"
       },
-      "custom_entities": "rec-RMS"
+      "custom_entities": "rec-RMS_desc-BWmatchedWithvNav",
+      "sidecar_changes": {
+        "InstitutionName": "RINSW"
+      }
     },
     {
+      "id": "id_flair",
       "datatype": "anat",
       "suffix": "FLAIR",
       "criteria": {
         "SeriesDescription": "t2_space_DF_BW651"
+      },
+      "custom_entities": "acq-spaceDarkFluid",
+      "sidecar_changes": {
+        "InstitutionName": "RINSW"
       }
     },
     {
+      "id": "id_t2w",
       "datatype": "anat",
       "suffix": "T2w",
       "criteria": {
         "SeriesDescription": "ABCD_T2w_SPC_ vNav Iso0.8mm BW744"
+      },
+      "custom_entities": "acq-space_desc-BWmatchedWithvNav",
+      "sidecar_changes": {
+        "InstitutionName": "RINSW"
       }
     },
     {
+      "id": "id_dwi_ap1",
       "datatype": "dwi",
       "suffix": "dwi",
       "criteria": {
         "SeriesDescription": "AP_BLOCK_1_DIFFUSION_30DIR"
       },
       "custom_entities": "dir-AP_run-1",
-      "id": "id_dwi_ap1",
       "sidecar_changes": {
         "MultipartID": "dwi_1"
       }
     },
     {
+      "id": "id_dwi_ap2",
       "datatype": "dwi",
       "suffix": "dwi",
       "criteria": {
         "SeriesDescription": "AP_BLOCK_2_DIFFUSION_30DIR"
       },
       "custom_entities": "dir-AP_run-2",
-      "id": "id_dwi_ap2",
       "sidecar_changes": {
         "MultipartID": "dwi_1"
       }
     },
     {
+      "id": "id_dwi_pa1",
       "datatype": "dwi",
       "suffix": "dwi",
       "criteria": {
         "SeriesDescription": "PA_BLOCK_1_DIFFUSION_30DIR"
       },
       "custom_entities": "dir-PA_run-1",
-      "id": "id_dwi_pa1",
       "sidecar_changes": {
         "MultipartID": "dwi_1"
       }
     },
     {
+      "id": "id_dwi_pa2",
       "datatype": "dwi",
       "suffix": "dwi",
       "criteria": {
         "SeriesDescription": "PA_BLOCK_2_DIFFUSION_30DIR"
       },
       "custom_entities": "dir-PA_run-2",
-      "id": "id_dwi_pa2",
       "sidecar_changes": {
         "MultipartID": "dwi_1"
       }
     },
     {
+      "id": "id_asl_asl",
+      "datatype": "perf",
+      "suffix": "asl",
+      "criteria": {
+        "SeriesDescription": "mTI16_800-3800_tgse_pcasl_3.4x3.4x4_14_31_2_24slc"
+      },
+      "custom_entities": "desc-siemensWIP",
+      "sidecar_changes": {
+        "M0Type": "Included",
+        "TotalAcquiredPairs": 16,
+        "AcquisitionVoxelSize": [
+          3.4,
+          3.4,
+          4
+        ],
+        "LabelingDuration": [
+          0.8,
+          1,
+          1.2,
+          1.4,
+          1.6,
+          1.8,
+          1.8,
+          1.8,
+          1.8,
+          1.8,
+          1.8,
+          1.8,
+          1.8,
+          1.8,
+          1.8,
+          1.8
+        ],
+        "PostLabelingDelay": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1,
+          1.2,
+          1.4,
+          1.6,
+          1.8,
+          2
+        ],
+        "LookLocker": false,
+        "LabelingEfficiency": 0.6,
+        "BackgroundSuppression": true,
+        "BackgroundSuppressionNumberPulses": 4,
+        "LabelingPulseAverageGradient": 1,
+        "LabelingPulseMaximumGradient": 8,
+        "LabelingPulseAverageB1": 1.8,
+        "PCASLType": "unbalanced",
+        "LabelingPulseFlipAngle": 27.6
+      }
+    },
+    {
+      "id": "id_asl_pepolar_fmap_ap",
+      "datatype": "fmap",
+      "suffix": "epi",
+      "criteria": {
+        "SeriesDescription": "AP_FMAP pcasl",
+        "ProtocolName": "AP_FMAP pcasl",
+        "PhaseEncodingDirection": "j-"
+      },
+      "custom_entities": "desc-pepolarForAsl_dir-AP",
+      "sidecar_changes": {
+        "PhaseEncodingDirection": "j-",
+        "IntendedFor": "id_asl_asl"
+      }
+    },
+    {
+      "id": "id_asl_pepolar_fmap_pa",
+      "datatype": "fmap",
+      "suffix": "epi",
+      "criteria": {
+        "SeriesDescription": "PA_FMAP pcasl",
+        "ProtocolName": "PA_FMAP pcasl",
+        "PhaseEncodingDirection": "j"
+      },
+      "custom_entities": "desc-pepolarForAsl_dir-PA",
+      "sidecar_changes": {
+        "PhaseEncodingDirection": "j",
+        "IntendedFor": "id_asl_asl"
+      }
+    },
+    {
+      "id": "id_rsfmri",
       "datatype": "func",
       "suffix": "bold",
       "criteria": {
         "SeriesDescription": "fMRI _RESTING STATE_MB6_PA normalise OFF"
       },
       "custom_entities": "task-rest",
-      "id": "id_rsfmri",
       "sidecar_changes": {
         "TaskName": "rest"
       }
     },
     {
+      "id": "id_rsfmri_pepolar_fmap_ap",
       "datatype": "fmap",
       "suffix": "epi",
       "criteria": {
         "SeriesDescription": "AP_FMAP_for resting state fMRI normalise OFF",
         "PhaseEncodingDirection": "j-"
       },
-      "custom_entities": "dir-AP",
+      "custom_entities": "desc-pepolarForRsfmri_dir-AP",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j-",
-        "TotalReadoutTime": 0.051,
         "IntendedFor": "id_rsfmri"
       }
     },
     {
+      "id": "id_rsfmri_pepolar_fmap_pa",
       "datatype": "fmap",
       "suffix": "epi",
       "criteria": {
         "SeriesDescription": "PA_FMAP_for resting state fMRI normalise OFF",
         "PhaseEncodingDirection": "j"
       },
-      "custom_entities": "dir-PA",
+      "custom_entities": "desc-pepolarForRsfmri_dir-PA",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j",
-        "TotalReadoutTime": 0.051,
         "IntendedFor": "id_rsfmri"
       }
     }
