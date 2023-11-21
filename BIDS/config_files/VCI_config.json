@@ -8,7 +8,7 @@
         "SeriesDescription": "ABCD_T1w_MPR_vNav_BW740 RMS",
         "ProtocolName": "ABCD_T1w_MPR_vNav_BW740"
       },
-      "custom_entities": "rec-RMS_desc-BWmatchedWithvNav",
+      "custom_entities": "rec-RMS",
       "sidecar_changes": {
         "InstitutionName": "RINSW"
       }
@@ -32,7 +32,7 @@
       "criteria": {
         "SeriesDescription": "ABCD_T2w_SPC_ vNav Iso0.8mm BW744"
       },
-      "custom_entities": "acq-space_desc-BWmatchedWithvNav",
+      "custom_entities": "acq-space",
       "sidecar_changes": {
         "InstitutionName": "RINSW"
       }
@@ -92,7 +92,7 @@
       "criteria": {
         "SeriesDescription": "mTI16_800-3800_tgse_pcasl_3.4x3.4x4_14_31_2_24slc"
       },
-      "custom_entities": "desc-siemensWIP",
+      "custom_entities": "dir-PA",
       "sidecar_changes": {
         "M0Type": "Included",
         "TotalAcquiredPairs": 16,
@@ -157,7 +157,7 @@
         "ProtocolName": "AP_FMAP pcasl",
         "PhaseEncodingDirection": "j-"
       },
-      "custom_entities": "desc-pepolarForAsl_dir-AP",
+      "custom_entities": "acq-pepolarForAsl_dir-AP",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j-",
         "IntendedFor": "id_asl_asl"
@@ -172,7 +172,7 @@
         "ProtocolName": "PA_FMAP pcasl",
         "PhaseEncodingDirection": "j"
       },
-      "custom_entities": "desc-pepolarForAsl_dir-PA",
+      "custom_entities": "acq-pepolarForAsl_dir-PA",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j",
         "IntendedFor": "id_asl_asl"
@@ -198,7 +198,7 @@
         "SeriesDescription": "AP_FMAP_for resting state fMRI normalise OFF",
         "PhaseEncodingDirection": "j-"
       },
-      "custom_entities": "desc-pepolarForRsfmri_dir-AP",
+      "custom_entities": "acq-pepolarForRsfmri_dir-AP",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j-",
         "IntendedFor": "id_rsfmri"
@@ -212,7 +212,7 @@
         "SeriesDescription": "PA_FMAP_for resting state fMRI normalise OFF",
         "PhaseEncodingDirection": "j"
       },
-      "custom_entities": "desc-pepolarForRsfmri_dir-PA",
+      "custom_entities": "acq-pepolarForRsfmri_dir-PA",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j",
         "IntendedFor": "id_rsfmri"
