@@ -26,6 +26,7 @@ mriqc_version=23.1.0
 qsiprep_version=0.19.1
 smriprep_version=0.12.2
 
+
 # Create dcm2bids configuration file.
 # ++++++++++++++++++++++++++++++++++++++++++++
 # 0.1 - reorganise DICOM folders, and run helper function.
@@ -143,8 +144,12 @@ for spec in mrtrix_multishell_msmt_pyafq_tractometry amico_noddi dsi_studio_gqi
 
     # mkdir -p $BIDS_dir/derivatives/qsiprep_${qsiprep_version}/qsirecon/$spec
 
+    export SINGULARITY_TEMPLATEFLOW_HOME=/opt/templateflow
+
     singularity run --containall --writable-tmpfs \
-                    -B $qsiprep_dir,$output_dir,${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
+                    -B $BMP_TMP_PATH/templateflow:/opt/templateflow \
+                    -B $qsiprep_dir,$output_dir \
+                    -B ${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
                     $BMP_3RD_PATH/qsiprep-${qsiprep_version}.sif \
                     $qsiprep_dir $output_dir \
                     participant \
