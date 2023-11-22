@@ -1,9 +1,23 @@
 #!/bin/bash
 
 # DESCRIPTION :
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #
 #   This script goes through the pipelines to process imaging data
 #   for VCI study.
+#
+# QSIPREP LOG :
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#
+#   - mrtrix_multishell_msmt_pyafq_tractometry constantly having 
+#     "No space left on device" error.
+#
+#   - Preprocessed dMRI data are upsampled to 1.2 mm isotropic 
+#     because fixel-based analyses require a minimum of 1.3 mm 
+#     isotropic. However, this means other reconstrctions 
+#     (e.g., noddi) will also be based on 1.2 mm isotropic results.
+#
+#
 
 # XPS13 VM lin4neuro
 export DICOM_zip=/home/brain/Desktop/VCI/vci_003/flywheel_20231113_001000.zip
@@ -165,3 +179,4 @@ for spec in mrtrix_multishell_msmt_pyafq_tractometry amico_noddi dsi_studio_gqi
                     -v
 end
 
+		
