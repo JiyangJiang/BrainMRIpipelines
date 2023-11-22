@@ -146,8 +146,7 @@ for spec in mrtrix_multishell_msmt_pyafq_tractometry amico_noddi dsi_studio_gqi
     singularity run --containall --writable-tmpfs \
                     -B $qsiprep_dir,$output_dir,${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
                     $BMP_3RD_PATH/qsiprep-${qsiprep_version}.sif \
-                    $qsiprep_dir \
-                    $output_dir \
+                    $qsiprep_dir $output_dir \
                     participant \
                     --skip_bids_validation \
                     --recon_only \
