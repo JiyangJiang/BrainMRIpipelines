@@ -115,10 +115,16 @@ singularity run --cleanenv \
 #
 # References : https://qsiprep.readthedocs.io/en/latest/preprocessing.html#merge-denoise
 
-mkdir -p ${BIDS_dir}/derivatives/qsiprep_${qsiprep_version}/work/$subject_ID
+work_dir=${BIDS_dir}/derivatives/qsiprep_${qsiprep_version}/work/$subject_ID
+
+mkdir -p $work_dir
 
 singularity run --containall --writable-tmpfs \
-                -B ${BIDS_dir},${BIDS_dir}/derivatives/qsiprep_${qsiprep_version},${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
+                -B ${BIDS_dir} \
+                -B ${BIDS_dir}/derivatives/qsiprep_${qsiprep_version} \
+                -B ${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
+                -B $BMP_PATH/VCI_study/bmp_VCI_qsiprep_eddy_param.json:/opt/eddy_param.json \
+                -B $work_dir \
                 $BMP_3RD_PATH/qsiprep-${qsiprep_version}.sif \
                 ${BIDS_dir} \
                 ${BIDS_dir}/derivatives/qsiprep_${qsiprep_version} \
@@ -131,9 +137,9 @@ singularity run --containall --writable-tmpfs \
                 --output-resolution 1.2 \
                 --anat_modality T1w \
                 --hmc_model eddy \
-                --eddy_config $BMP_PATH/VCI_study/bmp_VCI_qsiprep_eddy_param.json \
+                --eddy_config /opt/eddy_param.json \
                 --pepolar_method TOPUP \
-                --work_dir ${BIDS_dir}/derivatives/qsiprep_${qsiprep_version}/work/$subject_ID \
+                --work_dir $work_dir \
                 --omp_nthreads $omp \
                 -v
 
@@ -144,20 +150,25 @@ singularity run --containall --writable-tmpfs \
 
 qsiprep_dir=$BIDS_dir/derivatives/qsiprep_${qsiprep_version}/qsiprep
 # output_dir=$BIDS_dir/derivatives/qsiprep_${qsiprep_version}/qsirecon/$spec
-output_dir=$BIDS_dir/derivatives/qsiprep_${qsiprep_version}
 freesurfer_dir=$BIDS_dir/derivatives/smriprep_${smriprep_version}/freesurfer
 
-for spec in  mrtrix_multishell_msmt_ACT-hsvs \
+for spec in mrtrix_multishell_msmt_ACT-hsvs \
             amico_noddi \
             dsi_studio_gqi
 
-    # mkdir -p $BIDS_dir/derivatives/qsiprep_${qsiprep_version}/qsirecon/$spec
+    output_dir=$BIDS_dir/derivatives/qsiprep_${qsiprep_version}/qsirecon_$spec
+    work_dir=$output_dir/work/$subject_ID
+
+    mkdir -p $work_dir
 
     export SINGULARITY_TEMPLATEFLOW_HOME=/opt/templateflow
 
     singularity run --containall --writable-tmpfs \
                     -B $BMP_TMP_PATH/templateflow:/opt/templateflow \
-                    -B $qsiprep_dir,$output_dir \
+                    -B $qsiprep_dir \
+                    -B $output_dir \
+                    -B $freesurfer_dir \
+                    -B $work_dir \
                     -B ${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
                     $BMP_3RD_PATH/qsiprep-${qsiprep_version}.sif \
                     $qsiprep_dir $output_dir \
@@ -169,7 +180,7 @@ for spec in  mrtrix_multishell_msmt_ACT-hsvs \
                     --recon_spec $spec \
                     --freesurfer_input $freesurfer_dir \
                     --fs-license-file /opt/freesurfer/license.txt \
-                    --work_dir $BIDS_dir/derivatives/qsiprep-${qsiprep_version}/work/$subject_ID \
+                    --work_dir $work_dir \
                     --omp_nthreads $omp \
                     -v
 end
