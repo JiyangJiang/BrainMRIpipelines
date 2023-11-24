@@ -100,12 +100,14 @@ singularity run --cleanenv \
 mkdir -p ${BIDS_dir}/derivatives/smriprep_${smriprep_version}/work
 
 singularity run --cleanenv \
+				-B $BIDS_dir \
+				-B $FREESURFER_HOME/license.txt:/opt/freesurfer/license.txt \
                 $BMP_3RD_PATH/smriprep-${smriprep_version}.simg \
                 ${BIDS_dir} ${BIDS_dir}/derivatives/smriprep_${smriprep_version} \
                 participant \
                 --participant_label vci003 \
                 --omp-nthreads $omp \
-                --fs-license-file ${FREESURFER_HOME}/license.txt \
+                --fs-license-file /opt/freesurfer/license.txt \
                 --work-dir ${BIDS_dir}/derivatives/smriprep_${smriprep_version}/work \
                 --notrack \
                 -v
