@@ -29,11 +29,16 @@ export DICOM_zip=/Users/z3402744/Work/vci/vci_002/flywheel_20231004_235232.zip
 export BIDS_dir=/Users/z3402744/Work/vci/vci_002/BIDS
 export subject_ID=vci002
 
+# TowerX
+export DICOM_zip=/d/vci/flywheel/vci001/flywheel_20231127_015517.zip
+export BIDS_dir=/d/vci/BIDS_test
+export subject_ID=vci001
+
 # DICOM_zip=$1
 # BIDS_dir=$2
 # subject_ID=$3
 
-omp=16 # max num of threads per process
+omp=10 # max num of threads per process
 
 bids_validator_version=1.13.1
 mriqc_version=23.1.0
