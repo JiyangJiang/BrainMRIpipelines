@@ -82,6 +82,9 @@ DICOM_zip=$1
 BIDS_dir=$2
 subject_ID=$3
 
+# structural MRI
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#
 case "$subject_ID" in
 	vci001)
 		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/T1_MEMPRAGE Iso0.9mm_64ch RMS/"							MEMPRAGE_RMS
@@ -97,6 +100,10 @@ esac
 
 deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t2_space_DF_BW651/"										FLAIR
 
+
+# diffusion MRI
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++
+#
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_BLOCK_1_DIFFUSION_30DIR/"							DWI_AP_1
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_BLOCK_2_DIFFUSION_30DIR/"							DWI_AP_2
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_BLOCK_1_DIFFUSION_30DIR/"							DWI_PA_1
@@ -157,15 +164,33 @@ deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP cvr/"											CVR_FMAP
 # DCE
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++
 #
-deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_INV1/"					MP2RAGE_INV1
-deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_INV2/"					MP2RAGE_INV2
-deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_UNI_Images/"				MP2RAGE_UNI
-deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_T1_Images/"				MP2RAGE_T1
+case "$subject_ID" in
+	vci003)
+		echo "[$(date)] : $(basename $0) : vci003 did not have DCE data acquired."
+		;;
+	*)
+		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_INV1/"					MP2RAGE_INV1
+		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_INV2/"					MP2RAGE_INV2
+		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_UNI_Images/"				MP2RAGE_UNI
+		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_T1_Images/"				MP2RAGE_T1
 
-deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/B1Map_for_T1_mapping/"									B1
+		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/B1Map_for_T1_mapping/"									B1
 
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/t1_vibe_sag_DCE_2mm XL FOV 40s temporal res/"			DCE
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/t1_vibe_sag_DCE_2mm XL FOV 40s temporal res/"			DCE
 
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/fMRI _RESTING STATE_MB6_PA normalise OFF/"				rsfMRI
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_FMAP_for resting state fMRI normalise OFF/"			rsfMRI_FMAP_AP
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP_for resting state fMRI normalise OFF/"			rsfMRI_FMAP_PA
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/fMRI _RESTING STATE_MB6_PA normalise OFF/"				rsfMRI
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_FMAP_for resting state fMRI normalise OFF/"			rsfMRI_FMAP_AP
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP_for resting state fMRI normalise OFF/"			rsfMRI_FMAP_PA
+		;;
+esac
+
+# resting state fMRI
+# ++++++++++++++++++++++++++++++++++++++++++++++++++
+#
+case "$subject_ID" in
+	vci003)
+		# vci003 has rsfMRI acquired.
+		;;
+	*)
+		;;
+esac
