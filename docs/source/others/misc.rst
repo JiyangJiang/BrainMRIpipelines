@@ -11,7 +11,7 @@ Katana on-demand
 
 optiBET.sh error - [[: not found
 --------------------------------
-[[ is a bash-builtin. Add ``#!/bin/bash`` at the top of optiBET.sh file.
+[[ is a bash-builtin. Add ``#!/bin/bash`` at the top of optiBET.sh file, or call ``bash optiBET.sh``.
 
 Building singularity with image on Docker Hub
 ---------------------------------------------
@@ -30,6 +30,7 @@ Building singularity with image on Docker Hub
 	singularity pull mriqc.sif docker://nipreps/mriqc
 
 	singularity run mriqc.sif --version    # check image version
+	singularity run --cleanenv -B $HOME:/home/aslprep --home /home/aslprep aslprep.simg --version  # for aslprep
 
 	# If building singularity image on Katana failed,
 	# try build on GRID and copy to Katana.

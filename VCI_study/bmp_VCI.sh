@@ -38,12 +38,13 @@ export subject_ID=vci001
 # BIDS_dir=$2
 # subject_ID=$3
 
-omp=10 # max num of threads per process
+omp=16 # max num of threads per process
 
 bids_validator_version=1.13.1
 mriqc_version=23.1.0
 qsiprep_version=0.19.1
 smriprep_version=0.12.2
+aslprep_version=0.6.0
 
 
 # Create dcm2bids configuration file.
@@ -192,4 +193,39 @@ for spec in mrtrix_multishell_msmt_ACT-hsvs \
                     -v
 end
 
-		
+
+# Processing ASL (ASLPrep)
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#
+output_dir=$BIDS_dir/derivatives/aslprep_${aslprep_version}
+work_dir=$BMP_TMP_PATH/aslprep_work/$subject_ID		# aslprep does not allow work dir to be a subdir of bids dir.
+mkdir -p $work_dir $output_dir
+
+singularity run --cleanenv \
+				-B $HOME:/home/aslprep \
+				--home /home/aslprep \
+				-B $BIDS_dir \
+				-B $output_dir \
+				-B $work_dir \
+				-B ${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
+				$BMP_3RD_PATH/aslprep-${aslprep_version}.simg \
+				$BIDS_dir $output_dir \
+				participant \
+				--skip_bids_validation \
+				--participant_label $subject_ID \
+				--omp-nthreads $omp \
+				--force-bbr \
+				--m0_scale 10 \
+				--scorescrub \
+				--basil \
+				--fs-license-file /opt/freesurfer/license.txt \
+				--work-dir $work_dir \
+				-v
+
+
+# Preprocessing rsfMRI (fMRIPrep)
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+# Postprocessing rsfMRI (XCP-D)
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++
