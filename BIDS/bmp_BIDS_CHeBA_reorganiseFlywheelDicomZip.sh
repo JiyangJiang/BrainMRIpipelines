@@ -166,7 +166,7 @@ deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP cvr/"											CVR_FMAP
 #
 case "$subject_ID" in
 	vci003)
-		echo "[$(date)] : $(basename $0) : vci003 did not have DCE data acquired."
+		echo "[$(date)] : $(basename $0) : $subject_ID did not have DCE data acquired."
 		;;
 	*)
 		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_INV1/"					MP2RAGE_INV1
