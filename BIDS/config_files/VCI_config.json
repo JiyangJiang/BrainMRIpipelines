@@ -14,6 +14,19 @@
       }
     },
     {
+      "id": "id_memprage_rms_vci001",
+      "datatype": "anat",
+      "suffix": "T1w",
+      "criteria": {
+        "SeriesDescription": "T1_MEMPRAGE Iso0.9mm_64ch RMS",
+        "ProtocolName": "T1_MEMPRAGE Iso0.9mm_64ch"
+      },
+      "custom_entities": "rec-RMS",
+      "sidecar_changes": {
+        "InstitutionName": "RINSW"
+      }
+    },
+    {
       "id": "id_flair",
       "datatype": "anat",
       "suffix": "FLAIR",
@@ -31,6 +44,18 @@
       "suffix": "T2w",
       "criteria": {
         "SeriesDescription": "ABCD_T2w_SPC_ vNav Iso0.8mm BW744"
+      },
+      "custom_entities": "acq-space",
+      "sidecar_changes": {
+        "InstitutionName": "RINSW"
+      }
+    },
+    {
+      "id": "id_t2w_vci001",
+      "datatype": "anat",
+      "suffix": "T2w",
+      "criteria": {
+        "SeriesDescription": "ABCD_T2w_SPC_ vNav Iso0.9mm BW650"
       },
       "custom_entities": "acq-space",
       "sidecar_changes": {
@@ -102,22 +127,39 @@
           4
         ],
         "LabelingDuration": [
+          0,
           0.8,
+          0,
           1,
+          0,
           1.2,
+          0,
           1.4,
+          0,
           1.6,
+          0,
           1.8,
+          0,
           1.8,
+          0,
           1.8,
+          0,
           1.8,
+          0,
           1.8,
+          0,
           1.8,
+          0,
           1.8,
+          0,
           1.8,
+          0,
           1.8,
+          0,
           1.8,
-          1.8
+          0,
+          1.8,
+          0
         ],
         "PostLabelingDelay": [
           0,
@@ -126,15 +168,32 @@
           0,
           0,
           0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0.2,
           0.2,
           0.4,
+          0.4,
+          0.6,
           0.6,
           0.8,
+          0.8,
+          1,
           1,
           1.2,
+          1.2,
+          1.4,
           1.4,
           1.6,
+          1.6,
           1.8,
+          1.8,
+          2,
           2
         ],
         "LookLocker": false,
@@ -145,7 +204,106 @@
         "LabelingPulseMaximumGradient": 8,
         "LabelingPulseAverageB1": 1.8,
         "PCASLType": "unbalanced",
-        "LabelingPulseFlipAngle": 27.6
+        "LabelingPulseFlipAngle": 27.6,
+        "RepetitionTimePreparation": 4.14
+      }
+    },
+    {
+      "id": "id_asl_asl",
+      "datatype": "perf",
+      "suffix": "asl",
+      "criteria": {
+        "SeriesDescription": "mTI16_800-3800_tgse_pcasl_3.4x3.4x4_14_31_2_24slc_RR"
+      },
+      "custom_entities": "dir-PA",
+      "sidecar_changes": {
+        "M0Type": "Included",
+        "TotalAcquiredPairs": 16,
+        "AcquisitionVoxelSize": [
+          3.4,
+          3.4,
+          4
+        ],
+        "LabelingDuration": [
+          0,
+          0.8,
+          0,
+          1,
+          0,
+          1.2,
+          0,
+          1.4,
+          0,
+          1.6,
+          0,
+          1.8,
+          0,
+          1.8,
+          0,
+          1.8,
+          0,
+          1.8,
+          0,
+          1.8,
+          0,
+          1.8,
+          0,
+          1.8,
+          0,
+          1.8,
+          0,
+          1.8,
+          0,
+          1.8,
+          0,
+          1.8,
+          0
+        ],
+        "PostLabelingDelay": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0.2,
+          0.2,
+          0.4,
+          0.4,
+          0.6,
+          0.6,
+          0.8,
+          0.8,
+          1,
+          1,
+          1.2,
+          1.2,
+          1.4,
+          1.4,
+          1.6,
+          1.6,
+          1.8,
+          1.8,
+          2,
+          2
+        ],
+        "LookLocker": false,
+        "LabelingEfficiency": 0.6,
+        "BackgroundSuppression": true,
+        "BackgroundSuppressionNumberPulses": 4,
+        "LabelingPulseAverageGradient": 1,
+        "LabelingPulseMaximumGradient": 8,
+        "LabelingPulseAverageB1": 1.8,
+        "PCASLType": "unbalanced",
+        "LabelingPulseFlipAngle": 27.6,
+        "RepetitionTimePreparation": 4.14
       }
     },
     {

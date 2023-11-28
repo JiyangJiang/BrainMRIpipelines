@@ -177,10 +177,6 @@ case "$subject_ID" in
 		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/B1Map_for_T1_mapping/"									B1
 
 		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/t1_vibe_sag_DCE_2mm XL FOV 40s temporal res/"			DCE
-
-		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/fMRI _RESTING STATE_MB6_PA normalise OFF/"				rsfMRI
-		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_FMAP_for resting state fMRI normalise OFF/"			rsfMRI_FMAP_AP
-		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP_for resting state fMRI normalise OFF/"			rsfMRI_FMAP_PA
 		;;
 esac
 
@@ -189,7 +185,9 @@ esac
 #
 case "$subject_ID" in
 	vci003)
-		# vci003 has rsfMRI acquired.
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/fMRI _RESTING STATE_MB6_PA normalise OFF/"				rsfMRI
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_FMAP_for resting state fMRI normalise OFF/"			rsfMRI_FMAP_AP
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP_for resting state fMRI normalise OFF/"			rsfMRI_FMAP_PA
 		;;
 	*)
 		;;

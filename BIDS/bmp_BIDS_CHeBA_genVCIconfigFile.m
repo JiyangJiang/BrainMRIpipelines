@@ -32,6 +32,8 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 %   20231031 - Dr. Jiyang Jiang created the 1st version.
 %
 
+	clear vci_dcm2bids_config;
+
 	% MEMPRAGE RMS
 	vci_dcm2bids_config.descriptions(1).id = "id_memprage_rms";
 	vci_dcm2bids_config.descriptions(1).datatype = "anat";
@@ -44,21 +46,46 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 																					% []. It does not intend to change
 																					% anything.
 
+	% MEMPRAGE RMS (vci001 only)
+	curr_length = length(vci_dcm2bids_config.descriptions);
+	curr_idx = curr_length + 1;
+	vci_dcm2bids_config.descriptions(curr_idx).id = "id_memprage_rms_vci001";
+	vci_dcm2bids_config.descriptions(curr_idx).datatype = "anat";
+	vci_dcm2bids_config.descriptions(curr_idx).suffix = "T1w";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "T1_MEMPRAGE Iso0.9mm_64ch RMS";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.ProtocolName = "T1_MEMPRAGE Iso0.9mm_64ch";
+	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "rec-RMS";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.InstitutionName = "RINSW";
+
 	% FLAIR
-	vci_dcm2bids_config.descriptions(2).id = "id_flair";
-	vci_dcm2bids_config.descriptions(2).datatype = "anat";
-	vci_dcm2bids_config.descriptions(2).suffix = "FLAIR";
-	vci_dcm2bids_config.descriptions(2).criteria.SeriesDescription = "t2_space_DF_BW651";
-	vci_dcm2bids_config.descriptions(2).custom_entities = "acq-spaceDarkFluid";
-	vci_dcm2bids_config.descriptions(2).sidecar_changes.InstitutionName = "RINSW";
+	curr_length = length(vci_dcm2bids_config.descriptions);
+	curr_idx = curr_length + 1;
+	vci_dcm2bids_config.descriptions(curr_idx).id = "id_flair";
+	vci_dcm2bids_config.descriptions(curr_idx).datatype = "anat";
+	vci_dcm2bids_config.descriptions(curr_idx).suffix = "FLAIR";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "t2_space_DF_BW651";
+	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "acq-spaceDarkFluid";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.InstitutionName = "RINSW";
 
 	% T2w
-	vci_dcm2bids_config.descriptions(3).id = "id_t2w";
-	vci_dcm2bids_config.descriptions(3).datatype = "anat";
-	vci_dcm2bids_config.descriptions(3).suffix = "T2w";
-	vci_dcm2bids_config.descriptions(3).criteria.SeriesDescription = "ABCD_T2w_SPC_ vNav Iso0.8mm BW744";
-	vci_dcm2bids_config.descriptions(3).custom_entities = "acq-space";
-	vci_dcm2bids_config.descriptions(3).sidecar_changes.InstitutionName = "RINSW";
+	curr_length = length(vci_dcm2bids_config.descriptions);
+	curr_idx = curr_length + 1;
+	vci_dcm2bids_config.descriptions(curr_idx).id = "id_t2w";
+	vci_dcm2bids_config.descriptions(curr_idx).datatype = "anat";
+	vci_dcm2bids_config.descriptions(curr_idx).suffix = "T2w";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "ABCD_T2w_SPC_ vNav Iso0.8mm BW744";
+	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "acq-space";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.InstitutionName = "RINSW";
+
+	% T2w (vci001 only)
+	curr_length = length(vci_dcm2bids_config.descriptions);
+	curr_idx = curr_length + 1;
+	vci_dcm2bids_config.descriptions(curr_idx).id = "id_t2w_vci001";
+	vci_dcm2bids_config.descriptions(curr_idx).datatype = "anat";
+	vci_dcm2bids_config.descriptions(curr_idx).suffix = "T2w";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "ABCD_T2w_SPC_ vNav Iso0.9mm BW650";
+	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "acq-space";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.InstitutionName = "RINSW";
 
 	% Diffusion-weighted imaging
 	% =====================================================
@@ -68,36 +95,44 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 	%
 
 	% DWI - AP 1
-	vci_dcm2bids_config.descriptions(4).id = "id_dwi_ap1";
-	vci_dcm2bids_config.descriptions(4).datatype = "dwi";
-	vci_dcm2bids_config.descriptions(4).suffix = "dwi";
-	vci_dcm2bids_config.descriptions(4).criteria.SeriesDescription = "AP_BLOCK_1_DIFFUSION_30DIR";
-	vci_dcm2bids_config.descriptions(4).sidecar_changes.MultipartID = "dwi_1";
-	vci_dcm2bids_config.descriptions(4).custom_entities = "dir-AP_run-1";
+	curr_length = length(vci_dcm2bids_config.descriptions);
+	curr_idx = curr_length + 1;
+	vci_dcm2bids_config.descriptions(curr_idx).id = "id_dwi_ap1";
+	vci_dcm2bids_config.descriptions(curr_idx).datatype = "dwi";
+	vci_dcm2bids_config.descriptions(curr_idx).suffix = "dwi";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "AP_BLOCK_1_DIFFUSION_30DIR";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.MultipartID = "dwi_1";
+	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "dir-AP_run-1";
 
 	% DWI - AP 2
-	vci_dcm2bids_config.descriptions(5).id = "id_dwi_ap2";
-	vci_dcm2bids_config.descriptions(5).datatype = "dwi";
-	vci_dcm2bids_config.descriptions(5).suffix = "dwi";
-	vci_dcm2bids_config.descriptions(5).criteria.SeriesDescription = "AP_BLOCK_2_DIFFUSION_30DIR";
-	vci_dcm2bids_config.descriptions(5).sidecar_changes.MultipartID = "dwi_1";
-	vci_dcm2bids_config.descriptions(5).custom_entities = "dir-AP_run-2";
+	curr_length = length(vci_dcm2bids_config.descriptions);
+	curr_idx = curr_length + 1;
+	vci_dcm2bids_config.descriptions(curr_idx).id = "id_dwi_ap2";
+	vci_dcm2bids_config.descriptions(curr_idx).datatype = "dwi";
+	vci_dcm2bids_config.descriptions(curr_idx).suffix = "dwi";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "AP_BLOCK_2_DIFFUSION_30DIR";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.MultipartID = "dwi_1";
+	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "dir-AP_run-2";
 
 	% DWI - PA 1
-	vci_dcm2bids_config.descriptions(6).id = "id_dwi_pa1";
-	vci_dcm2bids_config.descriptions(6).datatype = "dwi";
-	vci_dcm2bids_config.descriptions(6).suffix = "dwi";
-	vci_dcm2bids_config.descriptions(6).criteria.SeriesDescription = "PA_BLOCK_1_DIFFUSION_30DIR";
-	vci_dcm2bids_config.descriptions(6).sidecar_changes.MultipartID = "dwi_1";
-	vci_dcm2bids_config.descriptions(6).custom_entities = "dir-PA_run-1";
+	curr_length = length(vci_dcm2bids_config.descriptions);
+	curr_idx = curr_length + 1;
+	vci_dcm2bids_config.descriptions(curr_idx).id = "id_dwi_pa1";
+	vci_dcm2bids_config.descriptions(curr_idx).datatype = "dwi";
+	vci_dcm2bids_config.descriptions(curr_idx).suffix = "dwi";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "PA_BLOCK_1_DIFFUSION_30DIR";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.MultipartID = "dwi_1";
+	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "dir-PA_run-1";
 
 	% DWI - PA 2
-	vci_dcm2bids_config.descriptions(7).id = "id_dwi_pa2";
-	vci_dcm2bids_config.descriptions(7).datatype = "dwi";
-	vci_dcm2bids_config.descriptions(7).suffix = "dwi";
-	vci_dcm2bids_config.descriptions(7).criteria.SeriesDescription = "PA_BLOCK_2_DIFFUSION_30DIR";
-	vci_dcm2bids_config.descriptions(7).sidecar_changes.MultipartID = "dwi_1";
-	vci_dcm2bids_config.descriptions(7).custom_entities = "dir-PA_run-2";
+	curr_length = length(vci_dcm2bids_config.descriptions);
+	curr_idx = curr_length + 1;
+	vci_dcm2bids_config.descriptions(curr_idx).id = "id_dwi_pa2";
+	vci_dcm2bids_config.descriptions(curr_idx).datatype = "dwi";
+	vci_dcm2bids_config.descriptions(curr_idx).suffix = "dwi";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "PA_BLOCK_2_DIFFUSION_30DIR";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.MultipartID = "dwi_1";
+	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "dir-PA_run-2";
 
 	% ASL
 	% =====================================================
@@ -105,62 +140,82 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 	% References :
 	%
 	%   ASL-BIDS         : https://www.nature.com/articles/s41597-022-01615-9
+	%
 	%   ASL data scaling : https://bids-standard.github.io/bids-starter-kit/tutorials/asl.html
 	%
+	%   ASL BIDS and REPETITION_TIME_PREPARATION_MISSING error : 
+	%       - https://neurostars.org/t/bids-asl-pld-vs-ti/21521
+	%       - https://neurostars.org/t/repetitiontime-parameters-what-are-they-and-where-to-find-them/20020
 	%
+	%
+
 	% ASL - ASL
-	vci_dcm2bids_config.descriptions(8).id = "id_asl_asl";
-	vci_dcm2bids_config.descriptions(8).datatype = "perf";
-	vci_dcm2bids_config.descriptions(8).suffix = "asl";
-	vci_dcm2bids_config.descriptions(8).criteria.SeriesDescription = "mTI16_800-3800_tgse_pcasl_3.4x3.4x4_14_31_2_24slc";
-	vci_dcm2bids_config.descriptions(8).custom_entities = "dir-PA";
-	vci_dcm2bids_config.descriptions(8).sidecar_changes.M0Type = "Included";
-	vci_dcm2bids_config.descriptions(8).sidecar_changes.TotalAcquiredPairs = 16;
-	vci_dcm2bids_config.descriptions(8).sidecar_changes.AcquisitionVoxelSize = [3.4,3.4,4];
-	vci_dcm2bids_config.descriptions(8).sidecar_changes.LabelingDuration = [0,0.8,0,1.0,0,1.2,0,1.4,0,1.6,0,1.8,0,1.8,0,1.8,0,1.8,0,1.8,0,1.8,0,1.8,0,1.8,0,1.8,0,1.8,0,1.8,0];
-	vci_dcm2bids_config.descriptions(8).sidecar_changes.PostLabelingDelay = [0,0,0,0,0,0,0,0,0,0,0,0,0,0.2,0,0.4,0,0.6,0,0.8,0,1.0,0,1.2,0,1.4,0,1.6,0,1.8,0,2.0,0];
-	vci_dcm2bids_config.descriptions(8).sidecar_changes.LookLocker = false;
-	vci_dcm2bids_config.descriptions(8).sidecar_changes.LabelingEfficiency = 0.60; 	% From Siemens WIP ASL doc, experimentally, with PCASL
-																					% background suppression gray-white-strong (which was
-																					% used in VCI), labeling efficiency alpha is 60%.
-	vci_dcm2bids_config.descriptions(8).sidecar_changes.BackgroundSuppression = true;																				
-	vci_dcm2bids_config.descriptions(8).sidecar_changes.BackgroundSuppressionNumberPulses = 4; % From Siemens WIP ASL doc, "gray-white-strong"
-																								% background suppression has 4 pulses.
-	% The following sidecar changes are recommended metadata fields by BIDS v1.9.0 spec,
-	% Data come from "WipMemBlock" field of JSON file - it says "wip_Adv3DASL(Mar 28 2023) 
-	% PCASL unbalanced: B1_ave=1.8uT/FA27.6,  G_ave=1mT/m, G_max=8mT/m"
-	vci_dcm2bids_config.descriptions(8).sidecar_changes.LabelingPulseAverageGradient = 1; 	% average labeling gradient switched on during the
-																							% application of the labelling RF pulses, in
-																							% milliteslas per meter.
-	vci_dcm2bids_config.descriptions(8).sidecar_changes.LabelingPulseMaximumGradient = 8;	% max amplitude of gradient switched on during the
-																							% application of the labelling RF pulses, in
-																							% milliteslas per meter.
-	vci_dcm2bids_config.descriptions(8).sidecar_changes.LabelingPulseAverageB1 = 1.8;		% average B1-field strength of the RF labeling pulses
-																							% in microteslas.
-	vci_dcm2bids_config.descriptions(8).sidecar_changes.PCASLType = "unbalanced";
-	vci_dcm2bids_config.descriptions(8).sidecar_changes.LabelingPulseFlipAngle = 27.6; % That's my guess on "FA27.6".
+	for i = 1 : 2  % for adding special cases
+		curr_length = length(vci_dcm2bids_config.descriptions);
+		curr_idx = curr_length + 1;
+		vci_dcm2bids_config.descriptions(curr_idx).id = "id_asl_asl";
+		vci_dcm2bids_config.descriptions(curr_idx).datatype = "perf";
+		vci_dcm2bids_config.descriptions(curr_idx).suffix = "asl";
+		if i == 1
+			vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "mTI16_800-3800_tgse_pcasl_3.4x3.4x4_14_31_2_24slc"; % most common
+		elseif i == 2
+			vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "mTI16_800-3800_tgse_pcasl_3.4x3.4x4_14_31_2_24slc_RR"; % vci001
+		end
+		vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "dir-PA";
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.M0Type = "Included";
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalAcquiredPairs = 16;
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.AcquisitionVoxelSize = [3.4,3.4,4];
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.LabelingDuration = [0,0.8,0,1.0,0,1.2,0,1.4,0,1.6,0,1.8,0,1.8,0,1.8,0,1.8,0,1.8,0,1.8,0,1.8,0,1.8,0,1.8,0,1.8,0,1.8,0];
+		% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.LabelingDuration = [0,0.8,0.8,1.0,1.0,1.2,1.2,1.4,1.4,1.6,1.6,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8,1.8];
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PostLabelingDelay = [0,0,0,0,0,0,0,0,0,0,0,0,0,0.2,0.2,0.4,0.4,0.6,0.6,0.8,0.8,1.0,1.0,1.2,1.2,1.4,1.4,1.6,1.6,1.8,1.8,2.0,2.0];
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.LookLocker = false;
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.LabelingEfficiency = 0.60; 	% From Siemens WIP ASL doc, experimentally, with PCASL
+																						% background suppression gray-white-strong (which was
+																						% used in VCI), labeling efficiency alpha is 60%.
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.BackgroundSuppression = true;																				
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.BackgroundSuppressionNumberPulses = 4; % From Siemens WIP ASL doc, "gray-white-strong"
+																									% background suppression has 4 pulses.
+		% The following sidecar changes are recommended metadata fields by BIDS v1.9.0 spec,
+		% Data come from "WipMemBlock" field of JSON file - it says "wip_Adv3DASL(Mar 28 2023) 
+		% PCASL unbalanced: B1_ave=1.8uT/FA27.6,  G_ave=1mT/m, G_max=8mT/m"
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.LabelingPulseAverageGradient = 1; 	% average labeling gradient switched on during the
+																								% application of the labelling RF pulses, in
+																								% milliteslas per meter.
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.LabelingPulseMaximumGradient = 8;	% max amplitude of gradient switched on during the
+																								% application of the labelling RF pulses, in
+																								% milliteslas per meter.
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.LabelingPulseAverageB1 = 1.8;		% average B1-field strength of the RF labeling pulses
+																								% in microteslas.
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PCASLType = "unbalanced";
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.LabelingPulseFlipAngle = 27.6; % That's my guess on "FA27.6".
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.RepetitionTimePreparation = 4.14; % https://neurostars.org/t/repetitiontime-parameters-what-are-they-and-where-to-find-them/20020
+	end
 
 	% ASL - PEPolar FMAP - AP
-	vci_dcm2bids_config.descriptions(9).id = "id_asl_pepolar_fmap_ap";
-	vci_dcm2bids_config.descriptions(9).datatype = "fmap";
-	vci_dcm2bids_config.descriptions(9).suffix = "epi";
-	vci_dcm2bids_config.descriptions(9).criteria.SeriesDescription = "AP_FMAP pcasl";
-	vci_dcm2bids_config.descriptions(9).criteria.ProtocolName = "AP_FMAP pcasl";
-	vci_dcm2bids_config.descriptions(9).criteria.PhaseEncodingDirection = "j-";
-	vci_dcm2bids_config.descriptions(9).custom_entities = "acq-pepolarForAsl_dir-AP";
-	vci_dcm2bids_config.descriptions(9).sidecar_changes.PhaseEncodingDirection = "j-";
-	vci_dcm2bids_config.descriptions(9).sidecar_changes.IntendedFor = "id_asl_asl";
+	curr_length = length(vci_dcm2bids_config.descriptions);
+	curr_idx = curr_length + 1;
+	vci_dcm2bids_config.descriptions(curr_idx).id = "id_asl_pepolar_fmap_ap";
+	vci_dcm2bids_config.descriptions(curr_idx).datatype = "fmap";
+	vci_dcm2bids_config.descriptions(curr_idx).suffix = "epi";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "AP_FMAP pcasl";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.ProtocolName = "AP_FMAP pcasl";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.PhaseEncodingDirection = "j-";
+	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "acq-pepolarForAsl_dir-AP";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j-";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor = "id_asl_asl";
 
 	% ASL - PEPolar FMAP - PA
-	vci_dcm2bids_config.descriptions(10).id = "id_asl_pepolar_fmap_pa";
-	vci_dcm2bids_config.descriptions(10).datatype = "fmap";
-	vci_dcm2bids_config.descriptions(10).suffix = "epi";
-	vci_dcm2bids_config.descriptions(10).criteria.SeriesDescription = "PA_FMAP pcasl";
-	vci_dcm2bids_config.descriptions(10).criteria.ProtocolName = "PA_FMAP pcasl";
-	vci_dcm2bids_config.descriptions(10).criteria.PhaseEncodingDirection = "j";
-	vci_dcm2bids_config.descriptions(10).custom_entities = "acq-pepolarForAsl_dir-PA";
-	vci_dcm2bids_config.descriptions(10).sidecar_changes.PhaseEncodingDirection = "j";
-	vci_dcm2bids_config.descriptions(10).sidecar_changes.IntendedFor = "id_asl_asl";
+	curr_length = length(vci_dcm2bids_config.descriptions);
+	curr_idx = curr_length + 1;
+	vci_dcm2bids_config.descriptions(curr_idx).id = "id_asl_pepolar_fmap_pa";
+	vci_dcm2bids_config.descriptions(curr_idx).datatype = "fmap";
+	vci_dcm2bids_config.descriptions(curr_idx).suffix = "epi";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "PA_FMAP pcasl";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.ProtocolName = "PA_FMAP pcasl";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.PhaseEncodingDirection = "j";
+	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "acq-pepolarForAsl_dir-PA";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor = "id_asl_asl";
 
 
 
