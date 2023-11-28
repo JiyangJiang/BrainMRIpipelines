@@ -201,10 +201,6 @@ output_dir=$BIDS_dir/derivatives/aslprep_${aslprep_version}
 work_dir=$BMP_TMP_PATH/aslprep_work/$subject_ID		# aslprep does not allow work dir to be a subdir of bids dir.
 mkdir -p $work_dir $output_dir
 
-export TEMP=/srv/scratch/cheba/Imaging/my_tmp
-export TMPDIR=$TEMP
-export TMP=$TEMP
-
 singularity run --cleanenv \
 				-B $HOME:/home/aslprep \
 				--home /home/aslprep \
