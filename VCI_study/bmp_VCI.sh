@@ -214,7 +214,7 @@ singularity run --cleanenv \
 				--skip_bids_validation \
 				--participant_label $subject_ID \
 				--omp-nthreads $omp \
-				--output-spaces MNI152NLin6Asym:res-2,T1w,asl \
+				--output-spaces MNI152NLin6Asym:res-2 T1w \
 				--force-bbr \
 				--m0_scale 10 \
 				--scorescrub \
