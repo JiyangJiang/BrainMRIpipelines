@@ -257,7 +257,7 @@ singularity run --cleanenv \
 				--work-dir $work_dir \
 				-v
 
-
+# 2023.12.01 - It seems fieldmaps were not considered for distortion correction. Try --debug fieldmaps for debugging.
 
 
 
