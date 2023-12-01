@@ -45,6 +45,7 @@ mriqc_version=23.1.0
 qsiprep_version=0.19.1
 smriprep_version=0.12.2
 aslprep_version=0.6.0
+fmriprep_version=23.1.4
 
 
 # Create dcm2bids configuration file.
@@ -199,6 +200,7 @@ end
 #
 output_dir=$BIDS_dir/derivatives/aslprep_${aslprep_version}
 work_dir=$BMP_TMP_PATH/aslprep_work/$subject_ID		# aslprep does not allow work dir to be a subdir of bids dir.
+
 mkdir -p $work_dir $output_dir
 
 singularity run --cleanenv \
@@ -226,6 +228,39 @@ singularity run --cleanenv \
 
 # Preprocessing rsfMRI (fMRIPrep)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+output_dir=$BIDS_dir/derivatives/fmriprep_${fmriprep_version}
+work_dir=$BMP_TMP_PATH/fmriprep_work/$subject_ID
+freesurfer_dir=$BIDS_dir/derivatives/smriprep_${smriprep_version}/freesurfer
+
+mkdir -p $work_dir $output_dir
+
+singularity run --cleanenv \
+				-B $BIDS_dir \
+				-B $output_dir \
+				-B $work_dir \
+				-B $freesurfer_dir \
+				-B ${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
+				-B $BMP_TMP_PATH/templateflow:/home/fmriprep/.cache/templateflow \
+				$BMP_3RD_PATH/fmriprep-${fmriprep_version}.simg \
+				$BIDS_dir $output_dir \
+				participant \
+				--skip_bids_validation \
+				--participant_label $subject_ID \
+				--omp-nthreads $omp \
+				--output-spaces MNI152NLin6Asym:res-2 MNI152NLin2009cAsym:res-2 fsaverage:den-10k anat func \
+				--force-bbr \
+				--me-t2s-fit-method curvefit \
+				--project-goodvoxels \
+				--medial-surface-nan \
+				--cifti-output 91k \
+				--return-all-components \
+				--fs-license-file /opt/freesurfer/license.txt \
+				--fs-subjects-dir $freesurfer_dir \
+				--work-dir $work_dir \
+				-v
+
+
+
 
 
 # Postprocessing rsfMRI (XCP-D)
