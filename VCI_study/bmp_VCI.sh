@@ -170,10 +170,8 @@ for spec in mrtrix_multishell_msmt_ACT-hsvs \
 
     mkdir -p $work_dir
 
-    export SINGULARITY_TEMPLATEFLOW_HOME=/opt/templateflow
-
     singularity run --containall --writable-tmpfs \
-                    -B $BMP_TMP_PATH/templateflow:/opt/templateflow \
+                    -B $BMP_TMP_PATH/templateflow:/home/qsiprep/.cache/templateflow \
                     -B $qsiprep_dir \
                     -B $output_dir \
                     -B $freesurfer_dir \
