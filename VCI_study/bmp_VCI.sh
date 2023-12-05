@@ -6,18 +6,29 @@
 #   This script goes through the pipelines to process imaging data
 #   for VCI study.
 #
-# QSIPREP LOG :
+# LOG :
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #
-#   - mrtrix_multishell_msmt_pyafq_tractometry constantly having 
-#     "No space left on device" error.
+#   - [qsiprep] - mrtrix_multishell_msmt_pyafq_tractometry constantly having 
+#                 "No space left on device" error.
 #
-#   - Preprocessed dMRI data are upsampled to 1.2 mm isotropic 
-#     because fixel-based analyses require a minimum of 1.3 mm 
-#     isotropic. However, this means other reconstrctions 
-#     (e.g., noddi) will also be based on 1.2 mm isotropic results.
+#   - [qsiprep] - Preprocessed dMRI data are upsampled to 1.2 mm isotropic 
+#                 because fixel-based analyses require a minimum of 1.3 mm 
+#                 isotropic. However, this means other reconstrctions 
+#                 (e.g., noddi) will also be based on 1.2 mm isotropic results.
 #
+#   - [fmriprep] - To let fmriprep finds fmaps, rsfMRI and fmap 
+#                  JSON files need specify "B0FieldSource" and 
+#                  "B0FieldIdentifier".
 #
+#   - [aslprep] -  It seems ASL-BIDS does not accept blip-up/down
+#                  like dMRI and fMRI. Instead, it requires an
+#                  additional m0scan with reverse PE from the
+#                  main m0scan. A BIDS example can be found at:
+#                  https://github.com/bids-standard/bids-examples/tree/master/asl004/sub-Sub1/fmap.
+#                  Reference: https://www.nature.com/articles/s41597-022-01615-9.
+#                  Therefore, add --use-syn-sdc and --force-syn
+#                  to enable fieldmap-less distortion correction.
 
 # XPS13 VM lin4neuro
 export DICOM_zip=/home/brain/Desktop/VCI/vci_003/flywheel_20231113_001000.zip
@@ -219,6 +230,8 @@ singularity run --cleanenv \
 				--m0_scale 10 \
 				--scorescrub \
 				--basil \
+				--use-syn-sdc \
+				--force-syn \
 				--fs-license-file /opt/freesurfer/license.txt \
 				--work-dir $work_dir \
 				-v
@@ -256,14 +269,7 @@ singularity run --cleanenv \
 				--fs-license-file /opt/freesurfer/license.txt \
 				--fs-subjects-dir $freesurfer_dir \
 				--work-dir $work_dir \
-				--mem-mb 512000 \
 				-v
-
-# 2023.12.01 - It seems fieldmaps were not considered for distortion correction. Try --debug fieldmaps for debugging.
-#
-# 2023.12.05 - 	Notice warning of exceeding memory
-#				ask for 28 CPU cores and 512 GB of memory
-#				runing with --mem-mb 512000
 
 
 
