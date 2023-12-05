@@ -303,7 +303,8 @@
         "LabelingPulseAverageB1": 1.8,
         "PCASLType": "unbalanced",
         "LabelingPulseFlipAngle": 27.6,
-        "RepetitionTimePreparation": 4.14
+        "RepetitionTimePreparation": 4.14,
+        "B0FieldSource": "pepolar_asl"
       }
     },
     {
@@ -318,7 +319,8 @@
       "custom_entities": "acq-pepolarForAsl_dir-AP",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j-",
-        "IntendedFor": "id_asl_asl"
+        "IntendedFor": "id_asl_asl",
+        "B0FieldIdentifier": "pepolar_asl"
       }
     },
     {
