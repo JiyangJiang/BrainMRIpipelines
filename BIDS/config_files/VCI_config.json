@@ -205,7 +205,8 @@
         "LabelingPulseAverageB1": 1.8,
         "PCASLType": "unbalanced",
         "LabelingPulseFlipAngle": 27.6,
-        "RepetitionTimePreparation": 4.14
+        "RepetitionTimePreparation": 4.14,
+        "B0FieldSource": "pepolar_asl"
       }
     },
     {
@@ -227,37 +228,37 @@
         "LabelingDuration": [
           0,
           0.8,
-          0,
+          0.8,
           1,
-          0,
+          1,
           1.2,
-          0,
+          1.2,
           1.4,
-          0,
+          1.4,
           1.6,
-          0,
+          1.6,
           1.8,
-          0,
           1.8,
-          0,
           1.8,
-          0,
           1.8,
-          0,
           1.8,
-          0,
           1.8,
-          0,
           1.8,
-          0,
           1.8,
-          0,
           1.8,
-          0,
           1.8,
-          0,
           1.8,
-          0
+          1.8,
+          1.8,
+          1.8,
+          1.8,
+          1.8,
+          1.8,
+          1.8,
+          1.8,
+          1.8,
+          1.8,
+          1.8
         ],
         "PostLabelingDelay": [
           0,
@@ -335,7 +336,8 @@
       "custom_entities": "acq-pepolarForAsl_dir-PA",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j",
-        "IntendedFor": "id_asl_asl"
+        "IntendedFor": "id_asl_asl",
+        "B0FieldIdentifier": "pepolar_asl"
       }
     },
     {
@@ -347,7 +349,8 @@
       },
       "custom_entities": "task-rest",
       "sidecar_changes": {
-        "TaskName": "rest"
+        "TaskName": "rest",
+        "B0FieldSource": "pepolar_rsfmri"
       }
     },
     {
@@ -361,7 +364,8 @@
       "custom_entities": "acq-pepolarForRsfmri_dir-AP",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j-",
-        "IntendedFor": "id_rsfmri"
+        "IntendedFor": "id_rsfmri",
+        "B0FieldIdentifier": "pepolar_rsfmri"
       }
     },
     {
@@ -375,7 +379,8 @@
       "custom_entities": "acq-pepolarForRsfmri_dir-PA",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j",
-        "IntendedFor": "id_rsfmri"
+        "IntendedFor": "id_rsfmri",
+        "B0FieldIdentifier": "pepolar_rsfmri"
       }
     }
   ]
