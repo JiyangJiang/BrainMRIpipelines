@@ -239,6 +239,7 @@ singularity run --cleanenv \
 				-B $freesurfer_dir \
 				-B ${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
 				-B $BMP_TMP_PATH/templateflow:/home/fmriprep/.cache/templateflow \
+				-B $BMP_TMP_PATH/matplotlib:/home/fmriprep/.config/matplotlib \
 				$BMP_3RD_PATH/fmriprep-${fmriprep_version}.simg \
 				$BIDS_dir $output_dir \
 				participant \
@@ -255,9 +256,14 @@ singularity run --cleanenv \
 				--fs-license-file /opt/freesurfer/license.txt \
 				--fs-subjects-dir $freesurfer_dir \
 				--work-dir $work_dir \
+				--mem-mb 512000 \
 				-v
 
 # 2023.12.01 - It seems fieldmaps were not considered for distortion correction. Try --debug fieldmaps for debugging.
+#
+# 2023.12.05 - 	Notice warning of exceeding memory
+#				ask for 28 CPU cores and 512 GB of memory
+#				runing with --mem-mb 512000
 
 
 
