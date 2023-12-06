@@ -8,6 +8,7 @@
 #
 # COMPUTATIONAL RESOURCES :
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#
 #   The processing can be carried out on Katana, through OnDemand
 #   service. A node with 16 CPU cores and 128 GB of memory for 12
 #   hours is enough for the processing. Note that each step is run
@@ -51,8 +52,9 @@ export subject_ID=vci001
 
 # TowerX
 export DICOM_zip=/d/vci/flywheel/vci001/flywheel_20231127_015517.zip
-export BIDS_dir=/d/vci/BIDS_test
-export subject_ID=vci001
+export DICOM_zip=/d/vci/flywheel/vci006/flywheel_20231206_034538.zip
+export BIDS_dir=/d/vci/BIDS
+export subject_ID=vci006
 
 # DICOM_zip=$1
 # BIDS_dir=$2

@@ -108,8 +108,17 @@ deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_BLOCK_1_DIFFUSION_30DIR/"				
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_BLOCK_2_DIFFUSION_30DIR/"							DWI_AP_2
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_BLOCK_1_DIFFUSION_30DIR/"							DWI_PA_1
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_BLOCK_2_DIFFUSION_30DIR/"							DWI_PA_2
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_FMAP_for DIFFUSION/"									DWI_FMAP_AP
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP_for DIFFUSION/"									DWI_FMAP_PA
+
+case "$subject_ID" in
+	vci001|vci002|vci003)
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_FMAP_for DIFFUSION/"									DWI_FMAP_AP
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP_for DIFFUSION/"									DWI_FMAP_PA
+		;;
+	*)
+		# fieldmaps for dMRI are removed from the 4th scan
+		;;
+esac
+
 
 # SWI/QSM
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -119,22 +128,23 @@ case "$subject_ID" in
 		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm/"									SWI_pha					# vci001 only
 		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_1/"								SWI_mag
 		;;
-	vci002)
-		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_Qsm/"								SWI_QSM					# vci002
-		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_SWI_Combined/"					SWI_SWI
-		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_SWI_mIP_Combined/"				SWI_mIP
-		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_Mag/"								SWI_mag
-		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_Pha/"								SWI_pha
-		;;
-	*)
-		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_RR_Qsm/"							SWI_QSM					# from vci003 - due to scanner upg?
+	vci003)
+		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_RR_Qsm/"							SWI_QSM					# vci003
 		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_RR_SWI_Combined/"					SWI_SWI
 		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_RR_SWI_mIP_Combined/"				SWI_mIP
 		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_RR_Mag/"							SWI_mag
 		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_RR_Pha/"							SWI_pha_filtered
 		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm/"									SWI_pha
 		;;
+	*)
+		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_Qsm/"								SWI_QSM	
+		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_SWI_Combined/"					SWI_SWI
+		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_SWI_mIP_Combined/"				SWI_mIP
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_Mag/"								SWI_mag
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_Pha/"								SWI_pha
+		;;	
 esac
+
 
 # ASL
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -169,15 +179,28 @@ case "$subject_ID" in
 		echo "[$(date)] : $(basename $0) : $subject_ID did not have DCE data acquired."
 		;;
 	*)
-		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_INV1/"					MP2RAGE_INV1
-		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_INV2/"					MP2RAGE_INV2
-		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_UNI_Images/"				MP2RAGE_UNI
-		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_T1_Images/"				MP2RAGE_T1
-
-		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/B1Map_for_T1_mapping/"									B1
+		case "$subject_ID" in
+			vci001|vci002)
+				deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_INV1/"					MP2RAGE_INV1
+				deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_INV2/"					MP2RAGE_INV2
+				deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_UNI_Images/"				MP2RAGE_UNI
+				deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_0.8x0.8x2_BW240_T1_Images/"				MP2RAGE_T1
+				deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/B1Map_for_T1_mapping/"									B1
+				;;
+			*)
+				deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_1x1x1_BW240_INV1/"						MP2RAGE_INV1
+				deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_1x1x1_BW240_INV2/"						MP2RAGE_INV2
+				deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_1x1x1_BW240_UNI_Images/"					MP2RAGE_UNI
+				deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t1_mp2rage_sag_1x1x1_BW240_T1_Images/"					MP2RAGE_T1
+				deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/B1Map_for_T1_mapping AX/"								B1_AX
+				deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/B1Map_for_T1_mapping SAG/"								B1_SAG
+				;;
+		esac
 
 		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/t1_vibe_sag_DCE_2mm XL FOV 40s temporal res/"			DCE
+		
 		;;
+	
 esac
 
 # resting state fMRI
