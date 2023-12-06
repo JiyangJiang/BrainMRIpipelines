@@ -6,6 +6,15 @@
 #   This script goes through the pipelines to process imaging data
 #   for VCI study.
 #
+# COMPUTATIONAL RESOURCES :
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#   The processing can be carried out on Katana, through OnDemand
+#   service. A node with 16 CPU cores and 128 GB of memory for 12
+#   hours is enough for the processing. Note that each step is run
+#   separately, meaning that for each processing step a VM of 16
+#   CPU cores and 128 GB of memory is needed.
+#
+#
 # LOG :
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #
