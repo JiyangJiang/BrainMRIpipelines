@@ -15,6 +15,19 @@
 #   separately, meaning that for each processing step a VM of 16
 #   CPU cores and 128 GB of memory is needed.
 #
+# OUTPUTS :
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#
+#   - [aslprep] - BASIL CBF results can be found in
+#                 /path/to/aslprep/work_dir/subject_ID/aslprep_wf/
+#                 single_subject_vci001_wf/asl_preproc_dir_PA_wf/
+#                 compute_cbf_wf/extract_deltam/native_space.
+#                 For example, vci001's results can be found in
+#                 /srv/scratch/cheba/Imaging/my_tmp/aslprep_work/
+#                 vci001/aslprep_wf/single_subject_vci001_wf/
+#                 asl_preproc_dir_PA_wf/compute_cbf_wf/
+#                 extract_deltam/native_space.
+# 
 #
 # LOG :
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
