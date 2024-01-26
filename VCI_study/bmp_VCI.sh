@@ -61,8 +61,9 @@ export subject_ID=vci003
 # Macbook pro
 export DICOM_zip=/Users/z3402744/Work/vci/raw/vci_001/flywheel_20230921_005034.zip
 export DICOM_zip=/Users/z3402744/Work/vci/raw/vci_006/flywheel_20231206_110542.zip
+export DICOM_zip=/Users/z3402744/Work/vci/raw/vci_007/flywheel_20240126_020812.zip
 export BIDS_dir=/Users/z3402744/Work/vci/BIDS
-export subject_ID=vci006
+export subject_ID=vci007
 
 # TowerX
 export DICOM_zip=/d/vci/flywheel/vci001/flywheel_20231127_015517.zip
