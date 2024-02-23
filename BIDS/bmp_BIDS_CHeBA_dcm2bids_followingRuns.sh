@@ -19,11 +19,11 @@ cd $BIDS_dir
 echo "[$(date)] : $(basename $0) : Calling dcm2bids to convert $subject_ID to BIDS."
 dcm2bids -d sourcedata/$subject_ID -p $subject_ID -c $BMP_PATH/BIDS/config_files/${study}_config.json --clobber --force_dcm2bids
 
-echo "[$(date)] : $(basename $0) : "
-echo "[$(date)] : $(basename $0) : [NOTE] If there's any warning message regarding IntendedFor id not found, "
-echo "[$(date)] : $(basename $0) : [NOTE] this is because fmaps acquired before the IntendedFor seq."
-echo "[$(date)] : $(basename $0) : [NOTE] May need to manually add \"IntendedFor\" to corresponding JSON."
-echo "[$(date)] : $(basename $0) : "
+# echo "[$(date)] : $(basename $0) : "
+# echo "[$(date)] : $(basename $0) : [NOTE] If there's any warning message regarding IntendedFor id not found, "
+# echo "[$(date)] : $(basename $0) : [NOTE] this is because fmaps acquired before the IntendedFor seq."
+# echo "[$(date)] : $(basename $0) : [NOTE] May need to manually add \"IntendedFor\" to corresponding JSON."
+# echo "[$(date)] : $(basename $0) : "
 
 echo "[$(date)] : $(basename $0) : Creating aslcontext file for subject $subject_ID."
 bmp_BIDS_CHeBA_genASLcontext.sh $BIDS_dir $subject_ID

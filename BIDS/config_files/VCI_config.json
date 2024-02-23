@@ -341,46 +341,87 @@
       }
     },
     {
-      "id": "id_rsfmri",
+      "id": "id_asl_pepolar_fmap_apm0",
+      "datatype": "fmap",
+      "suffix": "m0scan",
+      "criteria": {
+        "SeriesDescription": "A-P m0 field map",
+        "ProtocolName": "A-P m0 field map",
+        "PhaseEncodingDirection": "j-"
+      },
+      "custom_entities": "dir-AP",
+      "sidecar_changes": {
+        "PhaseEncodingDirection": "j-",
+        "IntendedFor": "id_asl_asl",
+        "B0FieldIdentifier": "pepolar_asl"
+      }
+    },
+    {
+      "id": "id_cvr_rest",
       "datatype": "func",
       "suffix": "bold",
       "criteria": {
-        "SeriesDescription": "fMRI _RESTING STATE_MB6_PA normalise OFF"
+        "SeriesDescription": "Resting state_ep2d_bold 3.8mm TR1500 adaptive"
       },
-      "custom_entities": "task-rest",
+      "custom_entities": "task-rest_dir-PA",
       "sidecar_changes": {
         "TaskName": "rest",
-        "B0FieldSource": "pepolar_rsfmri"
+        "B0FieldSource": "pepolar_cvr_rest"
       }
     },
     {
-      "id": "id_rsfmri_pepolar_fmap_ap",
+      "id": "id_cvr_co2",
+      "datatype": "func",
+      "suffix": "bold",
+      "criteria": {
+        "SeriesDescription": "CVR_ep2d_bold 3.8mm TR1500 adaptive"
+      },
+      "custom_entities": "task-co2_dir-PA",
+      "sidecar_changes": {
+        "TaskName": "co2",
+        "B0FieldSource": "pepolar_cvr_co2"
+      }
+    },
+    {
+      "id": "id_cvr_pepolar_fmap_ap",
       "datatype": "fmap",
       "suffix": "epi",
       "criteria": {
-        "SeriesDescription": "AP_FMAP_for resting state fMRI normalise OFF",
+        "SeriesDescription": "AP_FMAP cvr",
         "PhaseEncodingDirection": "j-"
       },
-      "custom_entities": "acq-pepolarForRsfmri_dir-AP",
+      "custom_entities": "acq-APforCVR_dir-AP",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j-",
-        "IntendedFor": "id_rsfmri",
-        "B0FieldIdentifier": "pepolar_rsfmri"
+        "IntendedFor": [
+          "id_cvr_rest",
+          "id_cvr_co2"
+        ],
+        "B0FieldIdentifier": [
+          "pepolar_cvr_rest",
+          "pepolar_cvr_co2"
+        ]
       }
     },
     {
-      "id": "id_rsfmri_pepolar_fmap_pa",
+      "id": "id_cvr_pepolar_fmap_pa",
       "datatype": "fmap",
       "suffix": "epi",
       "criteria": {
-        "SeriesDescription": "PA_FMAP_for resting state fMRI normalise OFF",
+        "SeriesDescription": "PA_FMAP cvr",
         "PhaseEncodingDirection": "j"
       },
-      "custom_entities": "acq-pepolarForRsfmri_dir-PA",
+      "custom_entities": "acq-PAforCVR_dir-PA",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j",
-        "IntendedFor": "id_rsfmri",
-        "B0FieldIdentifier": "pepolar_rsfmri"
+        "IntendedFor": [
+          "id_cvr_rest",
+          "id_cvr_co2"
+        ],
+        "B0FieldIdentifier": [
+          "pepolar_cvr_rest",
+          "pepolar_cvr_co2"
+        ]
       }
     }
   ]

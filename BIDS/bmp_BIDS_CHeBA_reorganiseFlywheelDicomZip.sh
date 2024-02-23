@@ -160,14 +160,41 @@ esac
 
 deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/relCBF/"												ASL_relCBF
 deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/BAT/"													ASL_BAT
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/Perfusion_Weighted/"									ASL_PWI
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_FMAP pcasl/"											ASL_FMAP_AP
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP pcasl/"											ASL_FMAP_PA
+
+case "$subject_ID" in
+	vci001|vci002|vci003|vci006|vci007)
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/Perfusion_Weighted/"									ASL_PWI
+		;;
+	*)
+		# Note that since VCI014, PWI is a 3D volume, instead of 4D.
+		deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/Perfusion_Weighted/"									ASL_PWI
+		;;
+esac
+
+case "$subject_ID" in
+	vci001|vci002|vci003|vci006|vci007)
+		# Early subjects did not have reversed PE M0 acquired.
+		# They have reversed PE B0's which may need to consider readout times
+		# to calculate field maps.
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_FMAP pcasl/"									ASL_FMAP_AP
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP pcasl/"									ASL_FMAP_PA
+		;;
+	*)
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/A-P m0 field map/"								ASL_FMAP_APM0		# Note that this AP
+																															# M0 is 4D, consisting
+																															# of AP M0, AP control,
+																															# and AP tag. Only AP
+																															# M0 is useful - need
+																															# to extract in later
+																															# steps.
+		;;
+esac
 
 # CVR
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++
 #
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/CVR_ep2d_bold 3.8mm TR1500 adaptive/"					CVR
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/Resting state_ep2d_bold 3.8mm TR1500 adaptive/"			CVR_rest
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/CVR_ep2d_bold 3.8mm TR1500 adaptive/"					CVR_CO2
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_FMAP cvr/"											CVR_FMAP_AP
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP cvr/"											CVR_FMAP_PA
 

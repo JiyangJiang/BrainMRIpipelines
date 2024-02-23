@@ -104,3 +104,7 @@ case $is_first_run in
         bmp_BIDS_CHeBA_dcm2bids_followingRuns.sh $DICOM_zip $BIDS_dir $subject_ID $study
         ;;
 esac
+
+echo "Fixing IntendedFor ... "
+
+matlab -nodisplay -nosplash -nodesktop -r "addpath(fullfile(getenv('BMP_PATH'),'BIDS'));bmp_BIDS_CHeBA_chkIntendedFor('$BIDS_dir', '$subject_ID');exit"

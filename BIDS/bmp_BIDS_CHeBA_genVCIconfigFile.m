@@ -30,6 +30,8 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 % HISTORY :
 %
 %   20231031 - Dr. Jiyang Jiang created the 1st version.
+%	20240223 - Include reverse PE M0 for ASL distortion correction.
+%			   Include resting and CO2-challenged BOLD images
 %
 
 	clear vci_dcm2bids_config;
@@ -221,7 +223,81 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor = "id_asl_asl";
 	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_asl";
 
+	% ASL - PEPolar FMAP - AP M0
+	%
+	% Note that since VCI004 (15/02/2024), AP M0 was acquired for ASL distortion
+	% correction.
+	%
+	curr_length = length(vci_dcm2bids_config.descriptions);
+	curr_idx = curr_length + 1;
+	vci_dcm2bids_config.descriptions(curr_idx).id = "id_asl_pepolar_fmap_apm0";
+	vci_dcm2bids_config.descriptions(curr_idx).datatype = "fmap";
+	vci_dcm2bids_config.descriptions(curr_idx).suffix = "m0scan";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "A-P m0 field map";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.ProtocolName = "A-P m0 field map";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.PhaseEncodingDirection = "j-";
+	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "dir-AP";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j-";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor = "id_asl_asl";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_asl";
 
+	% CVR resting
+	curr_length = length(vci_dcm2bids_config.descriptions);
+	curr_idx = curr_length + 1;
+
+	vci_dcm2bids_config.descriptions(curr_idx).id = "id_cvr_rest";
+	vci_dcm2bids_config.descriptions(curr_idx).datatype = "func";
+	vci_dcm2bids_config.descriptions(curr_idx).suffix = "bold";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "Resting state_ep2d_bold 3.8mm TR1500 adaptive";
+	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "task-rest_dir-PA";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TaskName = "rest";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldSource = "pepolar_cvr_rest";
+
+	% CVR CO2
+	curr_length = length(vci_dcm2bids_config.descriptions);
+	curr_idx = curr_length + 1;
+
+	vci_dcm2bids_config.descriptions(curr_idx).id = "id_cvr_co2";
+	vci_dcm2bids_config.descriptions(curr_idx).datatype = "func";
+	vci_dcm2bids_config.descriptions(curr_idx).suffix = "bold";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "CVR_ep2d_bold 3.8mm TR1500 adaptive";
+	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "task-co2_dir-PA";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TaskName = "co2";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldSource = "pepolar_cvr_co2";
+
+	% CVR FMAP AP
+	curr_length = length(vci_dcm2bids_config.descriptions);
+	curr_idx = curr_length + 1;
+
+	vci_dcm2bids_config.descriptions(curr_idx).id = "id_cvr_pepolar_fmap_ap";
+	vci_dcm2bids_config.descriptions(curr_idx).datatype = "fmap";
+	vci_dcm2bids_config.descriptions(curr_idx).suffix = "epi";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "AP_FMAP cvr";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.PhaseEncodingDirection = "j-";
+	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "acq-APforCVR_dir-AP";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j-";
+	% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051;
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(1) = "id_cvr_rest";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(2) = "id_cvr_co2";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier(1) = "pepolar_cvr_rest";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier(2) = "pepolar_cvr_co2";
+
+	% CVR FMAP PA
+	curr_length = length(vci_dcm2bids_config.descriptions);
+	curr_idx = curr_length + 1;
+
+	vci_dcm2bids_config.descriptions(curr_idx).id = "id_cvr_pepolar_fmap_pa";
+	vci_dcm2bids_config.descriptions(curr_idx).datatype = "fmap";
+	vci_dcm2bids_config.descriptions(curr_idx).suffix = "epi";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "PA_FMAP cvr";
+	vci_dcm2bids_config.descriptions(curr_idx).criteria.PhaseEncodingDirection = "j";
+	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "acq-PAforCVR_dir-PA";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j";
+	% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051;
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(1) = "id_cvr_rest";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(2) = "id_cvr_co2";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier(1) = "pepolar_cvr_rest";
+	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier(2) = "pepolar_cvr_co2";
 
 
 	% TO-DO's
