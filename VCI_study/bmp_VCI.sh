@@ -63,8 +63,10 @@ export DICOM_zip=/Users/z3402744/Work/vci/raw/vci_001/flywheel_20230921_005034.z
 export DICOM_zip=/Users/z3402744/Work/vci/raw/vci_006/flywheel_20231206_110542.zip
 export DICOM_zip=/Users/z3402744/Work/vci/raw/vci_007/flywheel_20240126_020812.zip
 export DICOM_zip=/Users/z3402744/Work/vci/raw/vci_014/flywheel_20240223_031604.zip
+export DICOM_zip=/Users/z3402744/Work/vci/raw/vci_010/flywheel_20240223_235303.zip
+export DICOM_zip=/Users/z3402744/Work/vci/raw/vci_012/flywheel_20240224_001454.zip
 export BIDS_dir=/Users/z3402744/Work/vci/BIDS
-export subject_ID=vci014
+export subject_ID=vci012
 
 # TowerX
 export DICOM_zip=/d/vci/flywheel/vci001/flywheel_20231127_015517.zip
