@@ -8,3 +8,11 @@ If you are using local computer/workstation, I found the most effective way to r
 ### Katana at UNSW
 
 ### Gadi from NCI
+
+### Building singularity images
+
+```
+singularity build ./smriprep.simg docker://nipreps/smriprep  # build sMRIPrep singularity image from latest
+singularity run --cleanenv ./smriprep.simg --version  # check sMRIPrep version
+
+```
