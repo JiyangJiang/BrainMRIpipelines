@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Data stored in /data_int/jiyang/tmp/work on GRID
+# Data stored in /data3/jiyang/oats_scs_asl on GRID
 #
 # NOTES
 #
 # 03/03/2024 - Comparing CSF reference from my own ventricular mask vs.
 #              the one automatically generated from BASIL
 
-work_dir=/data_int/jiyang/tmp/work
+work_dir=/data3/jiyang/oats_scs_asl
 
 # fsl_anat
 for_each -nthreads 40 ${work_dir}/P*/*-* : fsl_anat -i IN/t1 -o IN/t1
