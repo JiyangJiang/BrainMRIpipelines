@@ -5,6 +5,7 @@
 DICOM_zip=$1
 BIDS_dir=$2
 subject_ID=$3
+study=$4
 
 read -p "[$(date)] : $(basename $0) : dcm2bids environment activated? Or dcm2bids commands accessible? [Y/N] : " ans_yn
 
@@ -20,7 +21,24 @@ case "$ans_yn" in
 		# extract from Flywheel zip archive
 		echo "[$(date)] : $(basename $0) : Calling bmp_BIDS_CHeBA_init.sh to sort out Flywheel zip archive."
 
-		bmp_BIDS_CHeBA_reorganiseFlywheelDicomZip.sh $DICOM_zip $BIDS_dir $subject_ID
+		case "$study" in
+
+			"VCI")
+
+				bmp_BIDS_CHeBA_reorganiseFlywheelDicomZip_VCI.sh $DICOM_zip $BIDS_dir $subject_ID
+				;;
+
+			"CADsyd")
+
+				bmp_BIDS_CHeBA_reorganiseFlywheelDicomZip_CADsyd.sh $DICOM_zip $BIDS_dir $subject_ID
+				;;
+
+			*)
+
+				echo "UNKNOWN STUDY : $study"
+				;;
+
+		esac
 
 		echo "[$(date)] : $(basename $0) : Running dcm2bids_helper to convert DICOM to NIFTI and json, so that configuration file can be prepared."
 

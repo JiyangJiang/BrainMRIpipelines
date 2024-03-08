@@ -21,7 +21,7 @@ USAGE
 
 COMPULSORY
 
-  -s, --study                 <VCI>                  'VCI' study.
+  -s, --study                 <study>                'VCI' or 'CADsyd' study.
 
   -d, --dicom_zip             <DICOM zip archive>    Path to DICOM zip file downloaded
                                                      from Flywheel.
@@ -95,10 +95,11 @@ done
 echo "DICOM zip = ${DICOM_zip}"
 echo "BIDS dir = ${BIDS_dir}"
 echo "Subject ID = ${subject_ID}"
+echo "Study = ${study}"
 
 case $is_first_run in
     Y)
-        bmp_BIDS_CHeBA_dcm2bids_1stRun.sh $DICOM_zip $BIDS_dir $subject_ID
+        bmp_BIDS_CHeBA_dcm2bids_1stRun.sh $DICOM_zip $BIDS_dir $subject_ID $study
         ;;
     N)
         bmp_BIDS_CHeBA_dcm2bids_followingRuns.sh $DICOM_zip $BIDS_dir $subject_ID $study
