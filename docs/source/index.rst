@@ -20,6 +20,7 @@ Modules
    others/misc
    others/eg
    others/siemens.rst
+   others/gadi_katana.rst
 
 Public datasets
 ---------------
