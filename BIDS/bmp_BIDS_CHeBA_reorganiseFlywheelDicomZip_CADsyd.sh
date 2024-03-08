@@ -15,7 +15,7 @@ deal_with_3D(){
 	zip_path_kword=$4
 	modality_name=$5
 
-	DICOM="flywheel$(unzip -l $DICOM_zip | grep "$zip_path_kword" | grep ".dcm" | awk -F'flywheel' '{print $NF}')"
+	DICOM="flywheel$(unzip -l $DICOM_zip | grep "$zip_path_kword" | grep ".dicom" | awk -F'flywheel' '{print $NF}')"
 
 	if [ "$DICOM" = "flywheel" ]; then
 
@@ -85,52 +85,45 @@ subject_ID=$3
 # structural MRI
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #
-deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/ABCD_T1w_MPR_vNav_BW740 RMS/"							MEMPRAGE_RMS
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/ABCD_T1w_MPR_vNav_BW740/"								MEMPRAGE_echoes
-deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/ABCD_T2w_SPC_ vNav Iso0.8mm BW744/"						T2w
-deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/t2_space_DF_BW651/"										FLAIR
+deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "ABCD_T1w_MPR_vNav_BW740 RMS/"						MEMPRAGE_RMS
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "ABCD_T1w_MPR_vNav_BW740/"							MEMPRAGE_echoes
+deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "ABCD_T2w_SPC_ vNav Iso0.8mm BW744/"					T2w
+deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "t2_space_DF_BW651/"									FLAIR
 
 
 # diffusion MRI
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++
 #
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_BLOCK_1_DIFFUSION_30DIR/"							DWI_AP_1
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_BLOCK_2_DIFFUSION_30DIR/"							DWI_AP_2
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_BLOCK_1_DIFFUSION_30DIR/"							DWI_PA_1
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_BLOCK_2_DIFFUSION_30DIR/"							DWI_PA_2
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "AP_BLOCK_1_DIFFUSION_30DIR/"							DWI_AP_1
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "AP_BLOCK_2_DIFFUSION_30DIR/"							DWI_AP_2
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "PA_BLOCK_1_DIFFUSION_30DIR/"							DWI_PA_1
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "PA_BLOCK_2_DIFFUSION_30DIR/"							DWI_PA_2
 
 
 # SWI/QSM
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++
 #
-deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_SWI_Combined/"					SWI_SWI
-deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_SWI_mIP_Combined/"				SWI_mIP
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_Mag/"								SWI_mag
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/greME9_p31_256_Iso1mm_Pha/"								SWI_pha
+deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "greME9_p31_256_Iso1mm_SWI_Combined/"					SWI_SWI
+deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "greME9_p31_256_Iso1mm_SWI_mIP_Combined/"				SWI_mIP
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "greME9_p31_256_Iso1mm_Mag/"							SWI_mag
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "greME9_p31_256_Iso1mm_Pha/"							SWI_pha
 
 
 # ASL
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++
 #
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/mTI16_800-3800_tgse_pcasl_3.4x3.4x4_14_31_2_24slc/"		ASL_ASL
-deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/relCBF/"												ASL_relCBF
-deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/BAT/"													ASL_BAT
-deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/Perfusion_Weighted/"									ASL_PWI
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/A-P m0 field map/"										ASL_FMAP_APM0
-
-
-# CVR
-# ++++++++++++++++++++++++++++++++++++++++++++++++++++
-#
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/Resting state_ep2d_bold 3.8mm TR1500 adaptive/"			CVR_rest
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/CVR_ep2d_bold 3.8mm TR1500 adaptive/"					CVR_CO2
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_FMAP cvr/"											CVR_FMAP_AP
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP cvr/"											CVR_FMAP_PA
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "mTI16_800-3800_tgse_pcasl_3.4x3.4x4_14_31_2_24slc/"	ASL_ASL
+deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "relCBF/"												ASL_relCBF
+deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "BAT/"												ASL_BAT
+deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "Perfusion_Weighted/"									ASL_PWI
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "A-P m0 field map/"									ASL_FMAP_APM0
 
 
 # resting state fMRI
 # ++++++++++++++++++++++++++++++++++++++++++++++++++
 #
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/fMRI _RESTING STATE_MB6_PA normalise OFF/"				rsfMRI
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_FMAP_for resting state fMRI normalise OFF/"			rsfMRI_FMAP_AP
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP_for resting state fMRI normalise OFF/"			rsfMRI_FMAP_PA
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "fMRI _RESTING STATE_MB6_PA normalise OFF/"			rsfMRI
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "AP_FMAP_for resting state fMRI normalise OFF/"		rsfMRI_FMAP_AP
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "PA_FMAP_for resting state fMRI normalise OFF/"		rsfMRI_FMAP_PA
+
+deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "PhoenixZIPReport/"									OEF
