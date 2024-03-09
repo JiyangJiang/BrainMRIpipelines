@@ -1,6 +1,26 @@
 Using GADI and KATANA
 +++++++++++++++++++++
 
+# KATANA - jobs
+---------------
+
+..  code-block::
+
+	#!/bin/bash
+	#PBS -l select=1:ncpus=2:mem=8gb
+	#PBS -l walltime=02:00:00
+	#PBS -j oe
+	#PBS -N prep
+	#PBS -o /srv/scratch/cheba/NiL/UKB/wmh/training_2021SEP06_trainFrom20k/1003977.oe
+
+
+# KATANA - interactive job
+--------------------------
+
+..  code-block::
+
+	qsub -I -l ncpus=2,mem=16gb,walltime=12:00:00
+
 
 GADI - Download from MDSS to GADI
 ---------------------------------
