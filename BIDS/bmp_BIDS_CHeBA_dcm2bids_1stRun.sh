@@ -30,7 +30,7 @@ case "$ans_yn" in
 
 			"CADsyd")
 
-				bmp_BIDS_CHeBA_reorganiseFlywheelDicomZip_CADsyd.sh $DICOM_zip $BIDS_dir $subject_ID
+				bmp_BIDS_CHeBA_reorganiseFlywheelDicomZip_CADSYD.sh $DICOM_zip $BIDS_dir $subject_ID
 				;;
 
 			*)

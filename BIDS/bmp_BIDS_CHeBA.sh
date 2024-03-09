@@ -21,7 +21,7 @@ USAGE
 
 COMPULSORY
 
-  -s, --study                 <study>                'VCI' or 'CADsyd' study.
+  -s, --study                 <study>                'VCI' or 'CADSYD' study.
 
   -d, --dicom_zip             <DICOM zip archive>    Path to DICOM zip file downloaded
                                                      from Flywheel.
@@ -106,7 +106,8 @@ case $is_first_run in
 
         echo "Fixing IntendedFor ... "
 
-        matlab -nodisplay -nosplash -nodesktop -r "addpath(fullfile(getenv('BMP_PATH'),'BIDS'));bmp_BIDS_CHeBA_chkIntendedFor('$BIDS_dir', '$subject_ID');exit"
+        matlab -nodisplay -nosplash -nodesktop -r \
+                "addpath(fullfile(getenv('BMP_PATH'),'BIDS'));bmp_BIDS_CHeBA_chkIntendedFor('$BIDS_dir','$subject_ID','$study');exit"
 
         echo -ne "Tailoring M0 scan ... "
 

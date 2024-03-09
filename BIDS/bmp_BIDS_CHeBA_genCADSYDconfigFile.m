@@ -181,12 +181,12 @@ function cadsyd_dcm2bids_config = bmp_BIDS_CHeBA_genCADSYDconfigFile (varargin)
 	curr_length = length(cadsyd_dcm2bids_config.descriptions);
 	curr_idx = curr_length + 1;
 
-	% rsfMRI - Note that VCI doesn't have rsfMRI, however AusCADASIL has, therefore borrow MAS2 rsfMRI
+	% rsfMRI
 	cadsyd_dcm2bids_config.descriptions(curr_idx).id = "id_rsfmri";
 	cadsyd_dcm2bids_config.descriptions(curr_idx).datatype = "func";
 	cadsyd_dcm2bids_config.descriptions(curr_idx).suffix = "bold";
 	cadsyd_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "fMRI _RESTING STATE_MB6_PA normalise OFF";
-	cadsyd_dcm2bids_config.descriptions(curr_idx).custom_entities = "task-rest";
+	cadsyd_dcm2bids_config.descriptions(curr_idx).custom_entities = "task-rest_dir-PA";
 	cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TaskName = "rest";
 	cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldSource = "pepolar_rsfmri";
 

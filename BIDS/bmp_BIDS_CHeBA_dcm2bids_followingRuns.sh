@@ -10,10 +10,30 @@
 DICOM_zip=$1
 BIDS_dir=$2
 subject_ID=$3
-study=$4 # e.g., 'VCI'
+study=$4 # e.g., 'VCI' or 'CADSYD'
 
-echo "[$(date)] : $(basename $0) : Calling bmp_BIDS_CHeBA_init.sh to sort out Flywheel zip archive."
-bmp_BIDS_CHeBA_reorganiseFlywheelDicomZip.sh $DICOM_zip $BIDS_dir $subject_ID
+case "$study" in
+
+			"VCI")
+
+				echo "[$(date)] : $(basename $0) : VCI study subject."
+				echo "[$(date)] : $(basename $0) : Calling bmp_BIDS_CHeBA_reorganiseFlywheelDicomZip_VCI.sh to sort out Flywheel zip archive."
+				bmp_BIDS_CHeBA_reorganiseFlywheelDicomZip_VCI.sh $DICOM_zip $BIDS_dir $subject_ID
+				;;
+
+			"CADSYD")
+
+				echo "[$(date)] : $(basename $0) : CASASIL Sydney study subject."
+				echo "[$(date)] : $(basename $0) : Calling bmp_BIDS_CHeBA_reorganiseFlywheelDicomZip_CADSYD.sh to sort out Flywheel zip archive."
+				bmp_BIDS_CHeBA_reorganiseFlywheelDicomZip_CADSYD.sh $DICOM_zip $BIDS_dir $subject_ID
+				;;
+
+			*)
+
+				echo "UNKNOWN STUDY : $study"
+				;;
+
+		esac
 
 cd $BIDS_dir
 echo "[$(date)] : $(basename $0) : Calling dcm2bids to convert $subject_ID to BIDS."
