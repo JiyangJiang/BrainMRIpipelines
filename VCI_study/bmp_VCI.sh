@@ -74,6 +74,12 @@ export DICOM_zip=/d/vci/flywheel/vci006/flywheel_20231206_034538.zip
 export BIDS_dir=/d/vci/BIDS
 export subject_ID=vci006
 
+# Katana
+export DICOM_zip=/srv/scratch/cheba/Imaging/vci/vci_015/flywheel_20240313_002036.zip
+export BIDS_dir=/srv/scratch/cheba/Imaging/vci/BIDS
+export subject_ID=vci015
+module load matlab/R2023b
+
 # DICOM_zip=$1
 # BIDS_dir=$2
 # subject_ID=$3
