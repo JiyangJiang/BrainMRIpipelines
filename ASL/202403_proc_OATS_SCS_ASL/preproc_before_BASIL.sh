@@ -41,3 +41,7 @@ for_each -nthreads $n_threads ${work_dir}/PCASL/*-* : oxford_asl -i=IN/asl.nii -
 # PCASL - my own eroded CSF mask
 for_each -nthreads $n_threads ${work_dir}/PCASL/*-* : mkdir -p IN/basil_myOwnErodedCSFmask
 for_each -nthreads $n_threads ${work_dir}/PCASL/*-* : oxford_asl -i=IN/asl.nii --iaf=ct --ibf=rpt --casl --bolus=1.8 --rpts=30 --slicedt=0.03531 --tis=3.8 --fslanat=IN/t1.anat -c=IN/m0.nii --cmethod=single --tr=6 --cgain=1 --tissref=csf --csf=IN/vent_ero.nii.gz --t1csf=4.3 --t2csf=750 --t2bl=150 --te=12 -o=IN/basil_myOwnErodedCSFmask --bat=1.3 --t1=1.3 --t1b=1.65 --alpha=0.85 --spatial=1 --fixbolus --mc --pvcorr --artoff
+
+# PCASL - already calculated PWI - automatic CSF masking
+for_each -nthreads $n_threads ${work_dir}/PCASL-1volPWI/*-* : mkdir -p IN/basil_autoCSFmask
+for_each -nthreads $n_threads ${work_dir}/PCASL-1volPWI/*-* : oxford_asl -i=IN/asl --iaf=diff --ibf=rpt --casl --bolus=1.8 --rpts=1 --slicedt=0.03531 --tis=3.8 --fslanat=IN/t1.anat -c=IN/m0 --cmethod=single --tr=6 --cgain=1 --tissref=csf --t1csf=4.3 --t2csf=750 --t2bl=150 --te=12 -o=IN/basil_autoCSFmask --bat=1.3 --t1=1.3 --t1b=1.65 --alpha=0.85 --spatial=1 --fixbolus --mc --pvcorr --artoff
