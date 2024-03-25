@@ -71,8 +71,9 @@ export subject_ID=vci012
 # TowerX
 export DICOM_zip=/d/vci/flywheel/vci001/flywheel_20231127_015517.zip
 export DICOM_zip=/d/vci/flywheel/vci006/flywheel_20231206_034538.zip
+export DICOM_zip=/d/vci/vci_014/flywheel_20240325_053620.zip
 export BIDS_dir=/d/vci/BIDS
-export subject_ID=vci006
+export subject_ID=vci014
 
 # Katana
 export DICOM_zip=/srv/scratch/cheba/Imaging/vci/vci_015/flywheel_20240313_002036.zip
