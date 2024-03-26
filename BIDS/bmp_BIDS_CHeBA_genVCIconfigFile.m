@@ -193,6 +193,7 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.RepetitionTimePreparation = 4.14; % https://neurostars.org/t/repetitiontime-parameters-what-are-they-and-where-to-find-them/20020
 
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldSource = "pepolar_asl";
+		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.VascularCrushing = false;
 	end
 
 	% ASL - PEPolar FMAP - AP

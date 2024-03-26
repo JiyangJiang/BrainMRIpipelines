@@ -19,10 +19,10 @@ m0scan_json_raw = fread(m0scan_json_fid,inf);
 m0scan_json_txt = char(m0scan_json_raw'); 
 fclose(m0scan_json_fid); 
 m0scan_json_struct = jsondecode (m0scan_json_txt);
-fprintf ("DONE!\n");
 
 % assign RepetitionTimePreparation field. See reference above.
 m0scan_json_struct.RepetitionTimePreparation = m0scan_json_struct.RepetitionTime;
+fprintf ("DONE!\n");
 
 fprintf ("Writing out json file with correct RepetitionTimePreparation field ... ");
 m0scan_json_fid = fopen(fullfile(fmap_dir, ['sub-' subject_ID '_dir-AP_m0scan.json']), 'w');
