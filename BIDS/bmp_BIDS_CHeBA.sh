@@ -114,5 +114,12 @@ case $is_first_run in
         bmp_BIDS_CHeBA_tailorM0scan.sh $BIDS_dir $subject_ID
 
         echo "DONE!"
+
+        echo -ne "Fixing RepetitionTimePreparation field ... "
+
+        matlab -nodisplay -nosplash -nodesktop -r \
+                "addpath(fullfile(getenv('BMP_PATH'),'BIDS'));bmp_BIDS_CHeBA_fixReversePEm0RepetitionTimePreparation('$BIDS_dir','$subject_ID','$study');exit"
+
+        echo "DONE!"
         ;;
 esac
