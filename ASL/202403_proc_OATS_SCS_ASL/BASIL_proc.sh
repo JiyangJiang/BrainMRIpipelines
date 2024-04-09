@@ -7,8 +7,9 @@
 # 03/03/2024 - Comparing CSF reference from my own ventricular mask vs.
 #              the one automatically generated from BASIL
 
-work_dir=/data3/jiyang/oats_scs_asl
-work_dir=/data_orange/oats_scs_asl # TowerX
+# work_dir=/data3/jiyang/oats_scs_asl
+# work_dir=/data_orange/oats_scs_asl # TowerX
+work_dir=/srv/scratch/cheba/Imaging/oats_scs_asl # Katana
 n_threads=10
 
 # fsl_anat
