@@ -1,6 +1,8 @@
 # This script aims to resolve the issue with unmatched
-# FOV between dMRI blocks. This issue happened to
-# vci010 and vci012 (as of 08/04/2024)
+# FOV between dMRI blocks. This issue happened to:
+# - vci010
+# - vci012
+# - vci030
 #
 # The solution is based on:
 # - https://github.com/PennLINC/qsiprep/issues/106
