@@ -193,7 +193,15 @@ esac
 # CVR
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++
 #
-deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/Resting state_ep2d_bold 3.8mm TR1500 adaptive/"			CVR_rest
+case "$subject_ID" in
+	vci022)
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/Resting state_ep2d_bold 3.8mm TR1500 adaptive_1/"		CVR_rest
+		;;
+	*)
+		deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/Resting state_ep2d_bold 3.8mm TR1500 adaptive/"			CVR_rest
+		;;
+esac
+
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/CVR_ep2d_bold 3.8mm TR1500 adaptive/"					CVR_CO2
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/AP_FMAP cvr/"											CVR_FMAP_AP
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/PA_FMAP cvr/"											CVR_FMAP_PA
