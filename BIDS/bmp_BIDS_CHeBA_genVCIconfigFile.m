@@ -192,7 +192,7 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.LabelingPulseFlipAngle = 27.6; % That's my guess on "FA27.6".
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.RepetitionTimePreparation = 4.14; % https://neurostars.org/t/repetitiontime-parameters-what-are-they-and-where-to-find-them/20020
 
-		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldSource = "pepolar_asl";
+		% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldSource = "pepolar_asl";
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.VascularCrushing = false;
 	end
 
@@ -208,7 +208,7 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "acq-pepolarForAsl_dir-AP";
 	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j-";
 	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor = "id_asl_asl";
-	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_asl";
+	% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_asl";
 
 	% ASL - PEPolar FMAP - PA
 	curr_length = length(vci_dcm2bids_config.descriptions);
@@ -222,7 +222,7 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "acq-pepolarForAsl_dir-PA";
 	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j";
 	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor = "id_asl_asl";
-	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_asl";
+	% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_asl";
 
 	% ASL - PEPolar FMAP - AP M0
 	%
@@ -240,7 +240,7 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "dir-AP";
 	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j-";
 	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor = "id_asl_asl";
-	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_asl";
+	% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_asl";
 
 	% CVR resting
 	curr_length = length(vci_dcm2bids_config.descriptions);
@@ -252,7 +252,7 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "Resting state_ep2d_bold 3.8mm TR1500 adaptive";
 	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "task-rest_dir-PA";
 	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TaskName = "rest";
-	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldSource = "pepolar_cvr_rest";
+	% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldSource = "pepolar_cvr_rest";
 
 	% CVR CO2
 	curr_length = length(vci_dcm2bids_config.descriptions);
@@ -264,7 +264,7 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 	vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "CVR_ep2d_bold 3.8mm TR1500 adaptive";
 	vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "task-co2_dir-PA";
 	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TaskName = "co2";
-	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldSource = "pepolar_cvr_co2";
+	% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldSource = "pepolar_cvr_co2";
 
 	% CVR FMAP AP
 	curr_length = length(vci_dcm2bids_config.descriptions);
@@ -280,8 +280,8 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 	% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051;
 	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(1) = "id_cvr_rest";
 	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(2) = "id_cvr_co2";
-	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier(1) = "pepolar_cvr_rest";
-	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier(2) = "pepolar_cvr_co2";
+	% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier(1) = "pepolar_cvr_rest";
+	% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier(2) = "pepolar_cvr_co2";
 
 	% CVR FMAP PA
 	curr_length = length(vci_dcm2bids_config.descriptions);
@@ -297,8 +297,8 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 	% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051;
 	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(1) = "id_cvr_rest";
 	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor(2) = "id_cvr_co2";
-	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier(1) = "pepolar_cvr_rest";
-	vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier(2) = "pepolar_cvr_co2";
+	% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier(1) = "pepolar_cvr_rest";
+	% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier(2) = "pepolar_cvr_co2";
 
 
 	% TO-DO's
@@ -447,7 +447,7 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 		vci_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "fMRI _RESTING STATE_MB6_PA normalise OFF";
 		vci_dcm2bids_config.descriptions(curr_idx).custom_entities = "task-rest";
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TaskName = "rest";
-		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldSource = "pepolar_rsfmri";
+		% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldSource = "pepolar_rsfmri";
 
 		curr_length = length(vci_dcm2bids_config.descriptions);
 		curr_idx = curr_length + 1;
@@ -461,7 +461,7 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j-";
 		% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051;
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor = "id_rsfmri";
-		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_rsfmri";
+		% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_rsfmri";
 
 		curr_length = length(vci_dcm2bids_config.descriptions);
 		curr_idx = curr_length + 1;
@@ -475,7 +475,7 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j";
 		% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051;
 		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor = "id_rsfmri";
-		vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_rsfmri";
+		% vci_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_rsfmri";
 
 	end
 
