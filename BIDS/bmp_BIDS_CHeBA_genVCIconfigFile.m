@@ -31,7 +31,9 @@ function vci_dcm2bids_config = bmp_BIDS_CHeBA_genVCIconfigFile (varargin)
 %
 %   20231031 - Dr. Jiyang Jiang created the 1st version.
 %	20240223 - Include reverse PE M0 for ASL distortion correction.
-%			   Include resting and CO2-challenged BOLD images
+%			   Include resting and CO2-challenged BOLD images.
+%   20240919 - Removed "B0FieldSource" field, which prevents fmap
+%              from finding corresponding target for PEPOLAR correction.
 %
 
 	clear vci_dcm2bids_config;

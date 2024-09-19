@@ -206,7 +206,7 @@
         "PCASLType": "unbalanced",
         "LabelingPulseFlipAngle": 27.6,
         "RepetitionTimePreparation": 4.14,
-        "B0FieldSource": "pepolar_asl"
+        "VascularCrushing": false
       }
     },
     {
@@ -305,7 +305,7 @@
         "PCASLType": "unbalanced",
         "LabelingPulseFlipAngle": 27.6,
         "RepetitionTimePreparation": 4.14,
-        "B0FieldSource": "pepolar_asl"
+        "VascularCrushing": false
       }
     },
     {
@@ -320,8 +320,7 @@
       "custom_entities": "acq-pepolarForAsl_dir-AP",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j-",
-        "IntendedFor": "id_asl_asl",
-        "B0FieldIdentifier": "pepolar_asl"
+        "IntendedFor": "id_asl_asl"
       }
     },
     {
@@ -336,8 +335,7 @@
       "custom_entities": "acq-pepolarForAsl_dir-PA",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j",
-        "IntendedFor": "id_asl_asl",
-        "B0FieldIdentifier": "pepolar_asl"
+        "IntendedFor": "id_asl_asl"
       }
     },
     {
@@ -352,8 +350,7 @@
       "custom_entities": "dir-AP",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j-",
-        "IntendedFor": "id_asl_asl",
-        "B0FieldIdentifier": "pepolar_asl"
+        "IntendedFor": "id_asl_asl"
       }
     },
     {
@@ -365,8 +362,7 @@
       },
       "custom_entities": "task-rest_dir-PA",
       "sidecar_changes": {
-        "TaskName": "rest",
-        "B0FieldSource": "pepolar_cvr_rest"
+        "TaskName": "rest"
       }
     },
     {
@@ -378,8 +374,7 @@
       },
       "custom_entities": "task-co2_dir-PA",
       "sidecar_changes": {
-        "TaskName": "co2",
-        "B0FieldSource": "pepolar_cvr_co2"
+        "TaskName": "co2"
       }
     },
     {
@@ -396,10 +391,6 @@
         "IntendedFor": [
           "id_cvr_rest",
           "id_cvr_co2"
-        ],
-        "B0FieldIdentifier": [
-          "pepolar_cvr_rest",
-          "pepolar_cvr_co2"
         ]
       }
     },
@@ -417,10 +408,6 @@
         "IntendedFor": [
           "id_cvr_rest",
           "id_cvr_co2"
-        ],
-        "B0FieldIdentifier": [
-          "pepolar_cvr_rest",
-          "pepolar_cvr_co2"
         ]
       }
     }

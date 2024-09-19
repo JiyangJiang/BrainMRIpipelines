@@ -180,8 +180,7 @@
         "LabelingPulseAverageB1": 1.8,
         "PCASLType": "unbalanced",
         "LabelingPulseFlipAngle": 27.6,
-        "RepetitionTimePreparation": 4.14,
-        "B0FieldSource": "pepolar_asl"
+        "RepetitionTimePreparation": 4.14
       }
     },
     {
@@ -196,8 +195,7 @@
       "custom_entities": "dir-AP",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j-",
-        "IntendedFor": "id_asl_asl",
-        "B0FieldIdentifier": "pepolar_asl"
+        "IntendedFor": "id_asl_asl"
       }
     },
     {
@@ -207,10 +205,9 @@
       "criteria": {
         "SeriesDescription": "fMRI _RESTING STATE_MB6_PA normalise OFF"
       },
-      "custom_entities": "task-rest",
+      "custom_entities": "task-rest_dir-PA",
       "sidecar_changes": {
-        "TaskName": "rest",
-        "B0FieldSource": "pepolar_rsfmri"
+        "TaskName": "rest"
       }
     },
     {
@@ -224,8 +221,7 @@
       "custom_entities": "acq-pepolarForRsfmri_dir-AP",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j-",
-        "IntendedFor": "id_rsfmri",
-        "B0FieldIdentifier": "pepolar_rsfmri"
+        "IntendedFor": "id_rsfmri"
       }
     },
     {
@@ -239,8 +235,7 @@
       "custom_entities": "acq-pepolarForRsfmri_dir-PA",
       "sidecar_changes": {
         "PhaseEncodingDirection": "j",
-        "IntendedFor": "id_rsfmri",
-        "B0FieldIdentifier": "pepolar_rsfmri"
+        "IntendedFor": "id_rsfmri"
       }
     }
   ]

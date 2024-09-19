@@ -69,11 +69,9 @@ export BIDS_dir=/Users/z3402744/Work/vci/BIDS
 export subject_ID=vci012
 
 # TowerX
-export DICOM_zip=/d/vci/flywheel/vci001/flywheel_20231127_015517.zip
-export DICOM_zip=/d/vci/flywheel/vci006/flywheel_20231206_034538.zip
-export DICOM_zip=/d/vci/vci_014/flywheel_20240325_053620.zip
-export BIDS_dir=/d/vci/BIDS
-export subject_ID=vci014
+export DICOM_zip=/db/vci/RAW/vci_030/flywheel_20240628_121504.zip
+export BIDS_dir=/db/vci/BIDS
+export subject_ID=vci030
 
 # Katana
 export DICOM_zip=/srv/scratch/cheba/Imaging/vci/vci_015/flywheel_20240313_002036.zip
@@ -85,16 +83,18 @@ module load matlab/R2023b
 # BIDS_dir=$2
 # subject_ID=$3
 
-omp=16 # max num of threads per process
+n_procs=16 # max num of simultaneous processes (16/8 = 2 processes)
+omp=8 # max num of threads per process
+mem=22
 
 bids_validator_version=1.13.1
-mriqc_version=23.1.0
+mriqc_version=24.1.0
 qsiprep_version=0.19.1
-smriprep_version=0.12.2
+smriprep_version=0.16.1
 aslprep_version=0.6.0
-fmriprep_version=23.1.4
+fmriprep_version=24.1.0
 
-
+# ++++++++++++++++++++++++++++++++++++++++++++
 # Create dcm2bids configuration file.
 # ++++++++++++++++++++++++++++++++++++++++++++
 # 0.1 - reorganise DICOM folders, and run helper function.
@@ -104,12 +104,14 @@ fmriprep_version=23.1.4
 # 0.3 - tidy up.
 # edit BrainMRIPipelines/BIDS/config_files/VCI_config.json to remove [] lines.
 
+# +++++++++++++++++++++++++++++++++++++++
 # dcm2bids for subsequent scans.
 # +++++++++++++++++++++++++++++++++++++++
 conda activate dcm2bids
 bmp_BIDS_CHeBA.sh --study VCI --dicom_zip $DICOM_zip --bids_dir $BIDS_dir --subj_id $subject_ID
 
-# validate BIDS
+# +++++++++++++++++++++++++++++++++++++++
+#              validate BIDS
 # +++++++++++++++++++++++++++++++++++++++
 # bmp_BIDSvalidator.sh --bids_directory $BIDS_dir --docker
 #
@@ -123,35 +125,38 @@ singularity run --cleanenv \
                 $BMP_3RD_PATH/bids-validator-${bids_validator_version}.sif \
                 /data
 
-# MRIQC (subject level)
+# +++++++++++++++++++++++++++++++++++++++
+#         MRIQC (subject level)
 # +++++++++++++++++++++++++++++++++++++++
 # docker run -it --rm -v ${BIDS_dir}:/data:ro -v ${BIDS_dir}/derivatives/mriqc/sub-$subject_ID:/out nipreps/mriqc /data /out participant --modalities {T1w,T2w,bold,dwi} --verbose-reports --species human --deoblique --despike --mem_gb 4  --nprocs 1 --no-sub
 #
 # OR
 #
-mkdir -p ${BIDS_dir}/derivatives/mriqc_${mriqc_version}/work
+work_dir=$(dirname ${BIDS_dir})/mriqc_workdir/$subject_ID
+mkdir -p ${work_dir}
 
 singularity run --cleanenv \
-                -B ${BIDS_dir}:/data \
-                -B ${BIDS_dir}/derivatives/mriqc_${mriqc_version}:/out \
-                -B ${BIDS_dir}/derivatives/mriqc_${mriqc_version}/work:/work \
-                $BMP_3RD_PATH/mriqc-${mriqc_version}.sif \
-                /data /out \
-                participant \
-                --work-dir /work \
+                $BMP_3RD_PATH/mriqc-${mriqc_version}.simg \
+                --work-dir $work_dir \
                 --participant_label ${subject_ID} \
-                -m {T1w,T2w,bold} \
+                --modalities {T1w,T2w,bold,dwi} \
+                --nprocs $n_procs \
+                --omp-nthreads $omp \
+                --mem_gb $mem \
                 --verbose-reports \
                 --species human \
-                --deoblique \
-                --despike \
+                --fft-spikes-detector \
                 --no-sub \
-                -v
+                ${BIDS_dir} \
+                ${BIDS_dir}/derivatives/mriqc_${mriqc_version} \
+                participant
 
-# Pre-processing sMRI (smriprep)
+# +++++++++++++++++++++++++++++++++++++++
+#     Pre-processing sMRI (smriprep)
 # +++++++++++++++++++++++++++++++++++++++
 #
-mkdir -p ${BIDS_dir}/derivatives/smriprep_${smriprep_version}/work
+work_dir=$(dirname ${BIDS_dir})/smriprep_workdir/$subject_ID
+mkdir -p ${work_dir}
 
 singularity run --cleanenv \
 				-B $BIDS_dir \
@@ -159,13 +164,17 @@ singularity run --cleanenv \
                 $BMP_3RD_PATH/smriprep-${smriprep_version}.simg \
                 ${BIDS_dir} ${BIDS_dir}/derivatives/smriprep_${smriprep_version} \
                 participant \
-                --participant_label vci003 \
+                --participant_label ${subject_ID} \
+                --nprocs $n_procs \
                 --omp-nthreads $omp \
+                --mem_gb $mem \
                 --fs-license-file /opt/freesurfer/license.txt \
-                --work-dir ${BIDS_dir}/derivatives/smriprep_${smriprep_version}/work \
+                --work-dir ${work_dir} \
                 --notrack \
                 -v
 
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++
 # Pre-processing DWI  (qsiprep)
 # +++++++++++++++++++++++++++++++++++++++++++++++++
 #
@@ -200,6 +209,7 @@ singularity run --containall --writable-tmpfs \
                 -v
 
 
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Reconstruction DWI measures (qsiprep)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #
@@ -240,73 +250,98 @@ for spec in mrtrix_multishell_msmt_ACT-hsvs \
 end
 
 
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Processing ASL (ASLPrep)
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #
 output_dir=$BIDS_dir/derivatives/aslprep_${aslprep_version}
-work_dir=$BMP_TMP_PATH/aslprep_work/$subject_ID		# aslprep does not allow work dir to be a subdir of bids dir.
+work_dir=$(dirname ${BIDS_dir})/aslprep_workdir/$subject_ID
+# work_dir=$BMP_TMP_PATH/aslprep_work/$subject_ID		# aslprep does not allow work dir to be a subdir of bids dir.
+#                                                     # This path is currently used on Katana.
+#                                                     # In future, this will be changed to $(dirname $BIDS_dir)/aslprep_workdir
 
 mkdir -p $work_dir $output_dir
 
+# +++++++++++++++++++++++++++++++++++++
+# original script ran by Mai on Katana
+# +++++++++++++++++++++++++++++++++++++
+# singularity run --cleanenv \
+# 				-B $HOME:/home/aslprep \
+# 				--home /home/aslprep \
+# 				-B $BIDS_dir \
+# 				-B $output_dir \
+# 				-B $work_dir \
+# 				-B ${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
+# 				$BMP_3RD_PATH/aslprep-${aslprep_version}.simg \
+# 				$BIDS_dir $output_dir \
+# 				participant \
+# 				--skip_bids_validation \
+# 				--participant_label $subject_ID \
+# 				--omp-nthreads $omp \
+# 				--output-spaces MNI152NLin6Asym:res-2 T1w asl \
+# 				--force-bbr \
+# 				--m0_scale 10 \
+# 				--scorescrub \
+# 				--basil \
+# 				--use-syn-sdc \
+# 				--force-syn \
+# 				--fs-license-file /opt/freesurfer/license.txt \
+# 				--work-dir $work_dir \
+# 				-v
+
 singularity run --cleanenv \
-				-B $HOME:/home/aslprep \
-				--home /home/aslprep \
-				-B $BIDS_dir \
-				-B $output_dir \
-				-B $work_dir \
-				-B ${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
-				$BMP_3RD_PATH/aslprep-${aslprep_version}.simg \
-				$BIDS_dir $output_dir \
-				participant \
-				--skip_bids_validation \
-				--participant_label $subject_ID \
-				--omp-nthreads $omp \
-				--output-spaces MNI152NLin6Asym:res-2 T1w asl \
-				--force-bbr \
-				--m0_scale 10 \
-				--scorescrub \
-				--basil \
-				--use-syn-sdc \
-				--force-syn \
-				--fs-license-file /opt/freesurfer/license.txt \
-				--work-dir $work_dir \
-				-v
+                -B $HOME:/home/aslprep \
+                --home /home/aslprep \
+                -B $BIDS_dir \
+                -B $output_dir \
+                -B $work_dir \
+                -B ${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
+                $BMP_3RD_PATH/aslprep-${aslprep_version}.simg \
+                $BIDS_dir $output_dir \
+                participant \
+                --skip_bids_validation \
+                --participant_label $subject_ID \
+                --omp-nthreads $omp \
+                --output-spaces MNI152NLin6Asym:res-2 T1w asl \
+                --force-bbr \
+                --m0_scale 10 \
+                --scorescrub \
+                --basil \
+                --use-syn-sdc \
+                --force-syn \
+                --fs-license-file /opt/freesurfer/license.txt \
+                --work-dir $work_dir \
+                -v
 
 
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Preprocessing rsfMRI (fMRIPrep)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-output_dir=$BIDS_dir/derivatives/fmriprep_${fmriprep_version}
-work_dir=$BMP_TMP_PATH/fmriprep_work/$subject_ID
-freesurfer_dir=$BIDS_dir/derivatives/smriprep_${smriprep_version}/freesurfer
+work_dir=$(dirname ${BIDS_dir})/fmriprep_workdir/$subject_ID
+output_dir=${BIDS_dir}/derivatives/fmriprep_${fmriprep_version}/$subject_ID
+smriprep_dir=$BIDS_dir/derivatives/smriprep_${smriprep_version}
 
 mkdir -p $work_dir $output_dir
 
 singularity run --cleanenv \
-				-B $BIDS_dir \
-				-B $output_dir \
-				-B $work_dir \
-				-B $freesurfer_dir \
-				-B ${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
-				-B $BMP_TMP_PATH/templateflow:/home/fmriprep/.cache/templateflow \
-				-B $BMP_TMP_PATH/matplotlib:/home/fmriprep/.config/matplotlib \
-				$BMP_3RD_PATH/fmriprep-${fmriprep_version}.simg \
-				$BIDS_dir $output_dir \
-				participant \
-				--skip_bids_validation \
-				--participant_label $subject_ID \
-				--omp-nthreads $omp \
-				--output-spaces MNI152NLin6Asym:res-2 MNI152NLin2009cAsym:res-2 fsaverage:den-10k anat func \
-				--force-bbr \
-				--me-t2s-fit-method curvefit \
-				--project-goodvoxels \
-				--medial-surface-nan \
-				--cifti-output 91k \
-				--return-all-components \
-				--fs-license-file /opt/freesurfer/license.txt \
-				--fs-subjects-dir $freesurfer_dir \
-				--work-dir $work_dir \
-				-v
-
+                -B ${BIDS_dir},${work_dir},${output_dir},${smriprep_dir} \
+                -B $FREESURFER_HOME/license.txt:/opt/freesurfer/license.txt \
+                -B $BMP_TMP_PATH/templateflow:/home/fmriprep/.cache/templateflow \
+                -B $BMP_TMP_PATH/matplotlib:/home/fmriprep/.cache/matplotlib \
+                BMP_3RD_PATH/fmriprep-${fmriprep_version}.simg \
+                $bids_dir \
+                $output_dir \
+                participant \
+                --skip_bids_validation \
+                --participant_label vci025 \
+                --derivatives smriprep=${smriprep_dir} \
+                --nprocs 20 \
+                --mem_mb 25000 \
+                --level full \
+                --output-spaces MNI152NLin6Asym:res-2 MNI152NLin2009cAsym:res-2 fsaverage:den-10k anat func \
+                --project-goodvoxels \
+                --work-dir $work_dir \
+                --verbose
 
 
 # Postprocessing rsfMRI (XCP-D)

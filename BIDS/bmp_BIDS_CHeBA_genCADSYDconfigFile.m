@@ -21,6 +21,8 @@ function cadsyd_dcm2bids_config = bmp_BIDS_CHeBA_genCADSYDconfigFile (varargin)
 % HISTORY :
 %
 %   20240309 - Dr. Jiyang Jiang created the 1st version.
+%   20240919 - Removed B0FieldSource field which prevent fmap from finding
+%              corresponding target for PEPOLAR correction.
 %
 
 	clear cadsyd_dcm2bids_config;
@@ -158,7 +160,7 @@ function cadsyd_dcm2bids_config = bmp_BIDS_CHeBA_genCADSYDconfigFile (varargin)
 	cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.LabelingPulseFlipAngle = 27.6; % That's my guess on "FA27.6".
 	cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.RepetitionTimePreparation = 4.14; % https://neurostars.org/t/repetitiontime-parameters-what-are-they-and-where-to-find-them/20020
 
-	cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldSource = "pepolar_asl";
+	% cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldSource = "pepolar_asl";
 
 
 	% ASL - PEPolar FMAP - AP M0
@@ -174,7 +176,7 @@ function cadsyd_dcm2bids_config = bmp_BIDS_CHeBA_genCADSYDconfigFile (varargin)
 	cadsyd_dcm2bids_config.descriptions(curr_idx).custom_entities = "dir-AP";
 	cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j-";
 	cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor = "id_asl_asl";
-	cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_asl";
+	% cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_asl";
 
 	% rsfMRI
 	%
@@ -188,7 +190,7 @@ function cadsyd_dcm2bids_config = bmp_BIDS_CHeBA_genCADSYDconfigFile (varargin)
 	cadsyd_dcm2bids_config.descriptions(curr_idx).criteria.SeriesDescription = "fMRI _RESTING STATE_MB6_PA normalise OFF";
 	cadsyd_dcm2bids_config.descriptions(curr_idx).custom_entities = "task-rest_dir-PA";
 	cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TaskName = "rest";
-	cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldSource = "pepolar_rsfmri";
+	% cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldSource = "pepolar_rsfmri";
 
 	% rsfMRI fmap AP
 	%
@@ -204,7 +206,7 @@ function cadsyd_dcm2bids_config = bmp_BIDS_CHeBA_genCADSYDconfigFile (varargin)
 	cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j-";
 	% cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051;
 	cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor = "id_rsfmri";
-	cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_rsfmri";
+	% cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_rsfmri";
 
 	% rsfMRI fmap PA
 	%
@@ -220,7 +222,7 @@ function cadsyd_dcm2bids_config = bmp_BIDS_CHeBA_genCADSYDconfigFile (varargin)
 	cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.PhaseEncodingDirection = "j";
 	% cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.TotalReadoutTime = 0.051;
 	cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.IntendedFor = "id_rsfmri";
-	cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_rsfmri";
+	% cadsyd_dcm2bids_config.descriptions(curr_idx).sidecar_changes.B0FieldIdentifier = "pepolar_rsfmri";
 
 	% TO-DO's
 	%
