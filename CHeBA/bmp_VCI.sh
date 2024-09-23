@@ -266,55 +266,63 @@ mkdir -p $work_dir $output_dir
 # +++++++++++++++++++++++++++++++++++++
 # original script ran by Mai on Katana
 # +++++++++++++++++++++++++++++++++++++
-# singularity run --cleanenv \
-# 				-B $HOME:/home/aslprep \
-# 				--home /home/aslprep \
-# 				-B $BIDS_dir \
-# 				-B $output_dir \
-# 				-B $work_dir \
-# 				-B ${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
-# 				$BMP_3RD_PATH/aslprep-${aslprep_version}.simg \
-# 				$BIDS_dir $output_dir \
-# 				participant \
-# 				--skip_bids_validation \
-# 				--participant_label $subject_ID \
-# 				--omp-nthreads $omp \
-# 				--output-spaces MNI152NLin6Asym:res-2 T1w asl \
-# 				--force-bbr \
-# 				--m0_scale 10 \
-# 				--scorescrub \
-# 				--basil \
-# 				--use-syn-sdc \
-# 				--force-syn \
-# 				--fs-license-file /opt/freesurfer/license.txt \
-# 				--work-dir $work_dir \
-# 				-v
-
 singularity run --cleanenv \
-                -B $HOME:/home/aslprep \
-                --home /home/aslprep \
-                -B $BIDS_dir \
-                -B $output_dir \
-                -B $work_dir \
-                -B ${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
-                $BMP_3RD_PATH/aslprep-${aslprep_version}.simg \
-                --skip_bids_validation \
-                --participant_label $subject_ID \
-                --nprocs $n_procs \
+				-B $HOME:/home/aslprep \
+				--home /home/aslprep \
+				-B $BIDS_dir \
+				-B $output_dir \
+				-B $work_dir \
+				-B ${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
+				$BMP_3RD_PATH/aslprep-${aslprep_version}.simg \
+				$BIDS_dir $output_dir \
+				participant \
+				--skip_bids_validation \
+				--participant_label $subject_ID \
+				--nprocs $n_procs \
                 --omp-nthreads $omp \
                 --mem_mb $mem_mb \
-                --output-spaces MNI152NLin6Asym:res-2 T1w asl \
-                --m0_scale 10 \
-                --scorescrub \
-                --basil \
-                --project-goodvoxels \
-                --cifti-output 91k \
-                --fs-license-file /opt/freesurfer/license.txt \
-                --fs-subjects-dir ${BIDS_dir}/derivatives/smriprep_${smriprep_version}/freesurfer \
-                --work-dir $work_dir \
-                -v \
-                $BIDS_dir $output_dir \
-                participant
+				--output-spaces MNI152NLin6Asym:res-2 T1w asl \
+				--force-bbr \
+				--m0_scale 10 \
+				--scorescrub \
+				--basil \
+				--use-syn-sdc \
+				--force-syn \
+				--fs-license-file /opt/freesurfer/license.txt \
+				--work-dir $work_dir \
+				-v
+
+# Below script generates:
+#
+# 1) ERROR: roi volume is not in the same volume space as input volume
+# 2) reverse PE M0 not recognised for distortion correction. Was this not
+#    implemented in ASLPrep? Read methodology paper.
+#
+# singularity run --cleanenv \
+#                 -B $HOME:/home/aslprep \
+#                 --home /home/aslprep \
+#                 -B $BIDS_dir \
+#                 -B $output_dir \
+#                 -B $work_dir \
+#                 -B ${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
+#                 $BMP_3RD_PATH/aslprep-${aslprep_version}.simg \
+#                 --skip_bids_validation \
+#                 --participant_label $subject_ID \
+#                 --nprocs $n_procs \
+#                 --omp-nthreads $omp \
+#                 --mem_mb $mem_mb \
+#                 --output-spaces MNI152NLin6Asym:res-2 T1w asl \
+#                 --m0_scale 10 \
+#                 --scorescrub \
+#                 --basil \
+#                 --project-goodvoxels \
+#                 --cifti-output 91k \
+#                 --fs-license-file /opt/freesurfer/license.txt \
+#                 --fs-subjects-dir ${BIDS_dir}/derivatives/smriprep_${smriprep_version}/freesurfer \
+#                 --work-dir $work_dir \
+#                 -v \
+#                 $BIDS_dir $output_dir \
+#                 participant
 
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
