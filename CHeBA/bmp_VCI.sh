@@ -91,7 +91,7 @@ bids_validator_version=1.13.1
 mriqc_version=24.1.0
 qsiprep_version=0.19.1
 smriprep_version=0.16.1
-aslprep_version=0.6.0
+aslprep_version=0.7.2
 fmriprep_version=24.1.0
 
 # ++++++++++++++++++++++++++++++++++++++++++++
@@ -254,6 +254,7 @@ end
 # Processing ASL (ASLPrep)
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #
+mem_mb=$(bc <<< $mem*1000)
 output_dir=$BIDS_dir/derivatives/aslprep_${aslprep_version}
 work_dir=$(dirname ${BIDS_dir})/aslprep_workdir/$subject_ID
 # work_dir=$BMP_TMP_PATH/aslprep_work/$subject_ID		# aslprep does not allow work dir to be a subdir of bids dir.
@@ -297,21 +298,23 @@ singularity run --cleanenv \
                 -B $work_dir \
                 -B ${FREESURFER_HOME}/license.txt:/opt/freesurfer/license.txt \
                 $BMP_3RD_PATH/aslprep-${aslprep_version}.simg \
-                $BIDS_dir $output_dir \
-                participant \
                 --skip_bids_validation \
                 --participant_label $subject_ID \
+                --nprocs $n_procs \
                 --omp-nthreads $omp \
+                --mem_mb $mem_mb \
                 --output-spaces MNI152NLin6Asym:res-2 T1w asl \
-                --force-bbr \
                 --m0_scale 10 \
                 --scorescrub \
                 --basil \
-                --use-syn-sdc \
-                --force-syn \
+                --project-goodvoxels \
+                --cifti-output 91k \
                 --fs-license-file /opt/freesurfer/license.txt \
+                --fs-subjects-dir ${BIDS_dir}/derivatives/smriprep_${smriprep_version}/freesurfer \
                 --work-dir $work_dir \
-                -v
+                -v \
+                $BIDS_dir $output_dir \
+                participant
 
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
