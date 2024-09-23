@@ -331,7 +331,7 @@ singularity run --cleanenv \
                 -B $FREESURFER_HOME/license.txt:/opt/freesurfer/license.txt \
                 -B $BMP_TMP_PATH/templateflow:/home/fmriprep/.cache/templateflow \
                 -B $BMP_TMP_PATH/matplotlib:/home/fmriprep/.cache/matplotlib \
-                BMP_3RD_PATH/fmriprep-${fmriprep_version}.simg \
+                $BMP_3RD_PATH/fmriprep-${fmriprep_version}.simg \
                 $bids_dir \
                 $output_dir \
                 participant \
