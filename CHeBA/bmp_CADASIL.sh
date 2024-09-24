@@ -38,9 +38,9 @@
 #
 
 # Katana
-export DICOM_zip=/srv/scratch/cheba/Imaging/vci/vci_015/flywheel_20240313_002036.zip
-export BIDS_dir=/srv/scratch/cheba/Imaging/vci/BIDS
-export subject_ID=vci015
+export DICOM_zip=/srv/scratch/cheba/Imaging/cadasil/RAW/AC0020/AC0020.zip
+export BIDS_dir=/srv/scratch/cheba/Imaging/cadasil/BIDS
+export subject_ID=AC0020
 module load matlab/R2023b
 
 omp=16 # max num of threads per process
