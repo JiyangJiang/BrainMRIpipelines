@@ -15,7 +15,7 @@ deal_with_3D(){
 	zip_path_kword=$4
 	modality_name=$5
 
-	DICOM="flywheel$(unzip -l $DICOM_zip | grep "$zip_path_kword" | grep ".dicom" | awk -F'flywheel' '{print $NF}')"
+	DICOM="flywheel$(unzip -l $DICOM_zip | grep "$zip_path_kword" | grep ".dcm" | awk -F'flywheel' '{print $NF}')"
 
 	if [ "$DICOM" = "flywheel" ]; then
 
