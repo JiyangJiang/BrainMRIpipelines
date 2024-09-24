@@ -328,6 +328,7 @@ singularity run --cleanenv \
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Preprocessing rsfMRI (fMRIPrep)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+mem_mb=$(bc <<< $mem*1000)
 work_dir=$(dirname ${BIDS_dir})/fmriprep_workdir/$subject_ID
 output_dir=${BIDS_dir}/derivatives/fmriprep_${fmriprep_version}/$subject_ID
 smriprep_dir=$BIDS_dir/derivatives/smriprep_${smriprep_version}
@@ -344,15 +345,15 @@ singularity run --cleanenv \
                 $output_dir \
                 participant \
                 --skip_bids_validation \
-                --participant_label vci025 \
+                --participant_label $subject_ID \
                 --derivatives smriprep=${smriprep_dir} \
-                --nprocs 20 \
-                --mem_mb 25000 \
+                --nprocs $n_procs \
+                --omp-nthreads $omp \
+                --mem_mb $mem_mb \
                 --level full \
                 --output-spaces MNI152NLin6Asym:res-2 MNI152NLin2009cAsym:res-2 fsaverage:den-10k anat func \
                 --project-goodvoxels \
-                --work-dir $work_dir \
-                --verbose
+                --work-dir $work_dir
 
 
 # Postprocessing rsfMRI (XCP-D)
