@@ -126,4 +126,9 @@ deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "fMRI _RESTING STATE_MB6_PA normal
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "AP_FMAP_for resting state fMRI normalise OFF/"		rsfMRI_FMAP_AP
 deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "PA_FMAP_for resting state fMRI normalise OFF/"		rsfMRI_FMAP_PA
 
-deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "PhoenixZIPReport/"									OEF
+
+# OEF
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "PhoenixZIPReport/"									OEF
+deal_with_4D $DICOM_zip $BIDS_dir $subject_ID "/ep2d_TRUST_AsymShTE/"								OEF_TRUST
+deal_with_3D $DICOM_zip $BIDS_dir $subject_ID "/ep2d_TRUST_AsymShTE_T2_Yv/"							OEF_Yv
