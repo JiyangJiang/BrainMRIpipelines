@@ -28,6 +28,13 @@ case "$study" in
 				bmp_BIDS_CHeBA_reorganiseFlywheelDicomZip_CADSYD.sh $DICOM_zip $BIDS_dir $subject_ID
 				;;
 
+			"CADNEW")
+
+				echo "[$(date)] : $(basename $0) : CASASIL Newcastle study subject."
+				echo "[$(date)] : $(basename $0) : Calling bmp_BIDS_CHeBA_reorganiseDicomZip_CADNEW.sh to sort out DICOM zip archive."
+				bmp_BIDS_CHeBA_reorganiseDicomZip_CADNEW.sh $DICOM_zip $BIDS_dir $subject_ID
+				;;
+
 			*)
 
 				echo "UNKNOWN STUDY : $study"

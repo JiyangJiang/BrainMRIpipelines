@@ -28,10 +28,16 @@ case "$ans_yn" in
 				bmp_BIDS_CHeBA_reorganiseFlywheelDicomZip_VCI.sh $DICOM_zip $BIDS_dir $subject_ID
 				;;
 
-			"CADsyd")
+			"CADSYD")
 
 				bmp_BIDS_CHeBA_reorganiseFlywheelDicomZip_CADSYD.sh $DICOM_zip $BIDS_dir $subject_ID
 				;;
+
+			"CADNEW")
+
+				bmp_BIDS_CHeBA_reorganiseDicomZip_CADNEW.sh $DICOM_zip $BIDS_dir $subject_ID
+				;;
+
 
 			*)
 

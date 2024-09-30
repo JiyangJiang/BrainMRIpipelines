@@ -330,7 +330,7 @@ singularity run --cleanenv \
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 mem_mb=$(bc <<< $mem*1000)
 work_dir=$(dirname ${BIDS_dir})/fmriprep_workdir/$subject_ID
-output_dir=${BIDS_dir}/derivatives/fmriprep_${fmriprep_version}/$subject_ID
+output_dir=${BIDS_dir}/derivatives/fmriprep_${fmriprep_version}
 smriprep_dir=$BIDS_dir/derivatives/smriprep_${smriprep_version}
 
 mkdir -p $work_dir $output_dir
@@ -341,19 +341,16 @@ singularity run --cleanenv \
                 -B $BMP_TMP_PATH/templateflow:/home/fmriprep/.cache/templateflow \
                 -B $BMP_TMP_PATH/matplotlib:/home/fmriprep/.cache/matplotlib \
                 $BMP_3RD_PATH/fmriprep-${fmriprep_version}.simg \
-                $bids_dir \
-                $output_dir \
-                participant \
                 --skip_bids_validation \
                 --participant_label $subject_ID \
                 --derivatives smriprep=${smriprep_dir} \
                 --nprocs $n_procs \
                 --omp-nthreads $omp \
                 --mem_mb $mem_mb \
-                --level full \
                 --output-spaces MNI152NLin6Asym:res-2 MNI152NLin2009cAsym:res-2 fsaverage:den-10k anat func \
                 --project-goodvoxels \
-                --work-dir $work_dir
+                --work-dir $work_dir \
+                $BIDS_dir $output_dir participant
 
 
 # Postprocessing rsfMRI (XCP-D)
