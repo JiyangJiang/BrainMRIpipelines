@@ -29,3 +29,6 @@ CO2_sampling_freq = 4 	% Nonin monitor has a sampling rate of 4Hz,
 % 											% window
 
 slide_window_size = 1000 / (1/freq * 1000) % sliding window of 1000 ms size.
+
+smoothdata (time_series, 1, "movmean"...
+			"")
