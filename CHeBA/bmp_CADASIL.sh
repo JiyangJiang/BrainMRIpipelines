@@ -43,14 +43,19 @@ export BIDS_dir=/srv/scratch/cheba/Imaging/cadasil/BIDS
 export subject_ID=AC0030
 module load matlab/R2023b
 
+# TowerX
+export DICOM_zip=/db/cadasil/RAW/AC0030/flywheel_20240925_215817.zip
+export BIDS_dir=/db/cadasil/BIDS
+export subject_ID=AC0030
+
 omp=16 # max num of threads per process
 
-bids_validator_version=1.13.1
-mriqc_version=23.1.0
+bids_validator_version=1.14.12
+mriqc_version=24.1.0
 qsiprep_version=0.19.1
-smriprep_version=0.12.2
-aslprep_version=0.6.0
-fmriprep_version=23.1.4
+smriprep_version=0.16.1
+aslprep_version=0.7.2
+fmriprep_version=24.1.0
 
 # dcm2bids
 # +++++++++++++++++++++++++++++++++++++++
